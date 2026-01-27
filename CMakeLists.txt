@@ -10,8 +10,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory("GameEngine")
 
 # 2. SOURCE AND HEADER SETUP
-set(SOURCE_FILES "src/main.cpp")
-file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h")
+set(SOURCE_FILES
+    "src/main.cpp"
+    "src/scenes/combat_scene.cpp")
+file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "src/scenes/*.h")
 
 # 3. ASSET INFORMATION
 set(ASSET_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")

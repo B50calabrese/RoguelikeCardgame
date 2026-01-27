@@ -1,23 +1,10 @@
+#include <application.h>
+#include <engine.h>
+#include <scene_manager.h>
+
 #include <iostream>
 
-#include "application.h"
-#include "engine.h"
-#include "scene.h"
-#include "scene_manager.h"
-
-// --- A Simple Game Scene ---
-class GameScene : public engine::Scene {
- public:
-  GameScene() : Scene("MainGame") {}
-
-  void OnAttach() override { std::cout << "Game Scene Attached" << std::endl; }
-
-  void OnUpdate(float dt) override {
-    // Game logic (AI, Card movement) goes here
-  }
-
-  void OnRender() override {}
-};
+#include "scenes/combat_scene.h"
 
 class DeckBuilderApp : public engine::Application {
  public:
@@ -25,7 +12,8 @@ class DeckBuilderApp : public engine::Application {
 
   void OnInit() override {
     // Push the first scene
-    engine::SceneManager::Get().SetScene(std::make_unique<GameScene>());
+    engine::SceneManager::Get().SetScene(
+        std::make_unique<scenes::CombatScene>());
   }
 
   void OnUpdate(double deltaTimeSeconds) override {}
