@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(DeckBuilderGame)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 1. ADD THE ENGINE SUBDIRECTORY (Crucial)
@@ -9,11 +9,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # This makes the "GameEngine" target available to your game.
 add_subdirectory("GameEngine")
 
+add_subdirectory("demos")
+
 # 2. SOURCE AND HEADER SETUP
 set(SOURCE_FILES
     "src/main.cpp"
+    "src/core/graphics/card_renderer.cpp"
     "src/scenes/combat_scene.cpp")
-file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "src/scenes/*.h")
+file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "include/core/*.h" "include/core/graphics/*.h" "include/scenes/*.h" "src/scenes/*.h")
 
 # 3. ASSET INFORMATION
 set(ASSET_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
@@ -22,20 +25,24 @@ set(ASSET_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets")
 # Copy assets to build directory for relative path loading
 file(COPY "${ASSET_SOURCE_DIR}" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
+# 4. CREATE A LIBRARY FOR REUSABLE GAME LOGIC
+# We move the logic here so demos can actually "link" to it.
+add_library(RoguelikeCardgameLibrary STATIC ${SOURCE_FILES} ${INCLUDE_FILES})
+
 # Inject the asset path as a macro for C++ code
-add_definitions(-DENGINE_ASSETS_PATH="${ASSET_BUILD_DIR}/")
+target_compile_definitions(RoguelikeCardgameLibrary PUBLIC 
+    ENGINE_ASSETS_PATH=\"${ASSET_BUILD_DIR}/\"
+)
 
-# 4. CREATE THE EXECUTABLE
-# We include INCLUDE_FILES here so they show up in the Visual Studio Solution Explorer
-add_executable(RoguelikeCardgame ${SOURCE_FILES} ${INCLUDE_FILES})
+# Link the Engine to the Library
+target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine)
 
-# 5. LINKING & INCLUDES
-# By linking 'GameEngine', your project automatically inherits the 'PUBLIC' 
-# include directories we defined in the engine's CMake file.
-target_link_libraries(RoguelikeCardgame PRIVATE GameEngine)
+# Ensure the game's include folder is PUBLIC so anyone linking to it sees it
+target_include_directories(RoguelikeCardgameLibrary PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-# Ensure the game's own local include folder is searchable
-target_include_directories(RoguelikeCardgame PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+# 5. CREATE THE MAIN EXECUTABLE
+add_executable(RoguelikeCardgame "src/main.cpp") # main.cpp is usually the only thing left here
+target_link_libraries(RoguelikeCardgame PRIVATE RoguelikeCardgameLibrary)
 
 # 6. VISUAL STUDIO SETTINGS
 # Set the working directory so assets load correctly when pressing F5

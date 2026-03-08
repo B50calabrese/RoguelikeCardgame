@@ -1,6 +1,6 @@
-#include <application.h>
-#include <engine.h>
-#include <scene_manager.h>
+#include <engine/core/application.h>
+#include <engine/core/engine.h>
+#include <engine/scene/scene_manager.h>
 
 #include <iostream>
 
@@ -26,6 +26,7 @@ class DeckBuilderApp : public engine::Application {
 // --- Entry Point ---
 int main() {
   engine::EngineConfig engine_config;
+  engine_config.asset_path = ENGINE_ASSETS_PATH;
   engine_config.window_width = 1600;
   engine_config.window_height = 1200;
   engine::Engine::Init(engine_config);

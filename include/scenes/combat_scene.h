@@ -1,7 +1,7 @@
 #ifndef COMBAT_SCENE_H
 #define COMBAT_SCENE_H
 
-#include "scene.h"
+#include <engine/scene/scene.h>
 
 namespace scenes {
 
