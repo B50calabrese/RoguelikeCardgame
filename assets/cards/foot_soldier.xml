@@ -1,0 +1,8 @@
+<Card id="2">
+    <Name>Foot Soldier</Name>
+    <Description>A basic unit.</Description>
+    <Power>2</Power>
+    <Health>2</Health>
+    <Frame>creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>
