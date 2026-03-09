@@ -14,6 +14,7 @@ add_subdirectory("demos")
 # 2. SOURCE AND HEADER SETUP
 set(SOURCE_FILES
     "src/main.cpp"
+    "src/core/card_registry.cpp"
     "src/core/graphics/card_renderer.cpp"
     "src/scenes/combat_scene.cpp")
 file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "include/core/*.h" "include/core/graphics/*.h" "include/scenes/*.h" "src/scenes/*.h")

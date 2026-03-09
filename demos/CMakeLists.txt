@@ -11,3 +11,4 @@ function(add_game_demo target_name source_file)
 endfunction()
 
 add_subdirectory(cardrendererdemo)
+add_game_demo(cardregistrydemo cardregistrydemo/main.cpp)
