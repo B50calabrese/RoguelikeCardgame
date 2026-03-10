@@ -67,7 +67,7 @@ class CardRendererApp : public engine::Application {
   core::CardData card_data;
   float scale = 1.0f;
   float rotation = 0.0f;
-  glm::vec2 position = glm::vec2(0.0f);
+  glm::vec2 position = glm::vec2(800.0f, 600.0f);
 };
 
 // --- Entry Point ---
