@@ -7,8 +7,4 @@ GameConfig& GameConfig::Get() {
   return instance;
 }
 
-GameConfig::GameConfig() {
-  // Use default values as initialized in the header
-}
-
 }  // namespace core

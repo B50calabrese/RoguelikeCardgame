@@ -27,14 +27,14 @@ class DeckBuilderApp : public engine::Application {
 // --- Entry Point ---
 int main() {
   auto& config = core::GameConfig::Get();
-  config.SetAssetPath(ENGINE_ASSETS_PATH);
-  config.SetWindowWidth(1600);
-  config.SetWindowHeight(1200);
+  config.asset_path = ENGINE_ASSETS_PATH;
+  config.window_width = 1600;
+  config.window_height = 1200;
 
   engine::EngineConfig engine_config;
-  engine_config.asset_path = config.GetAssetPath();
-  engine_config.window_width = config.GetWindowWidth();
-  engine_config.window_height = config.GetWindowHeight();
+  engine_config.asset_path = config.asset_path;
+  engine_config.window_width = config.window_width;
+  engine_config.window_height = config.window_height;
 
   engine::Engine::Init(engine_config);
   DeckBuilderApp app;
