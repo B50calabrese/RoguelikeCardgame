@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # This makes the "GameEngine" target available to your game.
 add_subdirectory("GameEngine")
 
+find_package(pugixml REQUIRED)
+
 add_subdirectory("demos")
 
 # 2. SOURCE AND HEADER SETUP
@@ -35,8 +37,8 @@ target_compile_definitions(RoguelikeCardgameLibrary PUBLIC
     ENGINE_ASSETS_PATH=\"${ASSET_BUILD_DIR}/\"
 )
 
-# Link the Engine to the Library
-target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine)
+# Link the Engine and pugixml to the Library
+target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine pugixml)
 
 # Ensure the game's include folder is PUBLIC so anyone linking to it sees it
 target_include_directories(RoguelikeCardgameLibrary PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")

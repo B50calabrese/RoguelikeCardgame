@@ -2,6 +2,11 @@
 #include <engine/core/engine.h>
 #include <engine/util/logger.h>
 
+// clang-format off
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+// clang-format on
+
 #include <iostream>
 #include <string>
 
@@ -24,7 +29,8 @@ class CardRegistryDemo : public engine::Application {
     for (const auto& [id, card] : core::CardRegistry::Get().GetAllCards()) {
       std::cout << id << " ";
     }
-    std::cout << "\nEnter a card ID to view details (or 'q' to quit): " << std::endl;
+    std::cout << "\nEnter a card ID to view details (or 'q' to quit): "
+              << std::endl;
 
     std::string input;
     while (true) {
@@ -49,16 +55,19 @@ class CardRegistryDemo : public engine::Application {
           std::cout << "Card with ID " << id << " not found." << std::endl;
         }
       } catch (const std::invalid_argument&) {
-        std::cout << "Invalid input. Please enter a numeric ID or 'q' to quit." << std::endl;
+        std::cout << "Invalid input. Please enter a numeric ID or 'q' to quit."
+                  << std::endl;
       }
     }
 
-    // Since this is a CLI demo intended to run once and exit in this environment,
-    // we can request the engine to stop.
-    engine::Engine::Get().Stop();
+    // Since this is a CLI demo intended to run once and exit in this
+    // environment, we can request the window to close.
+    if (engine::Engine::window().native_handle()) {
+        glfwSetWindowShouldClose(engine::Engine::window().native_handle(), GLFW_TRUE);
+    }
   }
 
-  void OnUpdate(double deltaTimeSeconds) override {}
+  void OnUpdate(double delta_time_seconds) override {}
   void OnShutdown() override {}
 };
 
@@ -68,9 +77,9 @@ int main() {
   engine_config.window_width = 800;
   engine_config.window_height = 600;
 
-  // We need to initialize the engine to have the Renderer (and AssetManager) working.
-  // Note: This will create a window, which might not be ideal for a pure CLI demo,
-  // but the engine's systems depend on it.
+  // We need to initialize the engine to have the Renderer (and AssetManager)
+  // working. Note: This will create a window, which might not be ideal for a
+  // pure CLI demo, but the engine's systems depend on it.
   engine::Engine::Init(engine_config);
 
   CardRegistryDemo app;

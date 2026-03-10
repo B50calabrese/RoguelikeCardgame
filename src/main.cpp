@@ -16,7 +16,7 @@ class DeckBuilderApp : public engine::Application {
         std::make_unique<scenes::CombatScene>());
   }
 
-  void OnUpdate(double deltaTimeSeconds) override {}
+  void OnUpdate(double delta_time_seconds) override {}
 
   void OnShutdown() override {
     std::cout << "Game cleaning up..." << std::endl;

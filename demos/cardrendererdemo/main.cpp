@@ -26,7 +26,7 @@ class CardRendererApp : public engine::Application {
                  .art_texture_id = 1};
   }
 
-  void OnUpdate(double deltaTimeSeconds) override {
+  void OnUpdate(double delta_time_seconds) override {
     core::graphics::CardRenderer::RenderCard(card_data, position, scale,
                                              /*alpha=*/1.0f, rotation);
 

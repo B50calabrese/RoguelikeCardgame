@@ -1,13 +1,11 @@
-#ifndef COMBAT_SCENE_H
-#define COMBAT_SCENE_H
+#ifndef DECK_BUILDER_GAME_SCENES_COMBAT_SCENE_H_
+#define DECK_BUILDER_GAME_SCENES_COMBAT_SCENE_H_
 
 #include <engine/scene/scene.h>
 
 namespace scenes {
 
-/**
- * Scene containing the combat section of the game.
- */
+// Scene containing the combat section of the game.
 class CombatScene : public engine::Scene {
  public:
   CombatScene() : Scene("CombatScene") {}
@@ -23,4 +21,4 @@ class CombatScene : public engine::Scene {
 
 }  // namespace scenes
 
-#endif  // COMBAT_SCENE_H
+#endif  // DECK_BUILDER_GAME_SCENES_COMBAT_SCENE_H_
