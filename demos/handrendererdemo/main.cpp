@@ -1,9 +1,11 @@
 #include <engine/core/application.h>
 #include <engine/core/engine.h>
+#include <engine/graphics/renderer.h>
 #include <engine/graphics/text_renderer.h>
 #include <engine/graphics/texture.h>
 #include <engine/input/input_manager.h>
 
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -20,23 +22,26 @@ class HandRendererApp : public engine::Application {
     texture = engine::graphics::Texture::Load("creature_frame.png");
 
     for (int i = 0; i < 7; ++i) {
-      cards.push_back({
-          .id = i,
-          .name = "Card " + std::to_string(i),
-          .description = "A demo card",
-          .power = i,
-          .health = i,
-          .frame_texture_id = texture->id(),
-          .art_texture_id = 1
-      });
+      core::CardData card;
+      card.id = i;
+      card.name = "Card " + std::to_string(i);
+      card.description = "A demo card";
+      card.power = i;
+      card.health = i;
+      card.frame_texture_id = texture->id();
+      card.art_texture_id = 1;
+      cards.push_back(card);
     }
   }
 
   void OnUpdate(double deltaTimeSeconds) override {
     // Background UI for visualization
-    engine::graphics::Renderer::Get().DrawRect(bounds_pos.x, bounds_pos.y, bounds_size.x, bounds_size.y, 0.2f, 0.2f, 0.2f);
+    engine::graphics::Renderer::Get().DrawRect(bounds_pos.x, bounds_pos.y,
+                                               bounds_size.x, bounds_size.y,
+                                               0.2f, 0.2f, 0.2f);
 
-    core::graphics::HandRenderer::RenderHand(cards, bounds_pos, bounds_size, arc_angle, overlap);
+    core::graphics::HandRenderer::RenderHand(cards, bounds_pos, bounds_size,
+                                             arc_angle, overlap);
 
     // Controls
     if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_UP)) {
@@ -51,13 +56,14 @@ class HandRendererApp : public engine::Application {
       overlap = std::max(0.0f, overlap - 0.1f * (float)deltaTimeSeconds);
     }
 
-    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_EQUALS)) { // Plus key
-       cards.push_back({
-          .id = (int)cards.size(),
-          .name = "Card " + std::to_string(cards.size()),
-          .frame_texture_id = texture->id(),
-      });
-    } else if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_MINUS)) {
+    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_W)) {
+      core::CardData card;
+      card.id = (int)cards.size();
+      card.name = "Card " + std::to_string(cards.size());
+      card.frame_texture_id = texture->id();
+      cards.push_back(card);
+    } else if (engine::InputManager::Get().IsKeyPressed(
+                   engine::KeyCode::KC_S)) {
       if (!cards.empty()) cards.pop_back();
     }
   }

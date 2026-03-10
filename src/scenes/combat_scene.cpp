@@ -1,1 +1,67 @@
 #include "scenes/combat_scene.h"
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+#include <glm/vec2.hpp>
+
+#include "core/card_registry.h"
+#include "core/constants.h"
+#include "core/game_config.h"
+#include "core/graphics/hand_renderer.h"
+
+namespace scenes {
+
+void CombatScene::OnAttach() {
+  std::cout << "[CombatScene] Attached" << std::endl;
+
+  // Load cards from assets
+  bool success =
+      core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false);
+  if (!success) {
+    std::cerr << "[CombatScene] Failed to load some cards." << std::endl;
+  }
+
+  const auto& all_cards = core::CardRegistry::Get().GetAllCards();
+  if (all_cards.empty()) {
+    std::cerr << "[CombatScene] No cards loaded to display in hand!"
+              << std::endl;
+    return;
+  }
+
+  // Fill hand based on starting hand size from config
+  int starting_hand_size = core::GameConfig::Get().GetStartingHandSize();
+  auto it = all_cards.begin();
+  for (int i = 0; i < starting_hand_size && it != all_cards.end(); ++i, ++it) {
+    hand_.push_back(it->second);
+  }
+
+  // If we have fewer unique cards than starting hand size, duplicate some for
+  // demo
+  while (hand_.size() < static_cast<size_t>(starting_hand_size) &&
+         !hand_.empty()) {
+    hand_.push_back(hand_[hand_.size() % all_cards.size()]);
+  }
+}
+
+void CombatScene::OnUpdate(float delta_time_seconds) {
+  // Game logic (AI, Card movement) goes here
+}
+
+void CombatScene::OnRender() {
+  // Render the hand at the bottom of the screen
+  auto& config = core::GameConfig::Get();
+  glm::vec2 bounds_size = {config.GetWindowWidth() * 0.8f,
+                           config.GetWindowHeight() * 0.4f};
+  glm::vec2 bounds_pos = {
+      (config.GetWindowWidth() - bounds_size.x) * 0.5f,
+      20.0f  // Padding from bottom
+  };
+
+  core::graphics::HandRenderer::RenderHand(
+      hand_, bounds_pos, bounds_size, core::graphics::kDefaultArcAngle,
+      core::graphics::kDefaultOverlapFactor);
+}
+
+}  // namespace scenes
