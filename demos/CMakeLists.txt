@@ -12,3 +12,4 @@ endfunction()
 
 add_subdirectory(cardrendererdemo)
 add_game_demo(cardregistrydemo cardregistrydemo/main.cpp)
+add_game_demo(handrendererdemo handrendererdemo/main.cpp)
