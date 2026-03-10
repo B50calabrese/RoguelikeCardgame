@@ -1,10 +1,10 @@
-#ifndef INCLUDE_CORE_CARD_REGISTRY_H_
-#define INCLUDE_CORE_CARD_REGISTRY_H_
+#ifndef DECK_BUILDER_GAME_INCLUDE_CORE_CARD_REGISTRY_H_
+#define DECK_BUILDER_GAME_INCLUDE_CORE_CARD_REGISTRY_H_
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <memory>
 
 #include "core/card_data.h"
 #include "engine/graphics/texture.h"
@@ -22,9 +22,11 @@ class CardRegistry {
    * @brief Loads all card XML files from a directory.
    * @param directory Path to the directory containing XML files.
    * @param fail_closed If true, loading stops on the first error.
-   * @return True if all files were loaded (or if fail_closed is false and at least some loaded), false otherwise.
+   * @return True if all files were loaded (or if fail_closed is false and at
+   * least some loaded), false otherwise.
    */
-  bool LoadCardsFromDirectory(const std::string& directory, bool fail_closed = false);
+  bool LoadCardsFromDirectory(const std::string& directory,
+                              bool fail_closed = false);
 
   /**
    * @brief Retrieves card data by ID.
@@ -37,7 +39,9 @@ class CardRegistry {
    * @brief Retrieves all registered cards.
    * @return A map of card ID to CardData.
    */
-  const std::unordered_map<int, CardData>& GetAllCards() const { return cards_; }
+  const std::unordered_map<int, CardData>& GetAllCards() const {
+    return cards_;
+  }
 
  private:
   CardRegistry() = default;
@@ -52,4 +56,4 @@ class CardRegistry {
 
 }  // namespace core
 
-#endif  // INCLUDE_CORE_CARD_REGISTRY_H_
+#endif  // DECK_BUILDER_GAME_INCLUDE_CORE_CARD_REGISTRY_H_

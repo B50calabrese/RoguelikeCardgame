@@ -13,8 +13,8 @@ add_subdirectory("demos")
 
 # 2. SOURCE AND HEADER SETUP
 set(SOURCE_FILES
-    "src/main.cpp"
     "src/core/card_registry.cpp"
+    "src/core/game_config.cpp"
     "src/core/graphics/card_renderer.cpp"
     "src/core/graphics/hand_renderer.cpp"
     "src/scenes/combat_scene.cpp")
@@ -37,7 +37,7 @@ target_compile_definitions(RoguelikeCardgameLibrary PUBLIC
 )
 
 # Link the Engine to the Library
-target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine)
+target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine pugixml)
 
 # Ensure the game's include folder is PUBLIC so anyone linking to it sees it
 target_include_directories(RoguelikeCardgameLibrary PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
