@@ -9,6 +9,7 @@ namespace core::graphics {
 
 /**
  * @brief Utility class to draw game cards.
+ *
  * This class acts as a bridge between high-level CardData and the low-level
  * PrimitiveRenderer. It handles the layout logic (where the art goes, where
  * the text goes) relative to a central pivot point.
@@ -17,11 +18,15 @@ class CardRenderer {
  public:
   /**
    * @brief Renders a complete card with all its layers.
+   *
+   * Draws the frame texture and associated text elements (like the card name)
+   * at the specified world-space position with rotation and scaling.
+   *
    * @param data The card definition (textures, costs, name).
    * @param position The world-space center point of the card.
-   * @param scale Overall size multiplier.
-   * @param alpha Transparency (useful for fading or graveyard effects).
-   * @param rotation Rotation in degrees around the center pivot.
+   * @param scale Overall size multiplier. Default is 1.0.
+   * @param alpha Transparency multiplier (0.0 to 1.0). Default is 1.0.
+   * @param rotation Rotation in degrees around the center pivot. Default is 0.0.
    */
   static void RenderCard(const core::CardData& data, glm::vec2 position,
                          float scale = 1.0f, float alpha = 1.0f,
