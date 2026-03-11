@@ -7,22 +7,45 @@ namespace core {
 
 /**
  * @brief The static, immutable definition of a card.
+ *
+ * CardData objects are loaded from XML definitions and contain all the
+ * necessary information for gameplay logic and visual rendering of a card.
  */
 struct CardData {
-  // Unique internal identifier.
+  /**
+   * @brief Unique internal identifier for the card type.
+   */
   int id;
 
-  // Display properties
+  /**
+   * @brief The display name of the card.
+   */
   std::string name;
+
+  /**
+   * @brief A textual description of the card's effects and abilities.
+   */
   std::string description;
 
-  // Gameplay attributes
+  /**
+   * @brief Gameplay attribute representing the card's attack value.
+   */
   int power = 0;
+
+  /**
+   * @brief Gameplay attribute representing the card's health or defense value.
+   */
   int health = 0;
 
-  // Visuals
-  unsigned int frame_texture_id;  // The border/template
-  unsigned int art_texture_id;    // The unique illustration
+  /**
+   * @brief The texture ID for the card's frame or template border.
+   */
+  unsigned int frame_texture_id;
+
+  /**
+   * @brief The texture ID for the card's unique illustration artwork.
+   */
+  unsigned int art_texture_id;
 };
 
 }  // namespace core
