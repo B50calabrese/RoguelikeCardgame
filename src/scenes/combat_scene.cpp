@@ -1,10 +1,9 @@
 #include "scenes/combat_scene.h"
 
 #include <algorithm>
+#include <glm/vec2.hpp>
 #include <iostream>
 #include <vector>
-
-#include <glm/vec2.hpp>
 
 #include "core/card_registry.h"
 #include "core/constants.h"
@@ -23,7 +22,7 @@ void CombatScene::OnAttach() {
     std::cerr << "[CombatScene] Failed to load some cards." << std::endl;
   }
 
-  const auto& all_cards = core::CardRegistry::Get().GetAllCards();
+  const auto& all_cards = core::CardRegistry::Get().cards();
   if (all_cards.empty()) {
     std::cerr << "[CombatScene] No cards loaded to display in hand!"
               << std::endl;
@@ -31,7 +30,7 @@ void CombatScene::OnAttach() {
   }
 
   // Fill hand based on starting hand size from config
-  int starting_hand_size = core::GameConfig::Get().starting_hand_size;
+  int starting_hand_size = core::GameConfig::Get().starting_hand_size();
   auto it = all_cards.begin();
   for (int i = 0; i < starting_hand_size && it != all_cards.end(); ++i, ++it) {
     hand_.push_back(it->second);
@@ -52,10 +51,10 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
 void CombatScene::OnRender() {
   // Render the hand at the bottom of the screen
   auto& config = core::GameConfig::Get();
-  glm::vec2 bounds_size = {static_cast<float>(config.window_width) * 0.8f,
-                           static_cast<float>(config.window_height) * 0.4f};
+  glm::vec2 bounds_size = {static_cast<float>(config.window_width()) * 0.8f,
+                           static_cast<float>(config.window_height()) * 0.4f};
   glm::vec2 bounds_pos = {
-      (static_cast<float>(config.window_width) - bounds_size.x) * 0.5f,
+      (static_cast<float>(config.window_width()) - bounds_size.x) * 0.5f,
       20.0f  // Padding from bottom
   };
 

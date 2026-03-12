@@ -63,8 +63,8 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       auto frame_tex =
           engine::util::AssetManager<engine::graphics::Texture>::Get(
               frame_path);
-      auto art_tex = engine::util::AssetManager<engine::graphics::Texture>::Get(
-          art_path);
+      auto art_tex =
+          engine::util::AssetManager<engine::graphics::Texture>::Get(art_path);
 
       if (!frame_tex || !art_tex) {
         LOG_ERR("[CardRegistry] Failed to load textures for card %d in %s",

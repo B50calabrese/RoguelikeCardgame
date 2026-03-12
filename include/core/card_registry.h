@@ -13,9 +13,16 @@ namespace core {
 
 /**
  * @brief Singleton registry that manages all cards in the game.
+ *
+ * The CardRegistry is responsible for loading card definitions from XML files
+ * and providing access to these definitions throughout the application.
  */
 class CardRegistry {
  public:
+  /**
+   * @brief Access the singleton instance of CardRegistry.
+   * @return Reference to the CardRegistry instance.
+   */
   static CardRegistry& Get();
 
   /**
@@ -30,7 +37,7 @@ class CardRegistry {
 
   /**
    * @brief Retrieves card data by ID.
-   * @param id The card ID.
+   * @param id The unique identifier of the card.
    * @return Pointer to CardData if found, nullptr otherwise.
    */
   const CardData* GetCardById(int id) const;
@@ -39,9 +46,7 @@ class CardRegistry {
    * @brief Retrieves all registered cards.
    * @return A map of card ID to CardData.
    */
-  const std::unordered_map<int, CardData>& GetAllCards() const {
-    return cards_;
-  }
+  const std::unordered_map<int, CardData>& cards() const { return cards_; }
 
  private:
   CardRegistry() = default;
@@ -49,8 +54,10 @@ class CardRegistry {
   CardRegistry(const CardRegistry&) = delete;
   CardRegistry& operator=(const CardRegistry&) = delete;
 
+  /// Internal storage for card data, keyed by card ID.
   std::unordered_map<int, CardData> cards_;
-  // Keep textures alive
+
+  /// Keeps textures alive for the duration of the registry's lifetime.
   std::vector<std::shared_ptr<engine::graphics::Texture>> loaded_textures_;
 };
 
