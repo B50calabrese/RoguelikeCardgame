@@ -39,9 +39,7 @@ class CardRegistry {
    * @brief Retrieves all registered cards.
    * @return A map of card ID to CardData.
    */
-  const std::unordered_map<int, CardData>& GetAllCards() const {
-    return cards_;
-  }
+  const std::unordered_map<int, CardData>& cards() const { return cards_; }
 
  private:
   CardRegistry() = default;
