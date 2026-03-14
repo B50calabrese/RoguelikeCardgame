@@ -3,10 +3,11 @@
 #include <filesystem>
 #include <iostream>
 
+#include "pugixml.hpp"
+
 #include "engine/graphics/renderer.h"
 #include "engine/util/asset_manager.h"
 #include "engine/util/logger.h"
-#include "pugixml.hpp"
 
 namespace core {
 
@@ -63,8 +64,8 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       auto frame_tex =
           engine::util::AssetManager<engine::graphics::Texture>::Get(
               frame_path);
-      auto art_tex = engine::util::AssetManager<engine::graphics::Texture>::Get(
-          art_path);
+      auto art_tex =
+          engine::util::AssetManager<engine::graphics::Texture>::Get(art_path);
 
       if (!frame_tex || !art_tex) {
         LOG_ERR("[CardRegistry] Failed to load textures for card %d in %s",
