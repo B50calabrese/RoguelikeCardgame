@@ -1,11 +1,11 @@
-#include <engine/core/application.h>
-#include <engine/core/engine.h>
-#include <engine/util/logger.h>
-
 #include <iostream>
 #include <string>
 
 #include <GLFW/glfw3.h>
+
+#include <engine/core/application.h>
+#include <engine/core/engine.h>
+#include <engine/util/logger.h>
 
 #include "core/card_registry.h"
 
@@ -23,7 +23,7 @@ class CardRegistryDemo : public engine::Application {
 
     std::cout << "\n--- Card Registry CLI Demo ---" << std::endl;
     std::cout << "Available IDs: ";
-    for (const auto& [id, card] : core::CardRegistry::Get().GetAllCards()) {
+    for (const auto& [id, card] : core::CardRegistry::Get().cards()) {
       std::cout << id << " ";
     }
     std::cout << "\nEnter a card ID to view details (or 'q' to quit): "
@@ -59,7 +59,8 @@ class CardRegistryDemo : public engine::Application {
 
     // Since this is a CLI demo intended to run once and exit in this
     // environment, we can request the window to close.
-    glfwSetWindowShouldClose(engine::Engine::window().native_handle(), GLFW_TRUE);
+    glfwSetWindowShouldClose(engine::Engine::window().native_handle(),
+                             GLFW_TRUE);
   }
 
   void OnUpdate(double deltaTimeSeconds) override {}

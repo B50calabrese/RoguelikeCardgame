@@ -46,13 +46,15 @@ class HandRendererApp : public engine::Application {
     // Controls
     if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_UP)) {
       arc_angle += 10.0f * (float)deltaTimeSeconds;
-    } else if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_DOWN)) {
+    } else if (engine::InputManager::Get().IsKeyDown(
+                   engine::KeyCode::KC_DOWN)) {
       arc_angle -= 10.0f * (float)deltaTimeSeconds;
     }
 
     if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_RIGHT)) {
       overlap = std::min(1.0f, overlap + 0.1f * (float)deltaTimeSeconds);
-    } else if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_LEFT)) {
+    } else if (engine::InputManager::Get().IsKeyDown(
+                   engine::KeyCode::KC_LEFT)) {
       overlap = std::max(0.0f, overlap - 0.1f * (float)deltaTimeSeconds);
     }
 
