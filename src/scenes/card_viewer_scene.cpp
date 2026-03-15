@@ -10,6 +10,7 @@
 #include "core/constants.h"
 #include "core/game_config.h"
 #include "core/graphics/card_renderer.h"
+#include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
@@ -106,8 +107,8 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   float sb_height = config.window_height - 200.0f;
 
   if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT)) {
-    if (pixel_mouse_pos.x >= sb_x && pixel_mouse_pos.x <= sb_x + sb_width &&
-        pixel_mouse_pos.y >= sb_y && pixel_mouse_pos.y <= sb_y + sb_height) {
+    if (core::util::PointInRect(pixel_mouse_pos, {sb_x, sb_y},
+                                {sb_width, sb_height}, false)) {
       is_dragging_scrollbar_ = true;
     }
   }
@@ -147,14 +148,10 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   }
 
   if (clicked && !is_dragging_scrollbar_ && hovered_card_index_ != -1) {
-    // Check if we clicked any button first (buttons handled above, but let's
-    // ensure no overlap)
     bool button_clicked = false;
     for (const auto& btn : buttons_) {
-      if (pixel_mouse_pos.x >= btn->position().x &&
-          pixel_mouse_pos.x <= btn->position().x + btn->size().x &&
-          pixel_mouse_pos.y >= btn->position().y &&
-          pixel_mouse_pos.y <= btn->position().y + btn->size().y) {
+      if (core::util::PointInRect(pixel_mouse_pos, btn->position(), btn->size(),
+                                  false)) {
         button_clicked = true;
         break;
       }
@@ -178,10 +175,7 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
 
 bool CardViewerScene::IsMouseOverCard(const glm::vec2& pos, const glm::vec2& size,
                                       const glm::vec2& mouse_pos) const {
-  return mouse_pos.x >= pos.x - size.x * 0.5f &&
-         mouse_pos.x <= pos.x + size.x * 0.5f &&
-         mouse_pos.y >= pos.y - size.y * 0.5f &&
-         mouse_pos.y <= pos.y + size.y * 0.5f;
+  return core::util::PointInRect(mouse_pos, pos, size, true);
 }
 
 void CardViewerScene::OnRender() {

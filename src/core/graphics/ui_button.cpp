@@ -1,5 +1,6 @@
 #include "core/graphics/ui_button.h"
 
+#include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
 
 namespace core::graphics {
@@ -9,7 +10,7 @@ UIButton::UIButton(const std::string& label, glm::vec2 position, glm::vec2 size,
     : label_(label), position_(position), size_(size), callback_(callback) {}
 
 void UIButton::Update(glm::vec2 mouse_pos, bool is_clicked) {
-  is_hovered_ = IsMouseOver(mouse_pos);
+  is_hovered_ = core::util::PointInRect(mouse_pos, position_, size_, false);
   if (is_hovered_ && is_clicked) {
     callback_();
   }
@@ -28,8 +29,7 @@ void UIButton::Render() const {
 }
 
 bool UIButton::IsMouseOver(glm::vec2 mouse_pos) const {
-  return mouse_pos.x >= position_.x && mouse_pos.x <= position_.x + size_.x &&
-         mouse_pos.y >= position_.y && mouse_pos.y <= position_.y + size_.y;
+  return core::util::PointInRect(mouse_pos, position_, size_, false);
 }
 
 }  // namespace core::graphics
