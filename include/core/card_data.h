@@ -17,6 +17,7 @@ struct CardData {
   std::string description;
 
   // Gameplay attributes
+  int cost = 0;
   int power = 0;
   int health = 0;
 

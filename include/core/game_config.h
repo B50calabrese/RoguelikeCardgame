@@ -24,6 +24,11 @@ struct GameConfig {
   // Assets
   std::string asset_path = "";
 
+  // Card Viewer
+  int card_viewer_columns = 4;
+  float card_viewer_hover_zoom = 1.2f;
+  float card_viewer_fullscreen_zoom = 2.0f;
+
  private:
   GameConfig() = default;
   ~GameConfig() = default;

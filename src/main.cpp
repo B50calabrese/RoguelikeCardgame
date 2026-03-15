@@ -5,7 +5,7 @@
 #include "engine/core/application.h"
 #include "engine/core/engine.h"
 #include "engine/scene/scene_manager.h"
-#include "scenes/combat_scene.h"
+#include "scenes/main_menu_scene.h"
 
 class DeckBuilderApp : public engine::Application {
  public:
@@ -14,7 +14,7 @@ class DeckBuilderApp : public engine::Application {
   void OnInit() override {
     // Push the first scene
     engine::SceneManager::Get().SetScene(
-        std::make_unique<scenes::CombatScene>());
+        std::make_unique<scenes::MainMenuScene>());
   }
 
   void OnUpdate(double delta_time_seconds) override {}

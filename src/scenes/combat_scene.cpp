@@ -10,6 +10,9 @@
 #include "core/constants.h"
 #include "core/game_config.h"
 #include "core/graphics/hand_renderer.h"
+#include "engine/scene/scene_manager.h"
+#include "scenes/main_menu_scene.h"
+#include "engine/input/input_manager.h"
 
 namespace scenes {
 
@@ -47,6 +50,9 @@ void CombatScene::OnAttach() {
 
 void CombatScene::OnUpdate(float delta_time_seconds) {
   // Game logic (AI, Card movement) goes here
+  if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
+    engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
+  }
 }
 
 void CombatScene::OnRender() {
