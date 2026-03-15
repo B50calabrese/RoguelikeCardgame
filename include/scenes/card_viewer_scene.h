@@ -3,11 +3,12 @@
 
 #include <vector>
 #include <string>
-#include <functional>
+#include <memory>
 #include <glm/vec2.hpp>
 
 #include "engine/scene/scene.h"
 #include "core/card_data.h"
+#include "core/graphics/ui_button.h"
 
 namespace scenes {
 
@@ -24,7 +25,12 @@ class CardViewerScene : public engine::Scene {
   enum class SortOption { kAlphabetical, kCost };
 
   void SortCards();
-  bool IsMouseOver(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& mouse_pos) const;
+  void HandleInput(float delta_time_seconds);
+  void RenderGrid();
+  void RenderUI();
+  void RenderFullscreenOverlay();
+
+  bool IsMouseOverCard(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& mouse_pos) const;
 
   std::vector<core::CardData> cards_;
   SortOption current_sort_ = SortOption::kAlphabetical;
@@ -34,14 +40,7 @@ class CardViewerScene : public engine::Scene {
   int hovered_card_index_ = -1;
   int selected_card_index_ = -1;
 
-  // Basic button properties
-  struct Button {
-      std::string label;
-      glm::vec2 position;
-      glm::vec2 size;
-      std::function<void()> callback;
-  };
-  std::vector<Button> buttons_;
+  std::vector<std::unique_ptr<core::graphics::UIButton>> buttons_;
 };
 
 }  // namespace scenes

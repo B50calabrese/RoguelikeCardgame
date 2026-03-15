@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <memory>
 
 #include <glm/glm.hpp>
 
@@ -28,35 +29,52 @@ void CardViewerScene::OnAttach() {
   float btn_height = 50.0f;
   float margin = 20.0f;
 
-  buttons_.push_back({"Sort: Name", {margin, config.window_height - btn_height - margin}, {btn_width, btn_height}, [this]() {
-    current_sort_ = SortOption::kAlphabetical;
-    SortCards();
-  }});
+  buttons_.push_back(std::make_unique<core::graphics::UIButton>(
+      "Sort: Name",
+      glm::vec2{margin, config.window_height - btn_height - margin},
+      glm::vec2{btn_width, btn_height}, [this]() {
+        current_sort_ = SortOption::kAlphabetical;
+        SortCards();
+      }));
 
-  buttons_.push_back({"Sort: Cost", {margin + btn_width + margin, config.window_height - btn_height - margin}, {btn_width, btn_height}, [this]() {
-    current_sort_ = SortOption::kCost;
-    SortCards();
-  }});
+  buttons_.push_back(std::make_unique<core::graphics::UIButton>(
+      "Sort: Cost",
+      glm::vec2{margin + btn_width + margin,
+                config.window_height - btn_height - margin},
+      glm::vec2{btn_width, btn_height}, [this]() {
+        current_sort_ = SortOption::kCost;
+        SortCards();
+      }));
 
-  buttons_.push_back({"Back", {config.window_width - btn_width - margin, config.window_height - btn_height - margin}, {btn_width, btn_height}, []() {
-    engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
-  }});
+  buttons_.push_back(std::make_unique<core::graphics::UIButton>(
+      "Back",
+      glm::vec2{config.window_width - btn_width - margin,
+                config.window_height - btn_height - margin},
+      glm::vec2{btn_width, btn_height}, []() {
+        engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
+      }));
 }
 
 void CardViewerScene::SortCards() {
   if (current_sort_ == SortOption::kAlphabetical) {
-    std::sort(cards_.begin(), cards_.end(), [](const core::CardData& a, const core::CardData& b) {
-      return a.name < b.name;
-    });
+    std::sort(cards_.begin(), cards_.end(),
+              [](const core::CardData& a, const core::CardData& b) {
+                return a.name < b.name;
+              });
   } else {
-    std::sort(cards_.begin(), cards_.end(), [](const core::CardData& a, const core::CardData& b) {
-      if (a.cost != b.cost) return a.cost < b.cost;
-      return a.name < b.name;
-    });
+    std::sort(cards_.begin(), cards_.end(),
+              [](const core::CardData& a, const core::CardData& b) {
+                if (a.cost != b.cost) return a.cost < b.cost;
+                return a.name < b.name;
+              });
   }
 }
 
 void CardViewerScene::OnUpdate(float delta_time_seconds) {
+  HandleInput(delta_time_seconds);
+}
+
+void CardViewerScene::HandleInput(float delta_time_seconds) {
   auto& input = engine::InputManager::Get();
   auto mouse_pos = input.mouse_screen_pos();
   auto& config = core::GameConfig::Get();
@@ -66,106 +84,127 @@ void CardViewerScene::OnUpdate(float delta_time_seconds) {
   glm::vec2 pixel_mouse_pos = {mx, my};
 
   if (selected_card_index_ != -1) {
-    if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT) || input.IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
+    if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT) ||
+        input.IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
       selected_card_index_ = -1;
     }
     return;
   }
 
-  // Calculate layout to find max_scroll
+  // Calculate scroll limits
   int cols = config.card_viewer_columns;
-  float card_w = core::graphics::kBaseCardWidth;
   float card_h = core::graphics::kBaseCardHeight;
   float padding = 40.0f;
   int rows = static_cast<int>((cards_.size() + cols - 1) / cols);
   float total_content_height = rows * (card_h + padding) + 200.0f;
   max_scroll_ = std::max(0.0f, total_content_height - config.window_height);
 
-  // Scrollbar logic
+  // Scrollbar interaction
   float sb_width = 20.0f;
   float sb_x = config.window_width - sb_width - 5.0f;
   float sb_y = 100.0f;
   float sb_height = config.window_height - 200.0f;
 
   if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT)) {
-      if (pixel_mouse_pos.x >= sb_x && pixel_mouse_pos.x <= sb_x + sb_width &&
-          pixel_mouse_pos.y >= sb_y && pixel_mouse_pos.y <= sb_y + sb_height) {
-          is_dragging_scrollbar_ = true;
-      }
+    if (pixel_mouse_pos.x >= sb_x && pixel_mouse_pos.x <= sb_x + sb_width &&
+        pixel_mouse_pos.y >= sb_y && pixel_mouse_pos.y <= sb_y + sb_height) {
+      is_dragging_scrollbar_ = true;
+    }
   }
   if (input.IsKeyReleased(engine::KeyCode::KC_MOUSE_LEFT)) {
-      is_dragging_scrollbar_ = false;
+    is_dragging_scrollbar_ = false;
   }
 
   if (is_dragging_scrollbar_) {
-      float t = (pixel_mouse_pos.y - sb_y) / sb_height;
-      t = 1.0f - glm::clamp(t, 0.0f, 1.0f); // Invert because my y is 0 at bottom
-      scroll_offset_ = t * max_scroll_;
+    float t = (pixel_mouse_pos.y - sb_y) / sb_height;
+    t = 1.0f - glm::clamp(t, 0.0f, 1.0f);
+    scroll_offset_ = t * max_scroll_;
   }
 
-  // Hover detection
+  // Update buttons
+  bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
+  for (auto& btn : buttons_) {
+    btn->Update(pixel_mouse_pos, clicked);
+  }
+
+  // Card hover and selection
   hovered_card_index_ = -1;
-  float start_x = (config.window_width - (cols * card_w + (cols - 1) * padding)) * 0.5f;
+  float card_w = core::graphics::kBaseCardWidth;
+  float start_x =
+      (config.window_width - (cols * card_w + (cols - 1) * padding)) * 0.5f;
   float start_y = config.window_height - 150.0f + scroll_offset_;
 
   for (int i = 0; i < cards_.size(); ++i) {
     int row = i / cols;
     int col = i % cols;
-    glm::vec2 pos = {
-      start_x + col * (card_w + padding) + card_w * 0.5f,
-      start_y - row * (card_h + padding) - card_h * 0.5f
-    };
+    glm::vec2 pos = {start_x + col * (card_w + padding) + card_w * 0.5f,
+                     start_y - row * (card_h + padding) - card_h * 0.5f};
 
-    if (IsMouseOver(pos, {card_w, card_h}, pixel_mouse_pos)) {
+    if (IsMouseOverCard(pos, {card_w, card_h}, pixel_mouse_pos)) {
       hovered_card_index_ = i;
       break;
     }
   }
 
-  if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT) && !is_dragging_scrollbar_) {
-    // Check buttons
+  if (clicked && !is_dragging_scrollbar_ && hovered_card_index_ != -1) {
+    // Check if we clicked any button first (buttons handled above, but let's
+    // ensure no overlap)
+    bool button_clicked = false;
     for (const auto& btn : buttons_) {
-      if (pixel_mouse_pos.x >= btn.position.x && pixel_mouse_pos.x <= btn.position.x + btn.size.x &&
-          pixel_mouse_pos.y >= btn.position.y && pixel_mouse_pos.y <= btn.position.y + btn.size.y) {
-        btn.callback();
-        return;
+      if (pixel_mouse_pos.x >= btn->position().x &&
+          pixel_mouse_pos.x <= btn->position().x + btn->size().x &&
+          pixel_mouse_pos.y >= btn->position().y &&
+          pixel_mouse_pos.y <= btn->position().y + btn->size().y) {
+        button_clicked = true;
+        break;
       }
     }
-
-    if (hovered_card_index_ != -1) {
+    if (!button_clicked) {
       selected_card_index_ = hovered_card_index_;
     }
   }
 
-  if (input.IsKeyDown(engine::KeyCode::KC_UP)) scroll_offset_ -= 1000.0f * delta_time_seconds;
-  if (input.IsKeyDown(engine::KeyCode::KC_DOWN)) scroll_offset_ += 1000.0f * delta_time_seconds;
+  // Keyboard scrolling
+  if (input.IsKeyDown(engine::KeyCode::KC_UP))
+    scroll_offset_ -= 1000.0f * delta_time_seconds;
+  if (input.IsKeyDown(engine::KeyCode::KC_DOWN))
+    scroll_offset_ += 1000.0f * delta_time_seconds;
+  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_UP))
+    scroll_offset_ -= config.window_height * 0.5f;
+  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_DOWN))
+    scroll_offset_ += config.window_height * 0.5f;
   scroll_offset_ = glm::clamp(scroll_offset_, 0.0f, max_scroll_);
 }
 
-bool CardViewerScene::IsMouseOver(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& mouse_pos) const {
-  return mouse_pos.x >= pos.x - size.x * 0.5f && mouse_pos.x <= pos.x + size.x * 0.5f &&
-         mouse_pos.y >= pos.y - size.y * 0.5f && mouse_pos.y <= pos.y + size.y * 0.5f;
+bool CardViewerScene::IsMouseOverCard(const glm::vec2& pos, const glm::vec2& size,
+                                      const glm::vec2& mouse_pos) const {
+  return mouse_pos.x >= pos.x - size.x * 0.5f &&
+         mouse_pos.x <= pos.x + size.x * 0.5f &&
+         mouse_pos.y >= pos.y - size.y * 0.5f &&
+         mouse_pos.y <= pos.y + size.y * 0.5f;
 }
 
 void CardViewerScene::OnRender() {
-  auto& renderer = engine::graphics::Renderer::Get();
-  auto& config = core::GameConfig::Get();
+  RenderGrid();
+  RenderUI();
+  RenderFullscreenOverlay();
+}
 
-  // Render Grid
+void CardViewerScene::RenderGrid() {
+  auto& config = core::GameConfig::Get();
   int cols = config.card_viewer_columns;
   float card_w = core::graphics::kBaseCardWidth;
   float card_h = core::graphics::kBaseCardHeight;
   float padding = 40.0f;
-  float start_x = (config.window_width - (cols * card_w + (cols - 1) * padding)) * 0.5f;
+  float start_x =
+      (config.window_width - (cols * card_w + (cols - 1) * padding)) * 0.5f;
   float start_y = config.window_height - 150.0f + scroll_offset_;
 
   for (int i = 0; i < cards_.size(); ++i) {
     int row = i / cols;
     int col = i % cols;
-    glm::vec2 pos = {
-      start_x + col * (card_w + padding) + card_w * 0.5f,
-      start_y - row * (card_h + padding) - card_h * 0.5f
-    };
+    glm::vec2 pos = {start_x + col * (card_w + padding) + card_w * 0.5f,
+                     start_y - row * (card_h + padding) - card_h * 0.5f};
 
     if (pos.y + card_h < 0 || pos.y - card_h > config.window_height) continue;
 
@@ -176,6 +215,11 @@ void CardViewerScene::OnRender() {
 
     core::graphics::CardRenderer::RenderCard(cards_[i], pos, scale);
   }
+}
+
+void CardViewerScene::RenderUI() {
+  auto& renderer = engine::graphics::Renderer::Get();
+  auto& config = core::GameConfig::Get();
 
   // Render Scrollbar
   float sb_width = 20.0f;
@@ -184,31 +228,35 @@ void CardViewerScene::OnRender() {
   float sb_height = config.window_height - 200.0f;
   renderer.DrawRect(sb_x, sb_y, sb_width, sb_height, 0.2f, 0.2f, 0.2f);
   if (max_scroll_ > 0) {
-      float handle_height = std::max(20.0f, sb_height * (sb_height / (sb_height + max_scroll_)));
-      float handle_y = sb_y + (1.0f - (scroll_offset_ / max_scroll_)) * (sb_height - handle_height);
-      renderer.DrawRect(sb_x, handle_y, sb_width, handle_height, 0.5f, 0.5f, 0.5f);
+    float handle_height =
+        std::max(20.0f, sb_height * (sb_height / (sb_height + max_scroll_)));
+    float handle_y =
+        sb_y + (1.0f - (scroll_offset_ / max_scroll_)) * (sb_height - handle_height);
+    renderer.DrawRect(sb_x, handle_y, sb_width, handle_height, 0.5f, 0.5f, 0.5f);
   }
 
   // Render Buttons
   for (const auto& btn : buttons_) {
-    renderer.DrawRect(btn.position.x, btn.position.y, btn.size.x, btn.size.y, 0.2f, 0.2f, 0.2f);
-    renderer.DrawText("default", btn.label, btn.position + glm::vec2(10.0f, 15.0f), 0.0f, 0.5f, {1,1,1,1});
-  }
-
-  // Fullscreen Overlay
-  if (selected_card_index_ != -1) {
-    renderer.DrawQuad({config.window_width * 0.5f, config.window_height * 0.5f},
-                      {config.window_width, config.window_height},
-                      {0.0f, 0.0f, 0.0f, 0.7f}, 0.0f, {0.5f, 0.5f});
-
-    core::graphics::CardRenderer::RenderCard(cards_[selected_card_index_],
-                                            {config.window_width * 0.5f, config.window_height * 0.5f},
-                                            config.card_viewer_fullscreen_zoom);
+    btn->Render();
   }
 }
 
-bool CardViewerScene::OnInput() {
-  return false;
+void CardViewerScene::RenderFullscreenOverlay() {
+  if (selected_card_index_ == -1) return;
+
+  auto& renderer = engine::graphics::Renderer::Get();
+  auto& config = core::GameConfig::Get();
+
+  renderer.DrawQuad({config.window_width * 0.5f, config.window_height * 0.5f},
+                    {config.window_width, config.window_height},
+                    {0.0f, 0.0f, 0.0f, 0.7f}, 0.0f, {0.5f, 0.5f});
+
+  core::graphics::CardRenderer::RenderCard(
+      cards_[selected_card_index_],
+      {config.window_width * 0.5f, config.window_height * 0.5f},
+      config.card_viewer_fullscreen_zoom);
 }
+
+bool CardViewerScene::OnInput() { return false; }
 
 }  // namespace scenes

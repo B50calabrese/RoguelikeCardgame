@@ -1,13 +1,12 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_MAIN_MENU_SCENE_H_
-#ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_MAIN_MENU_SCENE_H_
 #define DECK_BUILDER_GAME_INCLUDE_SCENES_MAIN_MENU_SCENE_H_
 
 #include <vector>
 #include <string>
-#include <functional>
-#include <glm/vec2.hpp>
+#include <memory>
 
 #include "engine/scene/scene.h"
+#include "core/graphics/ui_button.h"
 
 namespace scenes {
 
@@ -21,16 +20,11 @@ class MainMenuScene : public engine::Scene {
   bool OnInput() override;
 
  private:
-  struct Button {
-      std::string label;
-      glm::vec2 position;
-      glm::vec2 size;
-      std::function<void()> callback;
-  };
-  std::vector<Button> buttons_;
+  void HandleInput();
+
+  std::vector<std::unique_ptr<core::graphics::UIButton>> buttons_;
 };
 
 }  // namespace scenes
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_MAIN_MENU_SCENE_H_
-#endif
