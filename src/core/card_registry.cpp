@@ -54,6 +54,7 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       card.id = card_node.attribute("id").as_int();
       card.name = card_node.child_value("Name");
       card.description = card_node.child_value("Description");
+      card.cost = card_node.child("Cost").text().as_int();
       card.power = card_node.child("Power").text().as_int();
       card.health = card_node.child("Health").text().as_int();
 

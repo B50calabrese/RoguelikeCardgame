@@ -1,7 +1,10 @@
-#ifndef COMBAT_SCENE_H
-#define COMBAT_SCENE_H
+#ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_SCENE_H_
+#define DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_SCENE_H_
 
-#include <engine/scene/scene.h>
+#include <vector>
+
+#include "core/card_data.h"
+#include "engine/scene/scene.h"
 
 namespace scenes {
 
@@ -12,15 +15,16 @@ class CombatScene : public engine::Scene {
  public:
   CombatScene() : Scene("CombatScene") {}
 
-  void OnAttach() override {}
+  void OnAttach() override;
 
-  void OnUpdate(float delta_time_seconds) override {
-    // Game logic (AI, Card movement) goes here
-  }
+  void OnUpdate(float delta_time_seconds) override;
 
-  void OnRender() override {}
+  void OnRender() override;
+
+ private:
+  std::vector<core::CardData> hand_;
 };
 
 }  // namespace scenes
 
-#endif  // COMBAT_SCENE_H
+#endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_SCENE_H_

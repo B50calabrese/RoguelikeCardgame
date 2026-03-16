@@ -1,5 +1,5 @@
-#ifndef INCLUDE_CORE_CARD_DATA_H_
-#define INCLUDE_CORE_CARD_DATA_H_
+#ifndef DECK_BUILDER_GAME_INCLUDE_CORE_CARD_DATA_H_
+#define DECK_BUILDER_GAME_INCLUDE_CORE_CARD_DATA_H_
 
 #include <string>
 
@@ -17,6 +17,7 @@ struct CardData {
   std::string description;
 
   // Gameplay attributes
+  int cost = 0;
   int power = 0;
   int health = 0;
 
@@ -27,4 +28,4 @@ struct CardData {
 
 }  // namespace core
 
-#endif  // INCLUDE_CORE_CARD_DATA_H_
+#endif  // DECK_BUILDER_GAME_INCLUDE_CORE_CARD_DATA_H_

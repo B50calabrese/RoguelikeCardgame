@@ -1,6 +1,7 @@
 <Card id="3">
     <Name>Iron Shield</Name>
     <Description>Gives 3 armor.</Description>
+    <Cost>1</Cost>
     <Power>0</Power>
     <Health>3</Health>
     <Frame>non_creature_frame.png</Frame>

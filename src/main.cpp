@@ -1,22 +1,23 @@
-#include <engine/core/application.h>
-#include <engine/core/engine.h>
-#include <engine/scene/scene_manager.h>
-
 #include <iostream>
+#include <memory>
 
-#include "scenes/combat_scene.h"
+#include "core/game_config.h"
+#include "engine/core/application.h"
+#include "engine/core/engine.h"
+#include "engine/scene/scene_manager.h"
+#include "scenes/main_menu_scene.h"
 
 class DeckBuilderApp : public engine::Application {
  public:
-  DeckBuilderApp() = default;  // Add a default constructor
+  DeckBuilderApp() = default;
 
   void OnInit() override {
     // Push the first scene
     engine::SceneManager::Get().SetScene(
-        std::make_unique<scenes::CombatScene>());
+        std::make_unique<scenes::MainMenuScene>());
   }
 
-  void OnUpdate(double deltaTimeSeconds) override {}
+  void OnUpdate(double delta_time_seconds) override {}
 
   void OnShutdown() override {
     std::cout << "Game cleaning up..." << std::endl;
@@ -25,10 +26,16 @@ class DeckBuilderApp : public engine::Application {
 
 // --- Entry Point ---
 int main() {
+  auto& config = core::GameConfig::Get();
+  config.asset_path = ENGINE_ASSETS_PATH;
+  config.window_width = 1600;
+  config.window_height = 1200;
+
   engine::EngineConfig engine_config;
-  engine_config.asset_path = ENGINE_ASSETS_PATH;
-  engine_config.window_width = 1600;
-  engine_config.window_height = 1200;
+  engine_config.asset_path = config.asset_path;
+  engine_config.window_width = config.window_width;
+  engine_config.window_height = config.window_height;
+
   engine::Engine::Init(engine_config);
   DeckBuilderApp app;
   app.Run();

@@ -1,6 +1,7 @@
 <Card id="2">
     <Name>Foot Soldier</Name>
     <Description>A basic unit.</Description>
+    <Cost>2</Cost>
     <Power>2</Power>
     <Health>2</Health>
     <Frame>creature_frame.png</Frame>

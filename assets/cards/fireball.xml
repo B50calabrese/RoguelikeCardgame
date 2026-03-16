@@ -1,6 +1,7 @@
 <Card id="1">
     <Name>Fireball</Name>
     <Description>Deals 5 damage to an enemy.</Description>
+    <Cost>3</Cost>
     <Power>5</Power>
     <Health>0</Health>
     <Frame>non_creature_frame.png</Frame>

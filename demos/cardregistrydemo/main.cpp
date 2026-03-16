@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 
+#include <GLFW/glfw3.h>
+
 #include "core/card_registry.h"
 
 class CardRegistryDemo : public engine::Application {
@@ -56,7 +58,8 @@ class CardRegistryDemo : public engine::Application {
     }
 
     // Since this is a CLI demo intended to run once and exit in this
-    // environment, we can request the engine to stop.
+    // environment, we can request the window to close.
+    glfwSetWindowShouldClose(engine::Engine::window().native_handle(), GLFW_TRUE);
   }
 
   void OnUpdate(double deltaTimeSeconds) override {}
