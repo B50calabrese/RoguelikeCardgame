@@ -17,8 +17,9 @@ set(SOURCE_FILES
     "src/core/card_registry.cpp"
     "src/core/graphics/card_renderer.cpp"
     "src/core/graphics/hand_renderer.cpp"
-    "src/scenes/combat_scene.cpp")
-file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "include/core/*.h" "include/core/graphics/*.h" "include/scenes/*.h" "src/scenes/*.h")
+    "src/scenes/combat_scene.cpp"
+    "third_party/pugixml/pugixml.cpp")
+file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "include/core/*.h" "include/core/graphics/*.h" "include/scenes/*.h" "src/scenes/*.h" "third_party/pugixml/*.hpp")
 
 # 3. ASSET INFORMATION
 set(ASSET_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
@@ -40,7 +41,7 @@ target_compile_definitions(RoguelikeCardgameLibrary PUBLIC
 target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine)
 
 # Ensure the game's include folder is PUBLIC so anyone linking to it sees it
-target_include_directories(RoguelikeCardgameLibrary PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(RoguelikeCardgameLibrary PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/pugixml")
 
 # 5. CREATE THE MAIN EXECUTABLE
 add_executable(RoguelikeCardgame "src/main.cpp") # main.cpp is usually the only thing left here

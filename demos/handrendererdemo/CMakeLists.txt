@@ -1,0 +1,1 @@
+add_game_demo(HandRendererDemo main.cpp)
