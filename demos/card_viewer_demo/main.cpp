@@ -3,6 +3,7 @@
 #include <engine/scene/scene_manager.h>
 #include <engine/util/logger.h>
 
+#include <engine/graphics/text_renderer.h>
 #include "core/game_config.h"
 #include "core/card_registry.h"
 #include "scenes/card_viewer_scene.h"
@@ -11,6 +12,9 @@ class CardViewerDemo : public engine::Application {
  public:
   void OnInit() override {
     LOG_INFO("Card Viewer Demo Initialized");
+
+    engine::graphics::TextRenderer::Get().LoadFont("arial", "arial.ttf", 24);
+    engine::graphics::TextRenderer::Get().LoadFont("default", "arial.ttf", 24);
 
     // Load cards from the assets/cards directory
     if (core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false)) {

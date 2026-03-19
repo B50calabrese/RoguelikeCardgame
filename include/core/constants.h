@@ -16,7 +16,7 @@ const glm::vec2 kCardNameOffset = {20.0f - kBaseCardWidth / 2.0f,
                                    264.0f - kBaseCardHeight / 2.0f};
 
 const glm::vec4 kDefaultCardTint = {1.0f, 1.0f, 1.0f, 1.0f};
-const glm::vec4 kDefaultTextColor = {1.0f, 0.0f, 0.0f, 1.0f};
+const glm::vec4 kDefaultTextColor = {0.0f, 0.0f, 0.0f, 1.0f};
 
 constexpr float kDefaultArcAngle = 30.0f;
 constexpr float kDefaultOverlapFactor = 0.3f;

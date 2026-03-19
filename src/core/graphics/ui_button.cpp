@@ -24,8 +24,8 @@ void UIButton::Render() const {
                     color.b);
 
   // Center text roughly (this engine doesn't seem to have text bounds yet)
-  glm::vec2 text_pos = position_ + glm::vec2(10.0f, size_.y * 0.4f);
-  renderer.DrawText("default", label_, text_pos, 0.0f, 0.5f, text_color_);
+  glm::vec2 text_pos = position_ + glm::vec2(10.0f, size_.y * 0.35f);
+  renderer.DrawText("default", label_, text_pos, 0.0f, 0.6f, text_color_);
 }
 
 bool UIButton::IsMouseOver(glm::vec2 mouse_pos) const {
