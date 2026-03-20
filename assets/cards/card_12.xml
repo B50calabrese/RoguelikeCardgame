@@ -1,0 +1,9 @@
+<Card id="112">
+    <Name>Placeholder Card 12</Name>
+    <Description>This is a placeholder card number 12.</Description>
+    <Cost>3</Cost>
+    <Power>2</Power>
+    <Health>5</Health>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>
