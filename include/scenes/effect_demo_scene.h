@@ -6,8 +6,9 @@
 #include <string>
 
 #include "engine/scene/scene.h"
-#include "core/game_state.h"
+#include "core/state/game_state.h"
 #include "core/effects/effect.h"
+#include "core/effects/target.h"
 
 namespace scenes {
 
@@ -30,16 +31,16 @@ class EffectDemoScene : public engine::Scene {
 
   void HandleInput();
   void SelectCard(int index);
-  void SelectTarget(const core::Target& target);
+  void SelectTarget(const core::effects::Target& target);
   void TriggerPendingEffects();
 
-  core::GameState state_;
+  core::state::GameState state_;
 
   // Interaction state
   int selected_hand_card_idx_ = -1;
-  const core::CardEffectDefinition* pending_effect_def_ = nullptr;
+  const core::effects::CardEffectDefinition* pending_effect_def_ = nullptr;
   int pending_source_id_ = -1;
-  std::vector<core::Target> selected_targets_;
+  std::vector<core::effects::Target> selected_targets_;
 
   std::string status_message_ = "Select a card to play";
 };

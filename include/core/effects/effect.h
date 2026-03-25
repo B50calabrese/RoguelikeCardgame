@@ -7,19 +7,9 @@
 
 #include "core/effects/action.h"
 #include "core/effects/target_filter.h"
+#include "core/effects/trigger.h"
 
-namespace core {
-
-/**
- * @brief Common triggers for card effects.
- */
-enum class Trigger {
-  OnPlay,
-  OnDeath,
-  AtStartOfTurn,
-  AtEndOfTurn,
-  Manual  // For effects that don't trigger automatically
-};
+namespace core::effects {
 
 /**
  * @brief Parameters for an effect instance.
@@ -33,18 +23,9 @@ class Effect {
  public:
   virtual ~Effect() = default;
 
-  /**
-   * @brief Produces actions when this effect is triggered.
-   * @param source_id The ID of the card or source of the effect.
-   * @param target_id The target ID (if already selected, else can be 0).
-   * @param params Parameters loaded for this specific card effect instance.
-   * @return A list of actions that should be queued.
-   */
+  /** @brief Produces actions when triggered. */
   virtual std::vector<Action> GenerateActions(int source_id, const std::vector<Target>& targets, const EffectParams& params) const = 0;
 
-  /**
-   * @brief Returns the targeting requirements for this effect.
-   */
   virtual const TargetFilter& GetTargetFilter() const { return default_filter_; }
 
  private:
@@ -61,6 +42,11 @@ struct CardEffectDefinition {
   TargetFilter filter;
 };
 
-}  // namespace core
+}  // namespace core::effects
+
+namespace core {
+  using effects::Trigger;
+  using effects::CardEffectDefinition;
+}
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_EFFECT_H_

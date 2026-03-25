@@ -1,7 +1,7 @@
 #include "core/effects/effect_registry.h"
 #include <iostream>
 
-namespace core {
+namespace core::effects {
 
 EffectRegistry& EffectRegistry::Get() {
   static EffectRegistry instance;
@@ -21,4 +21,4 @@ std::unique_ptr<Effect> EffectRegistry::CreateEffect(const std::string& name) co
   return nullptr;
 }
 
-}  // namespace core
+}  // namespace core::effects

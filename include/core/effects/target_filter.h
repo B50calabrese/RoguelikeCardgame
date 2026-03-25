@@ -4,12 +4,11 @@
 #include <string>
 #include <vector>
 #include <optional>
-#include <memory>
 
-#include "core/effects/action.h"
-#include "core/game_state.h"
+#include "core/effects/target.h"
+#include "core/state/game_state.h"
 
-namespace core {
+namespace core::effects {
 
 /**
  * @brief Simple filter to specify allowed targets for an effect.
@@ -37,7 +36,7 @@ struct TargetFilter {
   /**
    * @brief Checks if a given target is valid according to this filter.
    */
-  bool IsValid(const GameState& state, int actor_player_id, const Target& target) const {
+  bool IsValid(const state::GameState& state, int actor_player_id, const Target& target) const {
     if (target.type == Target::Type::Player || target.type == Target::Type::Enemy) {
       if (!allow_player) return false;
       bool is_actor = (target.id == actor_player_id);
@@ -70,6 +69,6 @@ struct TargetFilter {
   }
 };
 
-}  // namespace core
+}  // namespace core::effects
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_TARGET_FILTER_H_

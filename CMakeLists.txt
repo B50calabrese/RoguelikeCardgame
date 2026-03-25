@@ -20,6 +20,8 @@ set(SOURCE_FILES
     "src/core/graphics/hand_renderer.cpp"
     "src/core/graphics/ui_button.cpp"
     "src/core/effects/effect_registry.cpp"
+    "src/core/effects/actions/deal_damage_action.cpp"
+    "src/core/effects/actions/modify_stats_action.cpp"
     "src/scenes/main_menu_scene.cpp"
     "src/scenes/combat_scene.cpp"
     "src/scenes/card_viewer_scene.cpp"

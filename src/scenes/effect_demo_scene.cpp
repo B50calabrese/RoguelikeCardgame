@@ -13,6 +13,7 @@
 #include "core/effects/effect_resolver.h"
 #include "core/effects/rules_engine.h"
 #include "core/effects/common_effects.h"
+#include "core/effects/actions/play_card_action.h"
 #include "core/graphics/card_renderer.h"
 #include "engine/scene/scene_manager.h"
 #include "scenes/main_menu_scene.h"
@@ -26,9 +27,9 @@ void EffectDemoScene::OnAttach() {
     std::cout << "[EffectDemoScene] Attached" << std::endl;
 
     // Register some effects for the demo
-    core::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::DamageEffect>(); });
-    core::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::DrawEffect>(); });
-    core::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::StatModifyEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::DamageEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::effects::DrawEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::StatModifyEffect>(); });
 
     // Load cards
     core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false);
@@ -70,7 +71,7 @@ void EffectDemoScene::OnUpdate(float delta_time_seconds) {
     }
 
     HandleInput();
-    core::EffectResolver::Get().ProcessQueue(state_);
+    core::effects::EffectResolver::Get().ProcessQueue(state_);
 }
 
 void EffectDemoScene::HandleInput() {
@@ -87,14 +88,14 @@ void EffectDemoScene::HandleInput() {
 
     // Simple target selection (P for Player, E for Enemy, T for first enemy creature)
     if (input.IsKeyPressed(engine::KeyCode::KC_P)) {
-        SelectTarget({core::Target::Type::Player, 0});
+        SelectTarget({core::effects::Target::Type::Player, 0});
     }
     if (input.IsKeyPressed(engine::KeyCode::KC_E)) {
-        SelectTarget({core::Target::Type::Enemy, 1});
+        SelectTarget({core::effects::Target::Type::Enemy, 1});
     }
     if (input.IsKeyPressed(engine::KeyCode::KC_T)) {
         if (!state_.enemy->board.empty()) {
-            SelectTarget({core::Target::Type::Creature, state_.enemy->board[0]->instance_id});
+            SelectTarget({core::effects::Target::Type::Creature, state_.enemy->board[0]->instance_id});
         }
     }
 }
@@ -104,7 +105,7 @@ void EffectDemoScene::SelectCard(int index) {
     core::CardInstance* inst = state_.player->hand[index].get();
 
     // Check if card can be played
-    core::RuleResult rule = core::RulesEngine::CanPerformAction(state_, core::action::PlayCard{0, inst->instance_id, {}});
+    core::effects::RuleResult rule = core::effects::RulesEngine::CanPerformAction(state_, std::make_shared<core::effects::actions::PlayCardAction>(0, inst->instance_id, std::vector<core::effects::Target>{}));
     if (!rule.success) {
         status_message_ = "Cannot play card: " + rule.message;
         selected_hand_card_idx_ = -1;
@@ -114,7 +115,7 @@ void EffectDemoScene::SelectCard(int index) {
     // Find first 'OnPlay' effect that needs targeting
     pending_effect_def_ = nullptr;
     for (const auto& effect_def : inst->data->effects) {
-        if (effect_def.trigger == core::Trigger::OnPlay && effect_def.filter.is_required) {
+        if (effect_def.trigger == core::effects::Trigger::OnPlay && effect_def.filter.is_required) {
             pending_effect_def_ = &effect_def;
             pending_source_id_ = inst->instance_id;
             selected_targets_.clear();
@@ -124,15 +125,15 @@ void EffectDemoScene::SelectCard(int index) {
     }
 
     // If no targeting needed, just play it
-    core::EffectResolver::Get().QueueAction(core::action::PlayCard{0, inst->instance_id, {}});
+    core::effects::EffectResolver::Get().QueueAction(std::make_shared<core::effects::actions::PlayCardAction>(0, inst->instance_id, std::vector<core::effects::Target>{}));
 
     // Also trigger non-targeted OnPlay effects
     for (const auto& effect_def : inst->data->effects) {
-        if (effect_def.trigger == core::Trigger::OnPlay && !effect_def.filter.is_required) {
-            auto effect = core::EffectRegistry::Get().CreateEffect(effect_def.effect_type);
+        if (effect_def.trigger == core::effects::Trigger::OnPlay && !effect_def.filter.is_required) {
+            auto effect = core::effects::EffectRegistry::Get().CreateEffect(effect_def.effect_type);
             if (effect) {
                 auto actions = effect->GenerateActions(inst->instance_id, {}, effect_def.params);
-                for (const auto& a : actions) core::EffectResolver::Get().QueueAction(a);
+                for (const auto& a : actions) core::effects::EffectResolver::Get().QueueAction(a);
             }
         }
     }
@@ -141,7 +142,7 @@ void EffectDemoScene::SelectCard(int index) {
     selected_hand_card_idx_ = -1;
 }
 
-void EffectDemoScene::SelectTarget(const core::Target& target) {
+void EffectDemoScene::SelectTarget(const core::effects::Target& target) {
     if (!pending_effect_def_) return;
 
     // Validate target
@@ -153,14 +154,14 @@ void EffectDemoScene::SelectTarget(const core::Target& target) {
     selected_targets_.push_back(target);
 
     // For now assume all effects need only 1 target
-    auto effect = core::EffectRegistry::Get().CreateEffect(pending_effect_def_->effect_type);
+    auto effect = core::effects::EffectRegistry::Get().CreateEffect(pending_effect_def_->effect_type);
     if (effect) {
         // Queue the play card first
-        core::EffectResolver::Get().QueueAction(core::action::PlayCard{0, pending_source_id_, selected_targets_});
+        core::effects::EffectResolver::Get().QueueAction(std::make_shared<core::effects::actions::PlayCardAction>(0, pending_source_id_, selected_targets_));
 
         // Then the effect
         auto actions = effect->GenerateActions(pending_source_id_, selected_targets_, pending_effect_def_->params);
-        for (const auto& a : actions) core::EffectResolver::Get().QueueAction(a);
+        for (const auto& a : actions) core::effects::EffectResolver::Get().QueueAction(a);
 
         status_message_ = "Used " + pending_effect_def_->effect_type + " on target";
     }
@@ -198,9 +199,6 @@ void EffectDemoScene::OnRender() {
 void EffectDemoScene::RenderCardInHand(const core::CardInstance& card, float x, float y) {
     float scale = 0.5f;
     core::graphics::CardRenderer::RenderCard(*card.data, {x, y}, scale);
-
-    // Highlight if selected
-    // (Logic for selection highlight omitted for brevity)
 }
 
 void EffectDemoScene::RenderCreatureOnBoard(const core::CardInstance& card, float x, float y) {

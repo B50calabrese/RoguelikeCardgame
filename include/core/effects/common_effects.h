@@ -5,8 +5,11 @@
 #include <vector>
 
 #include "core/effects/effect.h"
+#include "core/effects/actions/deal_damage_action.h"
+#include "core/effects/actions/draw_card_action.h"
+#include "core/effects/actions/modify_stats_action.h"
 
-namespace core {
+namespace core::effects {
 
 /**
  * @brief Simple effect that deals damage to a single target.
@@ -23,7 +26,7 @@ class DamageEffect : public Effect {
       amount = std::stoi(it->second);
     }
 
-    actions.push_back(action::DealDamage{source_id, targets[0], amount});
+    actions.push_back(std::make_shared<actions::DealDamageAction>(source_id, targets[0], amount));
     return actions;
   }
 };
@@ -41,9 +44,8 @@ class DrawEffect : public Effect {
       amount = std::stoi(it->second);
     }
 
-    // Usually source_id's owner draws, but we might have custom logic later.
-    // For now, assume player 0 unless specified.
-    actions.push_back(action::DrawCard{0, amount});
+    // Default to player 0 for now
+    actions.push_back(std::make_shared<actions::DrawCardAction>(0, amount));
     return actions;
   }
 };
@@ -66,11 +68,11 @@ class StatModifyEffect : public Effect {
     auto it_h = params.find("health");
     if (it_h != params.end()) health = std::stoi(it_h->second);
 
-    actions.push_back(action::ModifyStats{targets[0].id, power, health});
+    actions.push_back(std::make_shared<actions::ModifyStatsAction>(targets[0].id, power, health));
     return actions;
   }
 };
 
-}  // namespace core
+}  // namespace core::effects
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_COMMON_EFFECTS_H_

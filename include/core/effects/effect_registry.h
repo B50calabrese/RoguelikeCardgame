@@ -8,7 +8,7 @@
 
 #include "core/effects/effect.h"
 
-namespace core {
+namespace core::effects {
 
 /**
  * @brief Singleton registry that manages all available effect types.
@@ -19,14 +19,10 @@ class EffectRegistry {
 
   static EffectRegistry& Get();
 
-  /**
-   * @brief Registers a new effect type.
-   */
+  /** @brief Registers a new effect type. */
   void RegisterEffect(const std::string& name, EffectCreator creator);
 
-  /**
-   * @brief Creates an instance of an effect by name.
-   */
+  /** @brief Creates an instance of an effect by name. */
   std::unique_ptr<Effect> CreateEffect(const std::string& name) const;
 
  private:
@@ -38,6 +34,10 @@ class EffectRegistry {
   std::unordered_map<std::string, EffectCreator> creators_;
 };
 
-}  // namespace core
+}  // namespace core::effects
+
+namespace core {
+  using effects::EffectRegistry;
+}
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_EFFECT_REGISTRY_H_

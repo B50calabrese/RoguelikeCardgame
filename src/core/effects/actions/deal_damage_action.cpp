@@ -1,0 +1,27 @@
+#include "core/effects/actions/deal_damage_action.h"
+#include "core/effects/actions/kill_creature_action.h"
+#include "core/effects/effect_resolver.h"
+#include "core/card_data.h"
+
+namespace core::effects::actions {
+
+void DealDamageAction::Apply(GameState& state) const {
+    if (target_.type == Target::Type::Player) {
+        state.player->health -= amount_;
+        std::cout << "[EffectResolver] Player takes " << amount_ << " damage. Health: " << state.player->health << std::endl;
+    } else if (target_.type == Target::Type::Enemy) {
+        state.enemy->health -= amount_;
+        std::cout << "[EffectResolver] Enemy takes " << amount_ << " damage. Health: " << state.enemy->health << std::endl;
+    } else if (target_.type == Target::Type::Creature) {
+        CardInstance* target_inst = state.FindCardInstance(target_.id);
+        if (target_inst && target_inst->location == CardLocation::Board) {
+            target_inst->current_health -= amount_;
+            std::cout << "[EffectResolver] Creature " << target_inst->data->name << " takes " << amount_ << " damage. Health: " << target_inst->current_health << std::endl;
+            if (target_inst->current_health <= 0) {
+                EffectResolver::Get().QueueAction(std::make_shared<KillCreatureAction>(target_inst->instance_id));
+            }
+        }
+    }
+}
+
+}  // namespace core::effects::actions

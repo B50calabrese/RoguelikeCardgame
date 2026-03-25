@@ -2,13 +2,44 @@
 
 #include <filesystem>
 #include <iostream>
+#include <string>
+#include <vector>
 
 #include "engine/graphics/renderer.h"
 #include "engine/util/asset_manager.h"
 #include "engine/util/logger.h"
 #include "pugixml.hpp"
+#include "core/effects/effect.h"
 
 namespace core {
+
+namespace {
+
+Trigger StringToTrigger(const std::string& str) {
+  if (str == "OnPlay") return Trigger::OnPlay;
+  if (str == "OnDeath") return Trigger::OnDeath;
+  if (str == "AtStartOfTurn") return Trigger::AtStartOfTurn;
+  if (str == "AtEndOfTurn") return Trigger::AtEndOfTurn;
+  return Trigger::Manual;
+}
+
+void ParseTargetFilter(pugi::xml_node filter_node, effects::TargetFilter& filter) {
+  if (filter_node.empty()) return;
+  filter.is_required = filter_node.attribute("required").as_bool(true);
+  filter.allow_creature = filter_node.attribute("allow_creature").as_bool(true);
+  filter.allow_player = filter_node.attribute("allow_player").as_bool(true);
+  filter.allow_enemy = filter_node.attribute("allow_enemy").as_bool(true);
+  filter.allow_self = filter_node.attribute("allow_self").as_bool(true);
+
+  if (filter_node.attribute("max_cost")) filter.max_cost = filter_node.attribute("max_cost").as_int();
+  if (filter_node.attribute("min_cost")) filter.min_cost = filter_node.attribute("min_cost").as_int();
+  if (filter_node.attribute("max_power")) filter.max_power = filter_node.attribute("max_power").as_int();
+  if (filter_node.attribute("min_power")) filter.min_power = filter_node.attribute("min_power").as_int();
+  if (filter_node.attribute("max_health")) filter.max_health = filter_node.attribute("max_health").as_int();
+  if (filter_node.attribute("min_health")) filter.min_health = filter_node.attribute("min_health").as_int();
+}
+
+}  // namespace
 
 CardRegistry& CardRegistry::Get() {
   static CardRegistry instance;
@@ -42,7 +73,7 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       }
 
       pugi::xml_node card_node = doc.child("Card");
-      if (!card_node) {
+      if (card_node.empty()) {
         LOG_ERR("[CardRegistry] No <Card> root in %s",
                 entry.path().string().c_str());
         overall_success = false;
@@ -52,66 +83,34 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
 
       CardData card;
       card.id = card_node.attribute("id").as_int();
-      card.name = card_node.child_value("Name");
-      card.description = card_node.child_value("Description");
+      card.name = card_node.child("Name").text().as_string();
+      card.description = card_node.child("Description").text().as_string();
       card.cost = card_node.child("Cost").text().as_int();
       card.power = card_node.child("Power").text().as_int();
       card.health = card_node.child("Health").text().as_int();
 
       // Parse Effects
-      for (pugi::xml_node effect_node = card_node.child("Effect"); effect_node;
+      for (pugi::xml_node effect_node = card_node.child("Effect"); !effect_node.empty();
            effect_node = effect_node.next_sibling("Effect")) {
         CardEffectDefinition effect_def;
-        std::string trigger_str = effect_node.attribute("trigger").as_string();
-        if (trigger_str == "OnPlay") {
-          effect_def.trigger = Trigger::OnPlay;
-        } else if (trigger_str == "OnDeath") {
-          effect_def.trigger = Trigger::OnDeath;
-        } else if (trigger_str == "AtStartOfTurn") {
-          effect_def.trigger = Trigger::AtStartOfTurn;
-        } else if (trigger_str == "AtEndOfTurn") {
-          effect_def.trigger = Trigger::AtEndOfTurn;
-        } else {
-          effect_def.trigger = Trigger::Manual;
-        }
-
+        effect_def.trigger = StringToTrigger(effect_node.attribute("trigger").as_string());
         effect_def.effect_type = effect_node.attribute("type").as_string();
 
         // Parse Params
-        for (pugi::xml_node param_node = effect_node.child("Param"); param_node;
+        for (pugi::xml_node param_node = effect_node.child("Param"); !param_node.empty();
              param_node = param_node.next_sibling("Param")) {
           effect_def.params[param_node.attribute("name").as_string()] =
               param_node.attribute("value").as_string();
         }
 
         // Parse Filter
-        pugi::xml_node filter_node = effect_node.child("TargetFilter");
-        if (filter_node) {
-          effect_def.filter.is_required =
-              filter_node.attribute("required").as_bool(true);
-          effect_def.filter.allow_creature =
-              filter_node.attribute("allow_creature").as_bool(true);
-          effect_def.filter.allow_player =
-              filter_node.attribute("allow_player").as_bool(true);
-          effect_def.filter.allow_enemy =
-              filter_node.attribute("allow_enemy").as_bool(true);
-          effect_def.filter.allow_self =
-              filter_node.attribute("allow_self").as_bool(true);
-
-          if (filter_node.attribute("max_cost")) {
-            effect_def.filter.max_cost = filter_node.attribute("max_cost").as_int();
-          }
-          if (filter_node.attribute("min_power")) {
-            effect_def.filter.min_power = filter_node.attribute("min_power").as_int();
-          }
-          // etc... add more stats as needed
-        }
+        ParseTargetFilter(effect_node.child("TargetFilter"), effect_def.filter);
 
         card.effects.push_back(effect_def);
       }
 
-      std::string frame_path = card_node.child_value("Frame");
-      std::string art_path = card_node.child_value("Art");
+      std::string frame_path = card_node.child("Frame").text().as_string();
+      std::string art_path = card_node.child("Art").text().as_string();
 
       auto frame_tex =
           engine::util::AssetManager<engine::graphics::Texture>::Get(
@@ -124,15 +123,12 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
                 card.id, entry.path().string().c_str());
         overall_success = false;
         if (fail_closed) return false;
-        // Even if we fail open, we probably shouldn't register a card with
-        // missing textures unless we have a fallback.
         continue;
       }
 
       card.frame_texture_id = frame_tex->renderer_id();
       card.art_texture_id = art_tex->renderer_id();
 
-      // Keep them alive
       loaded_textures_.push_back(frame_tex);
       loaded_textures_.push_back(art_tex);
 
