@@ -12,7 +12,9 @@
 #include "core/effects/effect_registry.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/rules_engine.h"
-#include "core/effects/common_effects.h"
+#include "core/effects/types/damage_effect.h"
+#include "core/effects/types/draw_effect.h"
+#include "core/effects/types/stat_modify_effect.h"
 #include "core/effects/actions/play_card_action.h"
 #include "core/graphics/card_renderer.h"
 #include "engine/scene/scene_manager.h"
@@ -27,9 +29,9 @@ void EffectDemoScene::OnAttach() {
     std::cout << "[EffectDemoScene] Attached" << std::endl;
 
     // Register some effects for the demo
-    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::DamageEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::effects::DrawEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::StatModifyEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::types::DamageEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::effects::types::DrawEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::types::StatModifyEffect>(); });
 
     // Load cards
     core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false);
