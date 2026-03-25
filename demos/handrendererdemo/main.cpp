@@ -28,7 +28,7 @@ class HandRendererApp : public engine::Application {
       card.description = "A demo card";
       card.power = i;
       card.health = i;
-      card.frame_texture_id = texture->id();
+      card.frame_texture_id = texture->renderer_id();
       card.art_texture_id = 1;
       cards.push_back(card);
     }
@@ -62,7 +62,7 @@ class HandRendererApp : public engine::Application {
       core::CardData card;
       card.id = (int)cards.size();
       card.name = "Card " + std::to_string(cards.size());
-      card.frame_texture_id = texture->id();
+      card.frame_texture_id = texture->renderer_id();
       cards.push_back(card);
     } else if (engine::InputManager::Get().IsKeyPressed(
                    engine::KeyCode::KC_S)) {

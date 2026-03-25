@@ -58,6 +58,58 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       card.power = card_node.child("Power").text().as_int();
       card.health = card_node.child("Health").text().as_int();
 
+      // Parse Effects
+      for (pugi::xml_node effect_node = card_node.child("Effect"); effect_node;
+           effect_node = effect_node.next_sibling("Effect")) {
+        CardEffectDefinition effect_def;
+        std::string trigger_str = effect_node.attribute("trigger").as_string();
+        if (trigger_str == "OnPlay") {
+          effect_def.trigger = Trigger::OnPlay;
+        } else if (trigger_str == "OnDeath") {
+          effect_def.trigger = Trigger::OnDeath;
+        } else if (trigger_str == "AtStartOfTurn") {
+          effect_def.trigger = Trigger::AtStartOfTurn;
+        } else if (trigger_str == "AtEndOfTurn") {
+          effect_def.trigger = Trigger::AtEndOfTurn;
+        } else {
+          effect_def.trigger = Trigger::Manual;
+        }
+
+        effect_def.effect_type = effect_node.attribute("type").as_string();
+
+        // Parse Params
+        for (pugi::xml_node param_node = effect_node.child("Param"); param_node;
+             param_node = param_node.next_sibling("Param")) {
+          effect_def.params[param_node.attribute("name").as_string()] =
+              param_node.attribute("value").as_string();
+        }
+
+        // Parse Filter
+        pugi::xml_node filter_node = effect_node.child("TargetFilter");
+        if (filter_node) {
+          effect_def.filter.is_required =
+              filter_node.attribute("required").as_bool(true);
+          effect_def.filter.allow_creature =
+              filter_node.attribute("allow_creature").as_bool(true);
+          effect_def.filter.allow_player =
+              filter_node.attribute("allow_player").as_bool(true);
+          effect_def.filter.allow_enemy =
+              filter_node.attribute("allow_enemy").as_bool(true);
+          effect_def.filter.allow_self =
+              filter_node.attribute("allow_self").as_bool(true);
+
+          if (filter_node.attribute("max_cost")) {
+            effect_def.filter.max_cost = filter_node.attribute("max_cost").as_int();
+          }
+          if (filter_node.attribute("min_power")) {
+            effect_def.filter.min_power = filter_node.attribute("min_power").as_int();
+          }
+          // etc... add more stats as needed
+        }
+
+        card.effects.push_back(effect_def);
+      }
+
       std::string frame_path = card_node.child_value("Frame");
       std::string art_path = card_node.child_value("Art");
 
