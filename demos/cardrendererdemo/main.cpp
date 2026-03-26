@@ -17,13 +17,13 @@ class CardRendererApp : public engine::Application {
     engine::graphics::TextRenderer::Get().Init();
     engine::graphics::TextRenderer::Get().LoadFont("arial", "arial.ttf", 16);
     texture = engine::graphics::Texture::Load("creature_frame.png");
-    card_data = {.id = 1,
-                 .name = "test",
-                 .description = "description",
-                 .power = 1,
-                 .health = 1,
-                 .frame_texture_id = texture->id(),
-                 .art_texture_id = 1};
+    card_data.id = 1;
+    card_data.name = "test";
+    card_data.description = "description";
+    card_data.power = 1;
+    card_data.health = 1;
+    card_data.frame_texture_id = texture->renderer_id();
+    card_data.art_texture_id = 1;
   }
 
   void OnUpdate(double deltaTimeSeconds) override {

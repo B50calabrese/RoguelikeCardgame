@@ -14,10 +14,18 @@ add_subdirectory("demos")
 # 2. SOURCE AND HEADER SETUP
 set(SOURCE_FILES
     "src/core/card_registry.cpp"
+    "src/core/card_instance.cpp"
     "src/core/game_config.cpp"
     "src/core/graphics/card_renderer.cpp"
     "src/core/graphics/hand_renderer.cpp"
+    "src/core/graphics/ui_button.cpp"
+    "src/core/effects/effect_registry.cpp"
+    "src/core/effects/actions/deal_damage_action.cpp"
+    "src/core/effects/actions/modify_stats_action.cpp"
+    "src/scenes/main_menu_scene.cpp"
     "src/scenes/combat_scene.cpp"
+    "src/scenes/card_viewer_scene.cpp"
+    "src/scenes/effect_demo_scene.cpp"
     "third_party/pugixml/pugixml.cpp")
 file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "include/core/*.h" "include/core/graphics/*.h" "include/scenes/*.h" "src/scenes/*.h" "third_party/pugixml/*.hpp")
 
