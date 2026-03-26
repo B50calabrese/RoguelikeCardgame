@@ -1,5 +1,5 @@
 #include "core/effects/effect_registry.h"
-#include <iostream>
+#include "engine/util/logger.h"
 
 namespace core::effects {
 
@@ -10,7 +10,7 @@ EffectRegistry& EffectRegistry::Get() {
 
 void EffectRegistry::RegisterEffect(const std::string& name, EffectCreator creator) {
   creators_[name] = std::move(creator);
-  std::cout << "[EffectRegistry] Registered effect: " << name << std::endl;
+  LOG_INFO("[EffectRegistry] Registered effect: %s", name.c_str());
 }
 
 std::unique_ptr<Effect> EffectRegistry::CreateEffect(const std::string& name) const {

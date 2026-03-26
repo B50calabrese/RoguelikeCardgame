@@ -1,13 +1,13 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_ACTIONS_KILL_CREATURE_ACTION_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_ACTIONS_KILL_CREATURE_ACTION_H_
 
-#include <iostream>
 #include <algorithm>
 
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
 #include "core/state/game_state.h"
 #include "core/card_data.h"
+#include "engine/util/logger.h"
 
 namespace core::effects::actions {
 
@@ -24,11 +24,15 @@ class KillCreatureAction : public ActionBase {
       auto it = std::find_if(p.board.begin(), p.board.end(),
           [id](const auto& c) { return c->instance_id == id; });
       if (it != p.board.end()) {
-          std::cout << "[EffectResolver] Creature " << (*it)->data->name << " dies." << std::endl;
-          (*it)->location = CardLocation::Board; // Logic fix: Board -> Graveyard transition handled by erase/push_back
+          LOG_INFO("[EffectResolver] Creature %s dies.", (*it)->data->name.c_str());
+
+          // Logic: Transition Board -> Graveyard
           (*it)->location = CardLocation::Graveyard;
           p.graveyard.push_back(std::move(*it));
           p.board.erase(it);
+
+          // Note: In a full implementation, we would trigger an "OnDeath" event here
+          // that could queue further actions for cards on the board that care about death.
           return true;
       }
       return false;

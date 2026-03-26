@@ -3,13 +3,13 @@
 
 #include <vector>
 #include <algorithm>
-#include <iostream>
 
 #include "core/effects/actions/action_base.h"
 #include "core/effects/target.h"
 #include "core/effects/rule_result.h"
 #include "core/state/game_state.h"
 #include "core/card_data.h"
+#include "engine/util/logger.h"
 
 namespace core::effects::actions {
 
@@ -42,7 +42,7 @@ class PlayCardAction : public ActionBase {
         [id = card_instance_id_](const auto& c) { return c->instance_id == id; });
 
     if (it != p.hand.end()) {
-        std::cout << "[EffectResolver] Playing card: " << (*it)->data->name << std::endl;
+        LOG_INFO("[EffectResolver] Playing card: %s", (*it)->data->name.c_str());
         p.mana -= (*it)->current_cost;
         (*it)->location = CardLocation::Board;
         p.board.push_back(std::move(*it));

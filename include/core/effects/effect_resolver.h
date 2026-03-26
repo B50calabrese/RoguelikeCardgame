@@ -4,11 +4,11 @@
 #include <deque>
 #include <memory>
 #include <vector>
-#include <iostream>
 
 #include "core/effects/action.h"
 #include "core/state/game_state.h"
 #include "core/effects/rule_result.h"
+#include "engine/util/logger.h"
 
 namespace core::effects {
 
@@ -35,7 +35,7 @@ class EffectResolver {
 
       RuleResult rule = next->Validate(state);
       if (!rule.success) {
-          std::cout << "[EffectResolver] " << next->name() << " failed: " << rule.message << " (fail_open: " << rule.fail_open << ")" << std::endl;
+          LOG_INFO("[EffectResolver] %s failed: %s (fail_open: %d)", next->name().c_str(), rule.message.c_str(), rule.fail_open);
           if (!rule.fail_open) continue;
       }
 
