@@ -42,5 +42,22 @@ void CardRenderer::RenderCard(const core::CardData& data, glm::vec2 position,
   engine::graphics::Renderer::Get().DrawText(
       "arial", data.name, card_name_transformed_offset, rotation, 1.0f * scale,
       kDefaultTextColor);
+
+  // Render Stats for Creatures
+  if (data.type == CardType::Creature) {
+    glm::vec2 power_transformed_offset =
+        position +
+        CalculateTransformedOffset(kPowerOffset, scale, rotation_vec);
+    engine::graphics::Renderer::Get().DrawText(
+        "arial", std::to_string(data.power), power_transformed_offset, rotation,
+        0.8f * scale, kDefaultTextColor);
+
+    glm::vec2 health_transformed_offset =
+        position +
+        CalculateTransformedOffset(kHealthOffset, scale, rotation_vec);
+    engine::graphics::Renderer::Get().DrawText(
+        "arial", std::to_string(data.health), health_transformed_offset,
+        rotation, 0.8f * scale, kDefaultTextColor);
+  }
 }
 }  // namespace core::graphics

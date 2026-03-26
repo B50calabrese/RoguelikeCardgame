@@ -23,6 +23,12 @@ Trigger StringToTrigger(const std::string& str) {
   return Trigger::Manual;
 }
 
+CardType StringToCardType(const std::string& str) {
+  if (str == "Creature") return CardType::Creature;
+  if (str == "Spell") return CardType::Spell;
+  return CardType::Spell;
+}
+
 void ParseTargetFilter(pugi::xml_node filter_node, effects::TargetFilter& filter) {
   if (filter_node.empty()) return;
   filter.is_required = filter_node.attribute("required").as_bool(true);
@@ -85,6 +91,7 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       card.id = card_node.attribute("id").as_int();
       card.name = card_node.child("Name").text().as_string();
       card.description = card_node.child("Description").text().as_string();
+      card.type = StringToCardType(card_node.child("Type").text().as_string());
       card.cost = card_node.child("Cost").text().as_int();
       card.power = card_node.child("Power").text().as_int();
       card.health = card_node.child("Health").text().as_int();

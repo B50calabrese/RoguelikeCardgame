@@ -15,6 +15,11 @@ const glm::vec2 kBaseCardSize = {kBaseCardWidth, kBaseCardHeight};
 const glm::vec2 kCardNameOffset = {20.0f - kBaseCardWidth / 2.0f,
                                    264.0f - kBaseCardHeight / 2.0f};
 
+const glm::vec2 kPowerOffset = {140.0f - kBaseCardWidth / 2.0f,
+                                25.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kHealthOffset = {172.0f - kBaseCardWidth / 2.0f,
+                                 25.0f - kBaseCardHeight / 2.0f};
+
 const glm::vec4 kDefaultCardTint = {1.0f, 1.0f, 1.0f, 1.0f};
 const glm::vec4 kDefaultTextColor = {0.0f, 0.0f, 0.0f, 1.0f};
 

@@ -45,7 +45,45 @@ The game uses a custom engine located in the `GameEngine/` submodule.
 - **Header Guards**: Use the format `DECK_BUILDER_GAME_<PATH>_<FILE>_H_`.
 - **Include Order**: Related header, C system headers, C++ system headers, other library headers (GLM, pugixml), project headers.
 
-## Agent Specific Instructions
+## Scripting & Extensibility
+### Lua Scripting for Effects and Actions
+The game engine supports Lua scripting via the `engine::util::ScriptManager`. This can be leveraged to move card effects and game actions from C++ into Lua scripts, allowing for faster iteration and easier modding.
+
+#### High-Level Proposal
+1.  **Lua Effect Wrapper**: Create a C++ class `LuaEffect` that implements the `core::effects::Effect` interface. This class would hold a reference to a Lua function or table.
+2.  **Registry Binding**: Bind `core::effects::EffectRegistry` to Lua so that new effect types can be registered directly from Lua scripts.
+3.  **Action Binding**: Bind the `Action` system and `GameState` to Lua using `sol2` (which the engine already uses). This allows Lua scripts to inspect the game state and return a list of actions.
+4.  **Scripted Cards**: Update the XML schema to allow specifying a `.lua` file for an effect instead of a built-in type.
+
+#### Example Implementation
+**C++ Binding (in `EffectRegistry` or a dedicated binder):**
+```cpp
+void BindEffectsToLua(sol::state& lua) {
+  lua.new_usertype<core::effects::Target>("Target",
+    "type", &core::effects::Target::type,
+    "id", &core::effects::Target::id
+  );
+
+  // Bind other necessary types (GameState, Action, etc.)
+}
+```
+
+**Lua Effect Definition (`assets/scripts/effects/burn.lua`):**
+```lua
+-- Define a new effect in Lua
+function GenerateBurnActions(source_id, targets, params)
+    local actions = {}
+    local damage_amount = tonumber(params["amount"]) or 0
+
+    for _, target in ipairs(targets) do
+        -- Assuming a 'CreateDamageAction' helper is bound to Lua
+        table.insert(actions, CreateDamageAction(source_id, target, damage_amount))
+    end
+
+    return actions
+end
+```
+
 ### Self-Evolution & Knowledge Management
 - **Updating AGENTS.md**: When significant architectural changes or new core components are added, update this file to reflect the current state of the game.
 - **Adding Skills**: If a recurring task is identified (e.g., adding a new type of game entity), create a new skill in `.github/skills/<skill-name>/SKILL.md`.

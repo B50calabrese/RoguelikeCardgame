@@ -1,12 +1,12 @@
 #include "scenes/main_menu_scene.h"
 
-#include <iostream>
 #include <memory>
 
 #include "core/game_config.h"
 #include "engine/graphics/renderer.h"
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
+#include "engine/util/logger.h"
 #include "scenes/combat_scene.h"
 #include "scenes/card_viewer_scene.h"
 #include "scenes/effect_demo_scene.h"
@@ -41,7 +41,7 @@ void MainMenuScene::OnAttach() {
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
       "Exit", glm::vec2{center_x - btn_width * 0.5f, start_y - 240.0f},
       glm::vec2{btn_width, btn_height}, []() {
-        std::cout << "Exit requested" << std::endl;
+        LOG_INFO("Exit requested");
       }));
 }
 

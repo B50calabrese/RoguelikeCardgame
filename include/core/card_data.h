@@ -9,6 +9,14 @@
 namespace core {
 
 /**
+ * @brief Defines the type of card.
+ */
+enum class CardType {
+  Creature,
+  Spell
+};
+
+/**
  * @brief The static, immutable definition of a card.
  */
 struct CardData {
@@ -20,6 +28,7 @@ struct CardData {
   std::string description;
 
   // Gameplay attributes
+  CardType type = CardType::Spell;
   int cost = 0;
   int power = 0;
   int health = 0;
