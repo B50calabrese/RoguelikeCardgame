@@ -1,6 +1,5 @@
 #include "scenes/effect_demo_scene.h"
 
-#include <iostream>
 #include <algorithm>
 
 #include <glm/vec2.hpp>
@@ -18,6 +17,7 @@
 #include "core/effects/actions/play_card_action.h"
 #include "core/graphics/card_renderer.h"
 #include "engine/scene/scene_manager.h"
+#include "engine/util/logger.h"
 #include "scenes/main_menu_scene.h"
 #include "engine/input/input_manager.h"
 #include "engine/graphics/renderer.h"
@@ -26,7 +26,7 @@
 namespace scenes {
 
 void EffectDemoScene::OnAttach() {
-    std::cout << "[EffectDemoScene] Attached" << std::endl;
+    LOG_INFO("[EffectDemoScene] Attached");
 
     // Register some effects for the demo
     core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::types::DamageEffect>(); });

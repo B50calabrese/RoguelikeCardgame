@@ -1,10 +1,10 @@
-#include <iostream>
 #include <memory>
 
 #include "core/game_config.h"
 #include "engine/core/application.h"
 #include "engine/core/engine.h"
 #include "engine/scene/scene_manager.h"
+#include "engine/util/logger.h"
 #include "scenes/main_menu_scene.h"
 
 class DeckBuilderApp : public engine::Application {
@@ -20,7 +20,7 @@ class DeckBuilderApp : public engine::Application {
   void OnUpdate(double delta_time_seconds) override {}
 
   void OnShutdown() override {
-    std::cout << "Game cleaning up..." << std::endl;
+    LOG_INFO("Game cleaning up...");
   }
 };
 

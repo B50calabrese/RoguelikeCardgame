@@ -1,6 +1,7 @@
 <Card id="2">
     <Name>Foot Soldier</Name>
     <Description>A basic unit. Draws 1 card on play.</Description>
+    <Type>Creature</Type>
     <Cost>2</Cost>
     <Power>2</Power>
     <Health>2</Health>
