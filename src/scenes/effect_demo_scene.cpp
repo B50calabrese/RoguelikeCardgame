@@ -67,7 +67,7 @@ void EffectDemoScene::InitializeGameState() {
 }
 
 void EffectDemoScene::OnUpdate(float delta_time_seconds) {
-    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
+    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::kEscape)) {
         engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
         return;
     }
@@ -81,7 +81,7 @@ void EffectDemoScene::HandleInput() {
 
     // Simple index-based card selection for demo (keys 1-9)
     for (int i = 0; i < 9; ++i) {
-        if (input.IsKeyPressed(static_cast<engine::KeyCode>(static_cast<int>(engine::KeyCode::KC_1) + i))) {
+        if (input.IsKeyPressed(static_cast<engine::KeyCode>(static_cast<int>(engine::KeyCode::k1) + i))) {
             if (i < state_.player->hand.size()) {
                 SelectCard(i);
             }
@@ -89,13 +89,13 @@ void EffectDemoScene::HandleInput() {
     }
 
     // Simple target selection (P for Player, E for Enemy, T for first enemy creature)
-    if (input.IsKeyPressed(engine::KeyCode::KC_P)) {
+    if (input.IsKeyPressed(engine::KeyCode::kP)) {
         SelectTarget({core::effects::Target::Type::Player, 0});
     }
-    if (input.IsKeyPressed(engine::KeyCode::KC_E)) {
+    if (input.IsKeyPressed(engine::KeyCode::kE)) {
         SelectTarget({core::effects::Target::Type::Enemy, 1});
     }
-    if (input.IsKeyPressed(engine::KeyCode::KC_T)) {
+    if (input.IsKeyPressed(engine::KeyCode::kT)) {
         if (!state_.enemy->board.empty()) {
             SelectTarget({core::effects::Target::Type::Creature, state_.enemy->board[0]->instance_id});
         }

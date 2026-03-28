@@ -31,31 +31,31 @@ class CardRendererApp : public engine::Application {
                                              /*alpha=*/1.0f, rotation);
 
     // Scaling
-    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_UP)) {
+    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::kUp)) {
       scale += 0.1f;
     } else if (engine::InputManager::Get().IsKeyPressed(
-                   engine::KeyCode::KC_DOWN)) {
+                   engine::KeyCode::kDown)) {
       scale -= 0.1f;
     }
 
     // Rotation
-    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_LEFT)) {
+    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kLeft)) {
       rotation += 0.5f;
     } else if (engine::InputManager::Get().IsKeyDown(
-                   engine::KeyCode::KC_RIGHT)) {
+                   engine::KeyCode::kRight)) {
       rotation -= 0.5f;
     }
 
     // Position
-    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_W)) {
+    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kW)) {
       position.y += 5.0f;
-    } else if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_S)) {
+    } else if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kS)) {
       position.y -= 5.0f;
     }
 
-    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_A)) {
+    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kA)) {
       position.x -= 5.0f;
-    } else if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_D)) {
+    } else if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kD)) {
       position.x += 5.0f;
     }
   }

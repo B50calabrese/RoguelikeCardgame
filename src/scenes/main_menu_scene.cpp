@@ -58,7 +58,7 @@ void MainMenuScene::HandleInput() {
   float my = (mouse_pos.y + 1.0f) * 0.5f * config.window_height;
   glm::vec2 pixel_mouse_pos = {mx, my};
 
-  bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
+  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
   for (auto& btn : buttons_) {
     btn->Update(pixel_mouse_pos, clicked);
   }

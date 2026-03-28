@@ -85,8 +85,8 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   glm::vec2 pixel_mouse_pos = {mx, my};
 
   if (selected_card_index_ != -1) {
-    if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT) ||
-        input.IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
+    if (input.IsKeyPressed(engine::KeyCode::kMouseLeft) ||
+        input.IsKeyPressed(engine::KeyCode::kEscape)) {
       selected_card_index_ = -1;
     }
     return;
@@ -106,13 +106,13 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   float sb_y = 100.0f;
   float sb_height = config.window_height - 200.0f;
 
-  if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT)) {
+  if (input.IsKeyPressed(engine::KeyCode::kMouseLeft)) {
     if (core::util::PointInRect(pixel_mouse_pos, {sb_x, sb_y},
                                 {sb_width, sb_height}, false)) {
       is_dragging_scrollbar_ = true;
     }
   }
-  if (input.IsKeyReleased(engine::KeyCode::KC_MOUSE_LEFT)) {
+  if (input.IsKeyReleased(engine::KeyCode::kMouseLeft)) {
     is_dragging_scrollbar_ = false;
   }
 
@@ -123,7 +123,7 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   }
 
   // Update buttons
-  bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
+  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
   for (auto& btn : buttons_) {
     btn->Update(pixel_mouse_pos, clicked);
   }
@@ -162,13 +162,13 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   }
 
   // Keyboard scrolling
-  if (input.IsKeyDown(engine::KeyCode::KC_UP))
+  if (input.IsKeyDown(engine::KeyCode::kUp))
     scroll_offset_ -= 1000.0f * delta_time_seconds;
-  if (input.IsKeyDown(engine::KeyCode::KC_DOWN))
+  if (input.IsKeyDown(engine::KeyCode::kDown))
     scroll_offset_ += 1000.0f * delta_time_seconds;
-  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_UP))
+  if (input.IsKeyPressed(engine::KeyCode::kPageUp))
     scroll_offset_ -= config.window_height * 0.5f;
-  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_DOWN))
+  if (input.IsKeyPressed(engine::KeyCode::kPageDown))
     scroll_offset_ += config.window_height * 0.5f;
   scroll_offset_ = glm::clamp(scroll_offset_, 0.0f, max_scroll_);
 }

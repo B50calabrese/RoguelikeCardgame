@@ -44,28 +44,28 @@ class HandRendererApp : public engine::Application {
                                              arc_angle, overlap);
 
     // Controls
-    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_UP)) {
+    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kUp)) {
       arc_angle += 10.0f * (float)deltaTimeSeconds;
     } else if (engine::InputManager::Get().IsKeyDown(
-                   engine::KeyCode::KC_DOWN)) {
+                   engine::KeyCode::kDown)) {
       arc_angle -= 10.0f * (float)deltaTimeSeconds;
     }
 
-    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::KC_RIGHT)) {
+    if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kRight)) {
       overlap = std::min(1.0f, overlap + 0.1f * (float)deltaTimeSeconds);
     } else if (engine::InputManager::Get().IsKeyDown(
-                   engine::KeyCode::KC_LEFT)) {
+                   engine::KeyCode::kLeft)) {
       overlap = std::max(0.0f, overlap - 0.1f * (float)deltaTimeSeconds);
     }
 
-    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_W)) {
+    if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::kW)) {
       core::CardData card;
       card.id = (int)cards.size();
       card.name = "Card " + std::to_string(cards.size());
       card.frame_texture_id = texture->renderer_id();
       cards.push_back(card);
     } else if (engine::InputManager::Get().IsKeyPressed(
-                   engine::KeyCode::KC_S)) {
+                   engine::KeyCode::kS)) {
       if (!cards.empty()) cards.pop_back();
     }
   }

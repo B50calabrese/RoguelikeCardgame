@@ -6,7 +6,7 @@
 #include <glm/vec4.hpp>
 
 #include "core/constants.h"
-#include "engine/graphics/render_queue.h"
+#include "engine/graphics/utils/render_queue.h"
 #include "engine/graphics/renderer.h"
 
 namespace core::graphics {
