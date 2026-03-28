@@ -49,7 +49,7 @@ void CombatScene::OnAttach() {
 
 void CombatScene::OnUpdate(float delta_time_seconds) {
   // Game logic (AI, Card movement) goes here
-  if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
+  if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::kEscape)) {
     engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
   }
 }
