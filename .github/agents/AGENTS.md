@@ -90,6 +90,11 @@ end
 - **Skill Maintenance**: Keep existing skills updated as the underlying APIs or requirements evolve.
 
 ### General Guidelines
+- **Build & Verification**: On every commit, you must ensure the project builds correctly and all tests pass.
+    1.  **Dependencies**: Ensure `libglfw3-dev`, `libfreetype-dev`, `xvfb`, and `imagemagick` are installed.
+    2.  **Build**: Use `cmake -B build && cmake --build build`.
+    3.  **Verify**: Run `./scripts/verify_build.sh` to execute C++ tests and capture screenshots for visual verification.
+    4.  **Artifacts**: Review the generated screenshots in the `screenshots/` directory to ensure no visual regressions.
 - **Verify before Submit**: Always use the `pre_commit_instructions` tool and ensure all verification steps pass.
 - **Edit Source, Not Artifacts**: Never modify files in `build/` or `dist/` directories.
 - **Proactive Testing**: Write and run tests for any new logic added to `core` or `scenes`.
