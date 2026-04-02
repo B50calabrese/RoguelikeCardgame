@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "core/constants.h"
+#include "core/character_config.h"
 #include "core/game_config.h"
 #include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
@@ -19,15 +20,15 @@ void NewRunScene::OnAttach() {
   auto& config = core::GameConfig::Get();
   float window_w = config.window_width;
   float window_h = config.window_height;
-  float buffer = window_w * core::graphics::kNewRunBufferFactor;
+  float buffer = window_w * kNewRunBufferFactor;
   float drawable_w = window_w - 2.0f * buffer;
 
   // Initialize characters
   std::vector<glm::vec4> char_colors = {
-      core::graphics::kCharColor1, core::graphics::kCharColor2,
-      core::graphics::kCharColor3};
+      core::characters::kCharColor1, core::characters::kCharColor2,
+      core::characters::kCharColor3};
 
-  float char_y = window_h * core::graphics::kNewRunCharacterYFactor;
+  float char_y = window_h * kNewRunCharacterYFactor;
   float char_spacing = drawable_w / (char_colors.size() - 1);
 
   for (size_t i = 0; i < char_colors.size(); ++i) {
@@ -47,7 +48,7 @@ void NewRunScene::OnAttach() {
       {core::graphics::kColorRed, core::graphics::kColorRedHighlight},
       {core::graphics::kColorGreen, core::graphics::kColorGreenHighlight}};
 
-  float color_y = window_h * core::graphics::kNewRunColorYFactor;
+  float color_y = window_h * kNewRunColorYFactor;
   float color_spacing = drawable_w / (gameplay_colors.size() - 1);
 
   for (size_t i = 0; i < gameplay_colors.size(); ++i) {
@@ -106,7 +107,7 @@ void NewRunScene::HandleInput() {
     // Check characters
     for (int i = 0; i < static_cast<int>(characters_.size()); ++i) {
       if (core::util::PointInRect(pixel_mouse_pos, characters_[i].pos,
-                                  core::graphics::kNewRunCharacterSize, true)) {
+                                  kNewRunCharacterSize, true)) {
         selected_character_index_ = i;
         break;
       }
@@ -115,7 +116,7 @@ void NewRunScene::HandleInput() {
     // Check colors
     for (int i = 0; i < static_cast<int>(colors_.size()); ++i) {
       if (core::util::PointInRect(pixel_mouse_pos, colors_[i].pos,
-                                  core::graphics::kNewRunColorSize, true)) {
+                                  kNewRunColorSize, true)) {
         auto it = std::find(selected_color_indices_.begin(),
                            selected_color_indices_.end(), i);
         if (it != selected_color_indices_.end()) {
@@ -146,16 +147,16 @@ void NewRunScene::OnRender() {
   // Render Characters
   for (int i = 0; i < static_cast<int>(characters_.size()); ++i) {
     glm::vec4 color = characters_[i].color;
-    renderer.DrawQuad(characters_[i].pos, core::graphics::kNewRunCharacterSize,
+    renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
                       color, 0.0f, {0.5f, 0.5f});
 
     if (i == selected_character_index_) {
       // Draw outline - engine doesn't have DrawRectOutline, so draw 4 small rects or a slightly larger quad behind
       float outline_thickness = 4.0f;
-      glm::vec2 outline_size = core::graphics::kNewRunCharacterSize + glm::vec2(outline_thickness * 2.0f);
+      glm::vec2 outline_size = kNewRunCharacterSize + glm::vec2(outline_thickness * 2.0f);
       renderer.DrawQuad(characters_[i].pos, outline_size, {1, 1, 1, 1}, 0.0f, {0.5f, 0.5f});
       // Redraw character on top
-      renderer.DrawQuad(characters_[i].pos, core::graphics::kNewRunCharacterSize,
+      renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
                         color, 0.0f, {0.5f, 0.5f});
     }
   }
@@ -166,7 +167,7 @@ void NewRunScene::OnRender() {
                              selected_color_indices_.end(),
                              i) != selected_color_indices_.end();
     glm::vec4 color = selected ? colors_[i].highlight_color : colors_[i].color;
-    renderer.DrawQuad(colors_[i].pos, core::graphics::kNewRunColorSize,
+    renderer.DrawQuad(colors_[i].pos, kNewRunColorSize,
                       color, 0.0f, {0.5f, 0.5f});
   }
 

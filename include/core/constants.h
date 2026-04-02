@@ -26,13 +26,6 @@ const glm::vec4 kDefaultTextColor = {0.0f, 0.0f, 0.0f, 1.0f};
 constexpr float kDefaultArcAngle = 30.0f;
 constexpr float kDefaultOverlapFactor = 0.3f;
 
-// New Run Scene Constants
-constexpr float kNewRunBufferFactor = 0.1f;
-constexpr float kNewRunCharacterYFactor = 0.75f;
-constexpr float kNewRunColorYFactor = 0.25f;
-const glm::vec2 kNewRunCharacterSize = {120.0f, 120.0f};
-const glm::vec2 kNewRunColorSize = {80.0f, 80.0f};
-
 // Gameplay Colors
 const glm::vec4 kColorWhite = {0.8f, 0.8f, 0.7f, 1.0f};
 const glm::vec4 kColorBlue = {0.0f, 0.4f, 0.7f, 1.0f};
@@ -46,10 +39,6 @@ const glm::vec4 kColorBlackHighlight = {0.4f, 0.4f, 0.4f, 1.0f};
 const glm::vec4 kColorRedHighlight = {1.0f, 0.2f, 0.2f, 1.0f};
 const glm::vec4 kColorGreenHighlight = {0.2f, 0.8f, 0.2f, 1.0f};
 
-// Placeholder Character Colors
-const glm::vec4 kCharColor1 = {0.0f, 0.8f, 0.8f, 1.0f}; // Cyan
-const glm::vec4 kCharColor2 = {0.8f, 0.0f, 0.8f, 1.0f}; // Magenta
-const glm::vec4 kCharColor3 = {0.8f, 0.8f, 0.0f, 1.0f}; // Yellow
 }  // namespace graphics
 
 // Gameplay Constants
