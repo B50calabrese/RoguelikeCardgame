@@ -27,6 +27,7 @@ set(SOURCE_FILES
     "src/scenes/card_viewer_scene.cpp"
     "src/scenes/effect_demo_scene.cpp"
     "src/scenes/new_run_scene.cpp"
+    "src/scenes/battle_test_scene.cpp"
     "third_party/pugixml/pugixml.cpp")
 file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "include/core/*.h" "include/core/graphics/*.h" "include/scenes/*.h" "src/scenes/*.h" "third_party/pugixml/*.hpp")
 
@@ -47,7 +48,7 @@ target_compile_definitions(RoguelikeCardgameLibrary PUBLIC
 )
 
 # Link the Engine to the Library
-target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine pugixml)
+target_link_libraries(RoguelikeCardgameLibrary PUBLIC GameEngine)
 
 # Ensure the game's include folder is PUBLIC so anyone linking to it sees it
 target_include_directories(RoguelikeCardgameLibrary PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/pugixml")
