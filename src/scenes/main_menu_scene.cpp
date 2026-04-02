@@ -7,7 +7,7 @@
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
 #include "engine/util/logger.h"
-#include "scenes/combat_scene.h"
+#include "scenes/new_run_scene.h"
 #include "scenes/card_viewer_scene.h"
 #include "scenes/effect_demo_scene.h"
 
@@ -21,9 +21,9 @@ void MainMenuScene::OnAttach() {
   float start_y = config.window_height * 0.7f;
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
-      "Start Combat", glm::vec2{center_x - btn_width * 0.5f, start_y},
+      "New Run", glm::vec2{center_x - btn_width * 0.5f, start_y},
       glm::vec2{btn_width, btn_height}, []() {
-        engine::SceneManager::Get().SetScene(std::make_unique<CombatScene>());
+        engine::SceneManager::Get().SetScene(std::make_unique<NewRunScene>());
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
