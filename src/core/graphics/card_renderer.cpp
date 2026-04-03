@@ -52,15 +52,24 @@ void CardRenderer::RenderCard(const core::CardData& data, glm::vec2 position,
   color_tint.a *= alpha;
 
   // Render the Main Frame (Tinted)
+  // Mixed with grayscale frame texture
   engine::graphics::Renderer::Get().DrawTexturedQuad(
       position, glm::vec2(card_width, card_height), data.frame_texture_id,
       rotation, color_tint, glm::vec2(0.5f, 0.5f));
 
-  // Render the Art
+  // Render the Art with Inner Black Border (Early 2000s style)
   glm::vec2 art_transformed_offset =
       position + CalculateTransformedOffset(kArtBoxOffset, scale, rotation_vec);
+
+  // Outer Art Frame (The black border)
+  engine::graphics::Renderer::Get().DrawQuad(
+      art_transformed_offset, kArtBoxSize * scale,
+      glm::vec4(0.0f, 0.0f, 0.0f, alpha), rotation, glm::vec2(0.5f, 0.5f));
+
+  // Inner Art (Slightly smaller to show border)
   engine::graphics::Renderer::Get().DrawTexturedQuad(
-      art_transformed_offset, kArtBoxSize * scale, data.art_texture_id, rotation,
+      art_transformed_offset, (kArtBoxSize - glm::vec2(4.0f)) * scale,
+      data.art_texture_id, rotation,
       glm::vec4(1.0f, 1.0f, 1.0f, alpha), glm::vec2(0.5f, 0.5f));
 
   const glm::vec4 text_color = glm::vec4(kDefaultTextColor.r, kDefaultTextColor.g,
@@ -93,11 +102,16 @@ void CardRenderer::RenderCard(const core::CardData& data, glm::vec2 position,
       text_color);
 
   // Description (Center aligned in its box)
-  // Note: For simplicity, we assume one line or handle multiple lines if
-  // TextRenderer supports it.
+  // Note: For simplicity, we assume one line and center it manually for now.
+  // In a real scenario, we'd calculate the text width using the font.
+  // For 0.5f scale, each character is roughly 4-6 pixels wide.
+  float estimated_text_width = data.description.length() * 8.0f * 0.5f * scale;
+  glm::vec2 centered_desc_offset = kDescriptionBoxOffset;
+  centered_desc_offset.x -= (estimated_text_width / 2.0f) / scale;
+
   glm::vec2 desc_transformed_offset =
       position +
-      CalculateTransformedOffset(kDescriptionBoxOffset, scale, rotation_vec);
+      CalculateTransformedOffset(centered_desc_offset, scale, rotation_vec);
   engine::graphics::Renderer::Get().DrawText(
       "arial", data.description, desc_transformed_offset, rotation,
       0.5f * scale, text_color);

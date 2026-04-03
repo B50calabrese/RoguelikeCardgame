@@ -6,7 +6,7 @@
     <Cost>2</Cost>
     <Power>2</Power>
     <Health>2</Health>
-    <Frame>creature_frame.png</Frame>
+    <Frame></Frame>
     <Art>sword.png</Art>
     <Effect trigger="OnPlay" type="Draw">
         <Param name="amount" value="1" />

@@ -1,91 +1,101 @@
-from PIL import Image, ImageDraw, ImageFont
+import random
+import math
+from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
 
-def create_card_frame(is_creature=True):
+def generate_texture(width, height, texture_type):
+    img = Image.new('L', (width, height), color=200)
+    pixels = img.load()
+
+    if texture_type == "marble": # White
+        for _ in range(60):
+            x = random.randint(0, width)
+            y = random.randint(0, height)
+            draw = ImageDraw.Draw(img)
+            draw.line([x, y, x + random.randint(-40, 40), y + random.randint(-40, 40)], fill=random.randint(220, 255), width=1)
+        img = img.filter(ImageFilter.GaussianBlur(radius=1))
+
+    elif texture_type == "parchment": # Blue
+        for x in range(width):
+            for y in range(height):
+                noise = random.randint(-10, 10)
+                pixels[x, y] = max(0, min(255, 215 + noise))
+        img = img.filter(ImageFilter.MedianFilter(size=3))
+
+    elif texture_type == "stone": # Black
+        for x in range(width):
+            for y in range(height):
+                noise = random.randint(-40, 10)
+                pixels[x, y] = max(0, min(255, 120 + noise))
+        img = img.filter(ImageFilter.UnsharpMask(radius=2, percent=150, threshold=3))
+
+    elif texture_type == "fire": # Red
+        for x in range(width):
+            for y in range(height):
+                v = int(abs(math.sin(x/5) * math.cos(y/5) * 100))
+                pixels[x, y] = max(0, min(255, 180 + v))
+
+    elif texture_type == "nature": # Green
+        for x in range(width):
+            grain = random.randint(-15, 15)
+            for y in range(height):
+                pixels[x, y] = max(0, min(255, 190 + grain + random.randint(-5, 5)))
+
+    return img
+
+def create_card_frame_classic(texture_type, is_creature=True):
     width, height = 200, 300
-    # Grayscale image (white background)
-    img = Image.new('L', (width, height), color=255)
+    img_bg = generate_texture(width, height, texture_type)
+    img = Image.new('RGB', (width, height))
+    img.paste(Image.merge("RGB", (img_bg, img_bg, img_bg)), (0,0))
     draw = ImageDraw.Draw(img)
 
-    # Main border
-    draw.rectangle([2, 2, width-2, height-2], outline=0, width=3)
+    # Thick black outer border (MTG classic)
+    draw.rectangle([0, 0, width-1, height-1], outline=(15, 15, 15), width=6)
+    # Inner border line
+    draw.rectangle([6, 6, width-7, height-7], outline=(100, 100, 100), width=1)
 
-    # Name & Cost Bar
-    draw.rectangle([8, 8, 192, 35], outline=0, width=2)
+    # Art Box
+    draw.rectangle([12, 40, 188, 160], fill=(0,0,0), outline=(10, 10, 10), width=2)
 
-    # Art Box (approx 40% height)
-    # y=40 to y=160
-    draw.rectangle([8, 40, 192, 160], outline=0, width=2)
+    # Name Bar
+    draw.rectangle([12, 10, 188, 34], fill=(235, 230, 220), outline=(0, 0, 0), width=1)
 
     # Type Line Bar
-    draw.rectangle([8, 165, 192, 185], outline=0, width=2)
+    draw.rectangle([12, 166, 188, 186], fill=(235, 230, 220), outline=(0, 0, 0), width=1)
 
     # Description Box
-    draw.rectangle([8, 190, 192, 292], outline=0, width=2)
+    draw.rectangle([12, 192, 188, 288], fill=(245, 245, 240), outline=(0, 0, 0), width=1)
 
     if is_creature:
-        # Stats Box (Power/Health) - Overlays description box corner usually
-        draw.rectangle([130, 265, 192, 292], fill=255, outline=0, width=2)
-        # Divider for P/H
-        draw.line([161, 265, 161, 292], fill=0, width=2)
-
-    return img
-
-def create_card_back():
-    width, height = 200, 300
-    # Brown color (RGB)
-    img = Image.new('RGB', (width, height), color=(139, 69, 19))
-    draw = ImageDraw.Draw(img)
-
-    # Outer border
-    draw.rectangle([0, 0, width-1, height-1], outline=(50, 20, 0), width=10)
-    # Inner decorative border
-    draw.rectangle([15, 15, width-15, height-15], outline=(210, 180, 140), width=2)
-
-    # Five color spots in a circle (WUBRG)
-    center_x, center_y = width // 2, height // 2
-    radius = 50
-    colors = [
-        (255, 255, 240), # White (Off-white)
-        (30, 144, 255),  # Blue (Dodger Blue)
-        (20, 20, 20),    # Black
-        (220, 20, 60),   # Red (Crimson)
-        (34, 139, 34)    # Green (Forest Green)
-    ]
-    import math
-    for i in range(5):
-        angle = math.radians(i * 72 - 90)
-        x = center_x + radius * math.cos(angle)
-        y = center_y + radius * math.sin(angle)
-        r_spot = 12
-        # Shadow
-        draw.ellipse([x-r_spot+2, y-r_spot+2, x+r_spot+2, y+r_spot+2], fill=(0,0,0,100))
-        draw.ellipse([x-r_spot, y-r_spot, x+r_spot, y+r_spot], fill=colors[i], outline=(0,0,0), width=1)
-
-    return img
-
-def create_placeholder_art(color, symbol_type):
-    width, height = 184, 120 # Fits inside the 8,40,192,160 box (192-8=184, 160-40=120)
-    img = Image.new('RGB', (width, height), color=(245, 245, 245))
-    draw = ImageDraw.Draw(img)
-
-    cx, cy = width // 2, height // 2
-
-    if symbol_type == "sword":
-        draw.line([cx-40, cy+40, cx+40, cy-40], fill=color, width=10)
-        draw.line([cx-30, cy+10, cx-10, cy+30], fill=color, width=10)
-    elif symbol_type == "shield":
-        draw.polygon([cx-30, cy-40, cx+30, cy-40, cx+40, cy, cx, cy+50, cx-40, cy], fill=color, outline=(0,0,0))
-    elif symbol_type == "flame":
-        draw.pieslice([cx-30, cy-40, cx+30, cy+40], 180, 360, fill=color)
-        draw.pieslice([cx-20, cy-50, cx+40, cy+20], 210, 330, fill=color)
+        # Stats Box
+        draw.rectangle([135, 263, 188, 288], fill=(255, 255, 255), outline=(0, 0, 0), width=1)
+        draw.line([161, 263, 161, 288], fill=(0, 0, 0), width=1)
 
     return img
 
 # Save assets
-create_card_frame(True).save('assets/creature_frame.png')
-create_card_frame(False).save('assets/non_creature_frame.png')
-create_card_back().save('assets/card_back.png')
+create_card_frame_classic("marble").save('assets/frame_white.png')
+create_card_frame_classic("parchment").save('assets/frame_blue.png')
+create_card_frame_classic("stone").save('assets/frame_black.png')
+create_card_frame_classic("fire").save('assets/frame_red.png')
+create_card_frame_classic("nature").save('assets/frame_green.png')
+create_card_frame_classic("marble", False).save('assets/frame_colorless.png')
 
-create_placeholder_art((169, 169, 169), "sword").save('assets/sword.png')
-create_placeholder_art((100, 149, 237), "shield").save('assets/shield.png')
-create_placeholder_art((255, 69, 0), "flame").save('assets/flame.png')
+# Placeholders (using standard icons for now as finding high res art failed)
+def create_icon_placeholder(color, style):
+    width, height = 172, 116
+    img = Image.new('RGB', (width, height), color=(20, 20, 20))
+    draw = ImageDraw.Draw(img)
+    cx, cy = width // 2, height // 2
+    if style == "sword":
+        draw.line([cx-40, cy+40, cx+40, cy-40], fill=color, width=8)
+        draw.line([cx-30, cy+10, cx-10, cy+30], fill=color, width=8)
+    elif style == "shield":
+        draw.polygon([cx-30, cy-40, cx+30, cy-40, cx+40, cy, cx, cy+50, cx-40, cy], fill=color, outline=(255,255,255))
+    elif style == "fire":
+        draw.pieslice([cx-30, cy-40, cx+30, cy+40], 180, 360, fill=color)
+    return img
+
+create_icon_placeholder((169, 169, 169), "sword").save('assets/sword.png')
+create_icon_placeholder((100, 149, 237), "shield").save('assets/shield.png')
+create_icon_placeholder((255, 69, 0), "fire").save('assets/flame.png')

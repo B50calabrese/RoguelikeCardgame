@@ -4,6 +4,6 @@
     <Type>Spell</Type>
     <Color>Blue</Color>
     <Cost>1</Cost>
-    <Frame>non_creature_frame.png</Frame>
+    <Frame></Frame>
     <Art>shield.png</Art>
 </Card>

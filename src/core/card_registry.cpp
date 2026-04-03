@@ -127,6 +127,18 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       }
 
       std::string frame_path = card_node.child("Frame").text().as_string();
+      // If frame path is missing or empty, use color-based default
+      if (frame_path.empty()) {
+        switch (card.color) {
+          case CardColor::White: frame_path = "frame_white.png"; break;
+          case CardColor::Blue: frame_path = "frame_blue.png"; break;
+          case CardColor::Black: frame_path = "frame_black.png"; break;
+          case CardColor::Red: frame_path = "frame_red.png"; break;
+          case CardColor::Green: frame_path = "frame_green.png"; break;
+          default: frame_path = "frame_colorless.png"; break;
+        }
+      }
+
       std::string art_path = card_node.child("Art").text().as_string();
 
       auto frame_tex =
