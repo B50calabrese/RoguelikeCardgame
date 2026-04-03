@@ -17,7 +17,7 @@ class CardViewerDemo : public engine::Application {
     engine::graphics::TextRenderer::Get().LoadFont("default", "arial.ttf", 24);
 
     // Load cards from the assets/cards directory
-    if (core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false)) {
+    if (core::CardRegistry::Get().LoadCardsFromDirectory("cards", false)) {
       LOG_INFO("Successfully loaded cards from assets/cards/");
     } else {
       LOG_WARN("Some cards failed to load, or directory not found.");

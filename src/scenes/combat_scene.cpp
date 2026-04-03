@@ -21,7 +21,7 @@ void CombatScene::OnAttach() {
 
   // Load cards from assets
   bool success =
-      core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false);
+      core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);
   if (!success) {
     LOG_ERR("[CombatScene] Failed to load some cards.");
   }

@@ -82,14 +82,10 @@ void NewRunScene::OnUpdate(float delta_time_seconds) { HandleInput(); }
 
 void NewRunScene::HandleInput() {
   auto& input = engine::InputManager::Get();
-  auto mouse_pos = input.mouse_screen_pos();
+  glm::vec2 pixel_mouse_pos = input.mouse_screen_pos();
   auto& config = core::GameConfig::Get();
 
-  float mx = (mouse_pos.x + 1.0f) * 0.5f * config.window_width;
-  float my = (mouse_pos.y + 1.0f) * 0.5f * config.window_height;
-  glm::vec2 pixel_mouse_pos = {mx, my};
-
-  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
+  bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
 
   // Update fixed buttons
   for (auto& btn : buttons_) {
