@@ -26,6 +26,16 @@ class CardRenderer {
   static void RenderCard(const core::CardData& data, glm::vec2 position,
                          float scale = 1.0f, float alpha = 1.0f,
                          float rotation = 0.0f);
+
+  /**
+   * @brief Renders the card back.
+   * @param position The world-space center point.
+   * @param scale Overall size multiplier.
+   * @param alpha Transparency.
+   * @param rotation Rotation in degrees.
+   */
+  static void RenderCardBack(glm::vec2 position, float scale = 1.0f,
+                             float alpha = 1.0f, float rotation = 0.0f);
 };
 
 }  // namespace core::graphics

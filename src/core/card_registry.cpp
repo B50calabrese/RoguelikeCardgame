@@ -29,6 +29,15 @@ CardType StringToCardType(const std::string& str) {
   return CardType::Spell;
 }
 
+CardColor StringToCardColor(const std::string& str) {
+  if (str == "White") return CardColor::White;
+  if (str == "Blue") return CardColor::Blue;
+  if (str == "Black") return CardColor::Black;
+  if (str == "Red") return CardColor::Red;
+  if (str == "Green") return CardColor::Green;
+  return CardColor::Colorless;
+}
+
 void ParseTargetFilter(pugi::xml_node filter_node, effects::TargetFilter& filter) {
   if (filter_node.empty()) return;
   filter.is_required = filter_node.attribute("required").as_bool(true);
@@ -91,7 +100,9 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       card.id = card_node.attribute("id").as_int();
       card.name = card_node.child("Name").text().as_string();
       card.description = card_node.child("Description").text().as_string();
+      card.type_line = card_node.child("TypeLine").text().as_string();
       card.type = StringToCardType(card_node.child("Type").text().as_string());
+      card.color = StringToCardColor(card_node.child("Color").text().as_string());
       card.cost = card_node.child("Cost").text().as_int();
       card.power = card_node.child("Power").text().as_int();
       card.health = card_node.child("Health").text().as_int();
@@ -117,6 +128,21 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       }
 
       std::string frame_path = card_node.child("Frame").text().as_string();
+      if (frame_path.empty()) {
+        // Auto-determine frame path based on color and type
+        std::string color_str = "colorless";
+        switch (card.color) {
+          case CardColor::White: color_str = "white"; break;
+          case CardColor::Blue: color_str = "blue"; break;
+          case CardColor::Black: color_str = "black"; break;
+          case CardColor::Red: color_str = "red"; break;
+          case CardColor::Green: color_str = "green"; break;
+          default: color_str = "gray"; break;
+        }
+        std::string type_suffix = (card.type == CardType::Creature) ? "creature" : "noncreature";
+        frame_path = color_str + "_" + type_suffix + "_frame.png";
+      }
+
       std::string art_path = card_node.child("Art").text().as_string();
 
       auto frame_tex =

@@ -8,17 +8,25 @@ namespace core {
 
 // Graphics Constants
 namespace graphics {
-constexpr float kBaseCardWidth = 200.0f;
-constexpr float kBaseCardHeight = 300.0f;
+constexpr float kBaseCardWidth = 250.0f;
+constexpr float kBaseCardHeight = 350.0f;
 const glm::vec2 kBaseCardSize = {kBaseCardWidth, kBaseCardHeight};
 
-const glm::vec2 kCardNameOffset = {20.0f - kBaseCardWidth / 2.0f,
-                                   264.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kCardNameOffset = {12.5f - kBaseCardWidth / 2.0f,
+                                   325.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kCardTypeOffset = {12.5f - kBaseCardWidth / 2.0f,
+                                   140.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kCardDescOffset = {17.5f - kBaseCardWidth / 2.0f,
+                                   110.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kCardArtOffset = {0.0f, 57.5f};
+const glm::vec2 kCardArtSize = {215.0f, 150.0f};
 
-const glm::vec2 kPowerOffset = {140.0f - kBaseCardWidth / 2.0f,
-                                25.0f - kBaseCardHeight / 2.0f};
-const glm::vec2 kHealthOffset = {172.0f - kBaseCardWidth / 2.0f,
-                                 25.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kPowerOffset = {198.75f - kBaseCardWidth / 2.0f,
+                                22.5f - kBaseCardHeight / 2.0f};
+const glm::vec2 kHealthOffset = {226.25f - kBaseCardWidth / 2.0f,
+                                 22.5f - kBaseCardHeight / 2.0f};
+const glm::vec2 kCostOffset = {225.0f - kBaseCardWidth / 2.0f,
+                               325.0f - kBaseCardHeight / 2.0f};
 
 const glm::vec4 kDefaultCardTint = {1.0f, 1.0f, 1.0f, 1.0f};
 const glm::vec4 kDefaultTextColor = {0.0f, 0.0f, 0.0f, 1.0f};

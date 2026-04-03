@@ -17,6 +17,18 @@ enum class CardType {
 };
 
 /**
+ * @brief Defines the color of the card.
+ */
+enum class CardColor {
+  White,
+  Blue,
+  Black,
+  Red,
+  Green,
+  Colorless
+};
+
+/**
  * @brief The static, immutable definition of a card.
  */
 struct CardData {
@@ -26,9 +38,11 @@ struct CardData {
   // Display properties
   std::string name;
   std::string description;
+  std::string type_line;  // e.g., "Creature - Human Soldier"
 
   // Gameplay attributes
   CardType type = CardType::Spell;
+  CardColor color = CardColor::Colorless;
   int cost = 0;
   int power = 0;
   int health = 0;
