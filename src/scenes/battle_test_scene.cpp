@@ -25,7 +25,7 @@ void BattleTestScene::OnAttach() {
   LOG_INFO("[BattleTestScene] Attached");
 
   // Ensure cards are loaded
-  core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false);
+  core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);
 
   RegisterCommands();
 }
