@@ -1,14 +1,14 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_CARD_VIEWER_SCENE_H_
 #define DECK_BUILDER_GAME_INCLUDE_SCENES_CARD_VIEWER_SCENE_H_
 
-#include <vector>
-#include <string>
-#include <memory>
 #include <glm/vec2.hpp>
+#include <memory>
+#include <string>
+#include <vector>
 
-#include "engine/scene/scene.h"
 #include "core/card_data.h"
 #include "core/graphics/ui_button.h"
+#include "engine/scene/scene.h"
 
 namespace scenes {
 
@@ -19,7 +19,6 @@ class CardViewerScene : public engine::Scene {
   void OnAttach() override;
   void OnUpdate(float delta_time_seconds) override;
   void OnRender() override;
-  void OnPostRender() override;
   bool OnInput() override;
 
  private:
@@ -31,7 +30,8 @@ class CardViewerScene : public engine::Scene {
   void RenderUI();
   void RenderFullscreenOverlay();
 
-  bool IsMouseOverCard(const glm::vec2& pos, const glm::vec2& size, const glm::vec2& mouse_pos) const;
+  bool IsMouseOverCard(const glm::vec2& pos, const glm::vec2& size,
+                       const glm::vec2& mouse_pos) const;
 
   std::vector<core::CardData> cards_;
   SortOption current_sort_ = SortOption::kAlphabetical;
