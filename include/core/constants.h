@@ -12,13 +12,26 @@ constexpr float kBaseCardWidth = 200.0f;
 constexpr float kBaseCardHeight = 300.0f;
 const glm::vec2 kBaseCardSize = {kBaseCardWidth, kBaseCardHeight};
 
-const glm::vec2 kCardNameOffset = {20.0f - kBaseCardWidth / 2.0f,
-                                   264.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kCardNameOffset = {15.0f - kBaseCardWidth / 2.0f,
+                                   278.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kCardCostOffset = {175.0f - kBaseCardWidth / 2.0f,
+                                   278.0f - kBaseCardHeight / 2.0f};
 
-const glm::vec2 kPowerOffset = {140.0f - kBaseCardWidth / 2.0f,
-                                25.0f - kBaseCardHeight / 2.0f};
-const glm::vec2 kHealthOffset = {172.0f - kBaseCardWidth / 2.0f,
-                                 25.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kArtBoxOffset = {100.0f - kBaseCardWidth / 2.0f,
+                                 200.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kArtBoxSize = {184.0f, 120.0f};
+
+const glm::vec2 kTypeLineOffset = {15.0f - kBaseCardWidth / 2.0f,
+                                   125.0f - kBaseCardHeight / 2.0f};
+
+const glm::vec2 kDescriptionBoxOffset = {100.0f - kBaseCardWidth / 2.0f,
+                                          59.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kDescriptionBoxSize = {184.0f, 102.0f};
+
+const glm::vec2 kPowerOffset = {145.0f - kBaseCardWidth / 2.0f,
+                                22.0f - kBaseCardHeight / 2.0f};
+const glm::vec2 kHealthOffset = {176.0f - kBaseCardWidth / 2.0f,
+                                 22.0f - kBaseCardHeight / 2.0f};
 
 const glm::vec4 kDefaultCardTint = {1.0f, 1.0f, 1.0f, 1.0f};
 const glm::vec4 kDefaultTextColor = {0.0f, 0.0f, 0.0f, 1.0f};

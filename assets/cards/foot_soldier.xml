@@ -2,11 +2,12 @@
     <Name>Foot Soldier</Name>
     <Description>A basic unit. Draws 1 card on play.</Description>
     <Type>Creature</Type>
+    <Color>White</Color>
     <Cost>2</Cost>
     <Power>2</Power>
     <Health>2</Health>
     <Frame>creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Art>sword.png</Art>
     <Effect trigger="OnPlay" type="Draw">
         <Param name="amount" value="1" />
         <TargetFilter required="false" />
