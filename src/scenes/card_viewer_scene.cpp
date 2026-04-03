@@ -1,6 +1,8 @@
 #include "scenes/card_viewer_scene.h"
 
 #include <algorithm>
+#include "engine/graphics/gaussian_blur_effect.h"
+#include "engine/graphics/post_processor.h"
 #include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
@@ -72,6 +74,20 @@ void CardViewerScene::SortCards() {
 
 void CardViewerScene::OnUpdate(float delta_time_seconds) {
   HandleInput(delta_time_seconds);
+
+  // Manage post-processing blur
+  auto& post = engine::graphics::PostProcessManager::Get();
+  if (selected_card_index_ != -1) {
+    if (!post.GetEffect("GaussianBlurEffect")) {
+      auto blur = std::make_unique<engine::graphics::GaussianBlurEffect>();
+      blur->SetBlurStrength(core::GameConfig::Get().card_viewer_blur_strength);
+      post.AddEffect(std::move(blur));
+    }
+  } else {
+    if (post.GetEffect("GaussianBlurEffect")) {
+      post.RemoveEffect("GaussianBlurEffect");
+    }
+  }
 }
 
 void CardViewerScene::HandleInput(float delta_time_seconds) {
@@ -119,16 +135,23 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
 
   // Update buttons
   bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
-  for (auto& btn : buttons_) {
-    btn->Update(pixel_mouse_pos, clicked);
+  if (selected_card_index_ == -1) {
+    for (auto& btn : buttons_) {
+      btn->Update(pixel_mouse_pos, clicked);
+    }
   }
 
   // Card hover and selection
+  if (selected_card_index_ != -1) return;
+
   hovered_card_index_ = -1;
   float card_w = core::graphics::kBaseCardWidth;
   float start_x =
       (config.window_width - (cols * card_w + (cols - 1) * padding)) * 0.5f;
   float start_y = config.window_height - 150.0f + scroll_offset_;
+
+  int hovered_i = -1;
+  glm::vec2 hovered_pos;
 
   for (int i = 0; i < cards_.size(); ++i) {
     int row = i / cols;
@@ -177,8 +200,9 @@ bool CardViewerScene::IsMouseOverCard(const glm::vec2& pos,
 void CardViewerScene::OnRender() {
   RenderGrid();
   RenderUI();
-  RenderFullscreenOverlay();
 }
+
+void CardViewerScene::OnPostRender() { RenderFullscreenOverlay(); }
 
 void CardViewerScene::RenderGrid() {
   auto& config = core::GameConfig::Get();
@@ -198,12 +222,18 @@ void CardViewerScene::RenderGrid() {
 
     if (pos.y + card_h < 0 || pos.y - card_h > config.window_height) continue;
 
-    float scale = 1.0f;
     if (i == hovered_card_index_ && selected_card_index_ == -1) {
-      scale = config.card_viewer_hover_zoom;
+      hovered_i = i;
+      hovered_pos = pos;
+    } else {
+      core::graphics::CardRenderer::RenderCard(cards_[i], pos, 1.0f);
     }
+  }
 
-    core::graphics::CardRenderer::RenderCard(cards_[i], pos, scale);
+  // Render hovered card last so it's on top
+  if (hovered_i != -1) {
+    core::graphics::CardRenderer::RenderCard(cards_[hovered_i], hovered_pos,
+                                             config.card_viewer_hover_zoom);
   }
 }
 
@@ -240,7 +270,7 @@ void CardViewerScene::RenderFullscreenOverlay() {
 
   renderer.DrawQuad({config.window_width * 0.5f, config.window_height * 0.5f},
                     {config.window_width, config.window_height},
-                    {0.0f, 0.0f, 0.0f, 0.7f}, 0.0f, {0.5f, 0.5f});
+                    {0.0f, 0.0f, 0.0f, 0.9f}, 0.0f, {0.5f, 0.5f});
 
   core::graphics::CardRenderer::RenderCard(
       cards_[selected_card_index_],
