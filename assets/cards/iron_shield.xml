@@ -2,7 +2,8 @@
     <Name>Iron Shield</Name>
     <Description>Gives 3 armor.</Description>
     <Type>Spell</Type>
+    <Color>Blue</Color>
     <Cost>1</Cost>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame></Frame>
+    <Art>shield.png</Art>
 </Card>

@@ -29,6 +29,15 @@ CardType StringToCardType(const std::string& str) {
   return CardType::Spell;
 }
 
+CardColor StringToCardColor(const std::string& str) {
+  if (str == "White") return CardColor::White;
+  if (str == "Blue") return CardColor::Blue;
+  if (str == "Black") return CardColor::Black;
+  if (str == "Red") return CardColor::Red;
+  if (str == "Green") return CardColor::Green;
+  return CardColor::Colorless;
+}
+
 void ParseTargetFilter(pugi::xml_node filter_node, effects::TargetFilter& filter) {
   if (filter_node.empty()) return;
   filter.is_required = filter_node.attribute("required").as_bool(true);
@@ -92,6 +101,7 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       card.name = card_node.child("Name").text().as_string();
       card.description = card_node.child("Description").text().as_string();
       card.type = StringToCardType(card_node.child("Type").text().as_string());
+      card.color = StringToCardColor(card_node.child("Color").text().as_string());
       card.cost = card_node.child("Cost").text().as_int();
       card.power = card_node.child("Power").text().as_int();
       card.health = card_node.child("Health").text().as_int();
@@ -117,6 +127,18 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       }
 
       std::string frame_path = card_node.child("Frame").text().as_string();
+      // If frame path is missing or empty, use color-based default
+      if (frame_path.empty()) {
+        switch (card.color) {
+          case CardColor::White: frame_path = "frame_white.png"; break;
+          case CardColor::Blue: frame_path = "frame_blue.png"; break;
+          case CardColor::Black: frame_path = "frame_black.png"; break;
+          case CardColor::Red: frame_path = "frame_red.png"; break;
+          case CardColor::Green: frame_path = "frame_green.png"; break;
+          default: frame_path = "frame_colorless.png"; break;
+        }
+      }
+
       std::string art_path = card_node.child("Art").text().as_string();
 
       auto frame_tex =

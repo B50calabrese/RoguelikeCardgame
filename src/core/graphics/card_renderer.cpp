@@ -12,6 +12,24 @@
 namespace core::graphics {
 namespace {
 
+glm::vec4 GetColorForCard(CardColor color) {
+  switch (color) {
+    case CardColor::White:
+      return core::graphics::kColorWhite;
+    case CardColor::Blue:
+      return core::graphics::kColorBlue;
+    case CardColor::Black:
+      return core::graphics::kColorBlack;
+    case CardColor::Red:
+      return core::graphics::kColorRed;
+    case CardColor::Green:
+      return core::graphics::kColorGreen;
+    case CardColor::Colorless:
+    default:
+      return glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+  }
+}
+
 glm::vec2 CalculateTransformedOffset(glm::vec2 local_offset, float scale,
                                      glm::vec2 rotation_vec) {
   glm::vec2 scaled = local_offset * scale;
@@ -28,20 +46,75 @@ void CardRenderer::RenderCard(const core::CardData& data, glm::vec2 position,
   const float rotation_radians = glm::radians(rotation);
   const glm::vec2 rotation_vec =
       glm::vec2(std::cos(rotation_radians), std::sin(rotation_radians));
-  const glm::vec4 tint = glm::vec4(1.0f, 1.0f, 1.0f, alpha);
 
-  // Render the Main Frame
+  // Card Color Tinting
+  glm::vec4 color_tint = GetColorForCard(data.color);
+  color_tint.a *= alpha;
+
+  // Render the Main Frame (Tinted)
+  // Mixed with grayscale frame texture
   engine::graphics::Renderer::Get().DrawTexturedQuad(
       position, glm::vec2(card_width, card_height), data.frame_texture_id,
-      rotation, tint, glm::vec2(0.5f, 0.5f));
+      rotation, color_tint, glm::vec2(0.5f, 0.5f));
+
+  // Render the Art with Inner Black Border (Early 2000s style)
+  glm::vec2 art_transformed_offset =
+      position + CalculateTransformedOffset(kArtBoxOffset, scale, rotation_vec);
+
+  // Outer Art Frame (The black border)
+  engine::graphics::Renderer::Get().DrawQuad(
+      art_transformed_offset, kArtBoxSize * scale,
+      glm::vec4(0.0f, 0.0f, 0.0f, alpha), rotation, glm::vec2(0.5f, 0.5f));
+
+  // Inner Art (Slightly smaller to show border)
+  engine::graphics::Renderer::Get().DrawTexturedQuad(
+      art_transformed_offset, (kArtBoxSize - glm::vec2(4.0f)) * scale,
+      data.art_texture_id, rotation,
+      glm::vec4(1.0f, 1.0f, 1.0f, alpha), glm::vec2(0.5f, 0.5f));
+
+  const glm::vec4 text_color = glm::vec4(kDefaultTextColor.r, kDefaultTextColor.g,
+                                         kDefaultTextColor.b, alpha);
 
   // Card Name
   glm::vec2 card_name_transformed_offset =
       position +
       CalculateTransformedOffset(kCardNameOffset, scale, rotation_vec);
   engine::graphics::Renderer::Get().DrawText(
-      "arial", data.name, card_name_transformed_offset, rotation, 1.0f * scale,
-      kDefaultTextColor);
+      "arial", data.name, card_name_transformed_offset, rotation, 0.8f * scale,
+      text_color);
+
+  // Card Cost
+  glm::vec2 card_cost_transformed_offset =
+      position +
+      CalculateTransformedOffset(kCardCostOffset, scale, rotation_vec);
+  engine::graphics::Renderer::Get().DrawText(
+      "arial", std::to_string(data.cost), card_cost_transformed_offset,
+      rotation, 0.8f * scale, text_color);
+
+  // Type Line
+  std::string type_str =
+      (data.type == CardType::Creature) ? "Creature" : "Spell";
+  glm::vec2 type_transformed_offset =
+      position +
+      CalculateTransformedOffset(kTypeLineOffset, scale, rotation_vec);
+  engine::graphics::Renderer::Get().DrawText(
+      "arial", type_str, type_transformed_offset, rotation, 0.6f * scale,
+      text_color);
+
+  // Description (Center aligned in its box)
+  // Note: For simplicity, we assume one line and center it manually for now.
+  // In a real scenario, we'd calculate the text width using the font.
+  // For 0.5f scale, each character is roughly 4-6 pixels wide.
+  float estimated_text_width = data.description.length() * 8.0f * 0.5f * scale;
+  glm::vec2 centered_desc_offset = kDescriptionBoxOffset;
+  centered_desc_offset.x -= (estimated_text_width / 2.0f) / scale;
+
+  glm::vec2 desc_transformed_offset =
+      position +
+      CalculateTransformedOffset(centered_desc_offset, scale, rotation_vec);
+  engine::graphics::Renderer::Get().DrawText(
+      "arial", data.description, desc_transformed_offset, rotation,
+      0.5f * scale, text_color);
 
   // Render Stats for Creatures
   if (data.type == CardType::Creature) {
@@ -50,14 +123,14 @@ void CardRenderer::RenderCard(const core::CardData& data, glm::vec2 position,
         CalculateTransformedOffset(kPowerOffset, scale, rotation_vec);
     engine::graphics::Renderer::Get().DrawText(
         "arial", std::to_string(data.power), power_transformed_offset, rotation,
-        0.8f * scale, kDefaultTextColor);
+        0.8f * scale, text_color);
 
     glm::vec2 health_transformed_offset =
         position +
         CalculateTransformedOffset(kHealthOffset, scale, rotation_vec);
     engine::graphics::Renderer::Get().DrawText(
         "arial", std::to_string(data.health), health_transformed_offset,
-        rotation, 0.8f * scale, kDefaultTextColor);
+        rotation, 0.8f * scale, text_color);
   }
 }
 }  // namespace core::graphics
