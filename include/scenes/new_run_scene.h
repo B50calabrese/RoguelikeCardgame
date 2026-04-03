@@ -19,7 +19,9 @@ const glm::vec2 kNewRunCharacterSize = {120.0f, 120.0f};
 const glm::vec2 kNewRunColorSize = {80.0f, 80.0f};
 
 struct CharacterData {
-  glm::vec4 color;
+  std::string name;
+  std::string texture_path;
+  unsigned int texture_id;
   glm::vec2 pos;
 };
 
