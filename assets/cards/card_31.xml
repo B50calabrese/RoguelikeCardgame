@@ -1,9 +1,9 @@
 <Card id="131">
-    <Name>Placeholder Card 31</Name>
-    <Description>This is a placeholder card number 31.</Description>
+    <Name>Raging Berserker</Name>
+    <Description>A thematic Raging Berserker card.</Description>
     <Cost>2</Cost>
     <Power>1</Power>
     <Health>3</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/red_1.png</Art>
 </Card>

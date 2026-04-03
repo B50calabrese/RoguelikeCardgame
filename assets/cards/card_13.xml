@@ -1,9 +1,9 @@
 <Card id="113">
-    <Name>Placeholder Card 13</Name>
-    <Description>This is a placeholder card number 13.</Description>
+    <Name>Mistweaver</Name>
+    <Description>A thematic Mistweaver card.</Description>
     <Cost>4</Cost>
     <Power>3</Power>
     <Health>6</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/blue_1.png</Art>
 </Card>

@@ -1,9 +1,9 @@
 <Card id="150">
-    <Name>Placeholder Card 50</Name>
-    <Description>This is a placeholder card number 50.</Description>
+    <Name>Earthshaker Beast</Name>
+    <Description>A thematic Earthshaker Beast card.</Description>
     <Cost>1</Cost>
     <Power>0</Power>
     <Health>1</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/green_1.png</Art>
 </Card>

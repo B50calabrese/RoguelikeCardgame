@@ -1,9 +1,9 @@
 <Card id="140">
-    <Name>Placeholder Card 40</Name>
-    <Description>This is a placeholder card number 40.</Description>
+    <Name>Scorched Earth</Name>
+    <Description>A thematic Scorched Earth card.</Description>
     <Cost>1</Cost>
     <Power>0</Power>
     <Health>5</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/red_1.png</Art>
 </Card>

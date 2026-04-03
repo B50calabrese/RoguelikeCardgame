@@ -1,9 +1,9 @@
 <Card id="114">
-    <Name>Placeholder Card 14</Name>
-    <Description>This is a placeholder card number 14.</Description>
+    <Name>Temporal Shift</Name>
+    <Description>A thematic Temporal Shift card.</Description>
     <Cost>5</Cost>
     <Power>4</Power>
     <Health>0</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/blue_1.png</Art>
 </Card>

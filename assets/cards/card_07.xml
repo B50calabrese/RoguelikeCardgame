@@ -1,9 +1,9 @@
 <Card id="107">
-    <Name>Placeholder Card 7</Name>
-    <Description>This is a placeholder card number 7.</Description>
+    <Name>Dawn's Light</Name>
+    <Description>A thematic Dawn's Light card.</Description>
     <Cost>8</Cost>
     <Power>2</Power>
     <Health>0</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/white_1.png</Art>
 </Card>

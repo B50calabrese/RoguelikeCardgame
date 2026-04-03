@@ -8,6 +8,8 @@
 #include "core/constants.h"
 #include "core/character_config.h"
 #include "core/game_config.h"
+#include "engine/graphics/texture.h"
+#include "engine/util/asset_manager.h"
 #include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
 #include "engine/input/input_manager.h"
@@ -24,16 +26,25 @@ void NewRunScene::OnAttach() {
   float drawable_w = window_w - 2.0f * buffer;
 
   // Initialize characters
-  std::vector<glm::vec4> char_colors = {
-      core::characters::kCharColor1, core::characters::kCharColor2,
-      core::characters::kCharColor3};
+  struct CharInitData {
+    std::string name;
+    std::string texture;
+  };
+  std::vector<CharInitData> char_inits = {
+      {"Wizard", "art/characters/wizard.png"},
+      {"Knight", "art/characters/knight.png"},
+      {"Ranger", "art/characters/ranger.png"}};
 
   float char_y = window_h * kNewRunCharacterYFactor;
-  float char_spacing = drawable_w / (char_colors.size() - 1);
+  float char_spacing = drawable_w / (char_inits.size() - 1);
 
-  for (size_t i = 0; i < char_colors.size(); ++i) {
+  for (size_t i = 0; i < char_inits.size(); ++i) {
     float x = buffer + i * char_spacing;
-    characters_.push_back({char_colors[i], {x, char_y}});
+    auto tex = engine::util::AssetManager<engine::graphics::Texture>::Get(
+        char_inits[i].texture);
+    unsigned int tex_id = tex ? tex->renderer_id() : 0;
+    characters_.push_back(
+        {char_inits[i].name, char_inits[i].texture, tex_id, {x, char_y}});
   }
 
   // Initialize colors
@@ -146,19 +157,35 @@ void NewRunScene::OnRender() {
 
   // Render Characters
   for (int i = 0; i < static_cast<int>(characters_.size()); ++i) {
-    glm::vec4 color = characters_[i].color;
-    renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
-                      color, 0.0f, {0.5f, 0.5f});
+    if (characters_[i].texture_id != 0) {
+      renderer.DrawTexturedQuad(characters_[i].pos, kNewRunCharacterSize,
+                                characters_[i].texture_id, 0.0f, {1, 1, 1, 1},
+                                {0.5f, 0.5f});
+    } else {
+      renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
+                        {0.5f, 0.5f, 0.5f, 1.0f}, 0.0f, {0.5f, 0.5f});
+    }
 
     if (i == selected_character_index_) {
-      // Draw outline - engine doesn't have DrawRectOutline, so draw 4 small rects or a slightly larger quad behind
       float outline_thickness = 4.0f;
-      glm::vec2 outline_size = kNewRunCharacterSize + glm::vec2(outline_thickness * 2.0f);
-      renderer.DrawQuad(characters_[i].pos, outline_size, {1, 1, 1, 1}, 0.0f, {0.5f, 0.5f});
-      // Redraw character on top
-      renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
-                        color, 0.0f, {0.5f, 0.5f});
+      glm::vec2 outline_size =
+          kNewRunCharacterSize + glm::vec2(outline_thickness * 2.0f);
+      renderer.DrawQuad(characters_[i].pos, outline_size, {1, 1, 1, 1}, 0.0f,
+                        {0.5f, 0.5f});
+      // Redraw portrait (or fallback) on top
+      if (characters_[i].texture_id != 0) {
+        renderer.DrawTexturedQuad(characters_[i].pos, kNewRunCharacterSize,
+                                  characters_[i].texture_id, 0.0f, {1, 1, 1, 1},
+                                  {0.5f, 0.5f});
+      } else {
+        renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
+                          {0.5f, 0.5f, 0.5f, 1.0f}, 0.0f, {0.5f, 0.5f});
+      }
     }
+
+    renderer.DrawText("default", characters_[i].name,
+                      characters_[i].pos - glm::vec2(40.0f, 80.0f), 0.0f, 0.6f,
+                      {1, 1, 1, 1});
   }
 
   // Render Colors

@@ -1,9 +1,9 @@
 <Card id="128">
-    <Name>Placeholder Card 28</Name>
-    <Description>This is a placeholder card number 28.</Description>
+    <Name>Death's Embrace</Name>
+    <Description>A thematic Death's Embrace card.</Description>
     <Cost>9</Cost>
     <Power>3</Power>
     <Health>0</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/black_1.png</Art>
 </Card>

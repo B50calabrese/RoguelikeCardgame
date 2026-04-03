@@ -1,9 +1,9 @@
 <Card id="117">
-    <Name>Placeholder Card 17</Name>
-    <Description>This is a placeholder card number 17.</Description>
+    <Name>Storm Caller</Name>
+    <Description>A thematic Storm Caller card.</Description>
     <Cost>8</Cost>
     <Power>2</Power>
     <Health>3</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/blue_1.png</Art>
 </Card>

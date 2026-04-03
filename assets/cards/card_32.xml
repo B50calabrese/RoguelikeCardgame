@@ -1,9 +1,9 @@
 <Card id="132">
-    <Name>Placeholder Card 32</Name>
-    <Description>This is a placeholder card number 32.</Description>
+    <Name>Molten Fury</Name>
+    <Description>A thematic Molten Fury card.</Description>
     <Cost>3</Cost>
     <Power>2</Power>
     <Health>4</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/red_1.png</Art>
 </Card>

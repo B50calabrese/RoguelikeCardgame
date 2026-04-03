@@ -1,9 +1,9 @@
 <Card id="103">
-    <Name>Placeholder Card 3</Name>
-    <Description>This is a placeholder card number 3.</Description>
+    <Name>Holy Sanctum</Name>
+    <Description>A thematic Holy Sanctum card.</Description>
     <Cost>4</Cost>
     <Power>3</Power>
     <Health>3</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/white_1.png</Art>
 </Card>

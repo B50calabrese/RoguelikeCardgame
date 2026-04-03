@@ -1,9 +1,9 @@
 <Card id="147">
-    <Name>Placeholder Card 47</Name>
-    <Description>This is a placeholder card number 47.</Description>
+    <Name>Thorned Thicket</Name>
+    <Description>A thematic Thorned Thicket card.</Description>
     <Cost>8</Cost>
     <Power>2</Power>
     <Health>5</Health>
-    <Frame>non_creature_frame.png</Frame>
-    <Art>card_back.png</Art>
+    <Frame>art/ui/card_frame.png</Frame>
+    <Art>art/cards/green_1.png</Art>
 </Card>
