@@ -1,0 +1,1 @@
+add_game_demo(UiButtonDemo main.cpp)

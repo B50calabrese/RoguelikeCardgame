@@ -1,0 +1,1 @@
+add_game_demo(CardViewerDemo main.cpp)
