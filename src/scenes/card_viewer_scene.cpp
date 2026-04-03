@@ -77,16 +77,12 @@ void CardViewerScene::OnUpdate(float delta_time_seconds) {
 
 void CardViewerScene::HandleInput(float delta_time_seconds) {
   auto& input = engine::InputManager::Get();
-  auto mouse_pos = input.mouse_screen_pos();
+  glm::vec2 pixel_mouse_pos = input.mouse_screen_pos();
   auto& config = core::GameConfig::Get();
 
-  float mx = (mouse_pos.x + 1.0f) * 0.5f * config.window_width;
-  float my = (mouse_pos.y + 1.0f) * 0.5f * config.window_height;
-  glm::vec2 pixel_mouse_pos = {mx, my};
-
   if (selected_card_index_ != -1) {
-    if (input.IsKeyPressed(engine::KeyCode::kMouseLeft) ||
-        input.IsKeyPressed(engine::KeyCode::kEscape)) {
+    if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT) ||
+        input.IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
       selected_card_index_ = -1;
     }
     return;
@@ -106,13 +102,13 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   float sb_y = 100.0f;
   float sb_height = config.window_height - 200.0f;
 
-  if (input.IsKeyPressed(engine::KeyCode::kMouseLeft)) {
+  if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT)) {
     if (core::util::PointInRect(pixel_mouse_pos, {sb_x, sb_y},
                                 {sb_width, sb_height}, false)) {
       is_dragging_scrollbar_ = true;
     }
   }
-  if (input.IsKeyReleased(engine::KeyCode::kMouseLeft)) {
+  if (input.IsKeyReleased(engine::KeyCode::KC_MOUSE_LEFT)) {
     is_dragging_scrollbar_ = false;
   }
 
@@ -123,7 +119,7 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   }
 
   // Update buttons
-  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
+  bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
   for (auto& btn : buttons_) {
     btn->Update(pixel_mouse_pos, clicked);
   }
@@ -162,13 +158,13 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   }
 
   // Keyboard scrolling
-  if (input.IsKeyDown(engine::KeyCode::kUp))
+  if (input.IsKeyDown(engine::KeyCode::KC_UP))
     scroll_offset_ -= 1000.0f * delta_time_seconds;
-  if (input.IsKeyDown(engine::KeyCode::kDown))
+  if (input.IsKeyDown(engine::KeyCode::KC_DOWN))
     scroll_offset_ += 1000.0f * delta_time_seconds;
-  if (input.IsKeyPressed(engine::KeyCode::kPageUp))
+  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_UP))
     scroll_offset_ -= config.window_height * 0.5f;
-  if (input.IsKeyPressed(engine::KeyCode::kPageDown))
+  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_DOWN))
     scroll_offset_ += config.window_height * 0.5f;
   scroll_offset_ = glm::clamp(scroll_offset_, 0.0f, max_scroll_);
 }

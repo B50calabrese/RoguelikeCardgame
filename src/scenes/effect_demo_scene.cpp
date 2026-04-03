@@ -34,7 +34,7 @@ void EffectDemoScene::OnAttach() {
     core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::types::StatModifyEffect>(); });
 
     // Load cards
-    core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false);
+    core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);
 
     InitializeGameState();
 }

@@ -16,8 +16,8 @@ class BattleTestApp : public Application {
   void OnInit() override {
     // Initialize text rendering (required for console and cards)
     graphics::TextRenderer::Get().Init();
-    graphics::TextRenderer::Get().LoadFont("arial", "assets/arial.ttf", 24);
-    graphics::TextRenderer::Get().LoadFont("default", "assets/arial.ttf", 18);
+    graphics::TextRenderer::Get().LoadFont("arial", "arial.ttf", 24);
+    graphics::TextRenderer::Get().LoadFont("default", "arial.ttf", 18);
 
     // Set the initial scene
     SceneManager::Get().SetScene(std::make_unique<scenes::BattleTestScene>());

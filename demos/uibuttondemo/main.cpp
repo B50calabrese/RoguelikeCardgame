@@ -45,14 +45,9 @@ class UIButtonDemo : public engine::Application {
 
   void OnUpdate(double delta_time_seconds) override {
     auto& input = engine::InputManager::Get();
-    auto mouse_pos = input.mouse_screen_pos();
+    glm::vec2 pixel_mouse_pos = input.mouse_screen_pos();
 
-    // Normalize to pixel coordinates for 800x600 window
-    float mx = (mouse_pos.x + 1.0f) * 0.5f * 800.0f;
-    float my = (mouse_pos.y + 1.0f) * 0.5f * 600.0f;
-    glm::vec2 pixel_mouse_pos = {mx, my};
-
-    bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
+    bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
     for (auto& btn : buttons_) {
       btn->Update(pixel_mouse_pos, clicked);
     }
