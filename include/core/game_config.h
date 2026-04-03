@@ -28,6 +28,7 @@ struct GameConfig {
   int card_viewer_columns = 4;
   float card_viewer_hover_zoom = 1.2f;
   float card_viewer_fullscreen_zoom = 1.6f;
+  float card_viewer_blur_strength = 2.0f;
 
  private:
   GameConfig() = default;
