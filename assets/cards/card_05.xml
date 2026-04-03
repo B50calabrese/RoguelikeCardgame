@@ -1,9 +1,9 @@
 <Card id="105">
-    <Name>Celestial Messenger</Name>
-    <Description>A thematic Celestial Messenger card.</Description>
+    <Name>Placeholder Card 5</Name>
+    <Description>This is a placeholder card number 5.</Description>
     <Cost>6</Cost>
     <Power>0</Power>
     <Health>5</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/white_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

@@ -1,9 +1,9 @@
 <Card id="130">
-    <Name>Vengeful Specter</Name>
-    <Description>A thematic Vengeful Specter card.</Description>
+    <Name>Placeholder Card 30</Name>
+    <Description>This is a placeholder card number 30.</Description>
     <Cost>1</Cost>
     <Power>0</Power>
     <Health>2</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/black_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

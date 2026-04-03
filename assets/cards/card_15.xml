@@ -1,9 +1,9 @@
 <Card id="115">
-    <Name>Ethereal Insight</Name>
-    <Description>A thematic Ethereal Insight card.</Description>
+    <Name>Placeholder Card 15</Name>
+    <Description>This is a placeholder card number 15.</Description>
     <Cost>6</Cost>
     <Power>0</Power>
     <Health>1</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/blue_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

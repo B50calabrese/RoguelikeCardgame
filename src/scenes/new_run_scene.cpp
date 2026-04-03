@@ -32,8 +32,8 @@ void NewRunScene::OnAttach() {
   };
   std::vector<CharInitData> char_inits = {
       {"Wizard", "art/characters/wizard.png"},
-      {"Knight", "art/characters/knight.png"},
-      {"Ranger", "art/characters/ranger.png"}};
+      {"Warrior", "art/characters/warrior.png"},
+      {"Rogue", "art/characters/rogue.png"}};
 
   float char_y = window_h * kNewRunCharacterYFactor;
   float char_spacing = drawable_w / (char_inits.size() - 1);

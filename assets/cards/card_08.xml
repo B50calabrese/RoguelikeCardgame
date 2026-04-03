@@ -1,9 +1,9 @@
 <Card id="108">
-    <Name>Archangel's Decree</Name>
-    <Description>A thematic Archangel's Decree card.</Description>
+    <Name>Placeholder Card 8</Name>
+    <Description>This is a placeholder card number 8.</Description>
     <Cost>9</Cost>
     <Power>3</Power>
     <Health>1</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/white_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

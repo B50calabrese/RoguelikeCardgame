@@ -1,9 +1,9 @@
 <Card id="133">
-    <Name>Dragon's Breath</Name>
-    <Description>A thematic Dragon's Breath card.</Description>
+    <Name>Placeholder Card 33</Name>
+    <Description>This is a placeholder card number 33.</Description>
     <Cost>4</Cost>
     <Power>3</Power>
     <Health>5</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/red_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

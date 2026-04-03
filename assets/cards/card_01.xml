@@ -1,9 +1,9 @@
 <Card id="101">
-    <Name>Seraph of Justice</Name>
-    <Description>A thematic Seraph of Justice card.</Description>
+    <Name>Placeholder Card 1</Name>
+    <Description>This is a placeholder card number 1.</Description>
     <Cost>2</Cost>
     <Power>1</Power>
     <Health>1</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/white_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

@@ -1,9 +1,9 @@
 <Card id="144">
-    <Name>Wildheart Shaman</Name>
-    <Description>A thematic Wildheart Shaman card.</Description>
+    <Name>Placeholder Card 44</Name>
+    <Description>This is a placeholder card number 44.</Description>
     <Cost>5</Cost>
     <Power>4</Power>
     <Health>2</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/green_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

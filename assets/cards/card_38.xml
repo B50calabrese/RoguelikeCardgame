@@ -1,9 +1,9 @@
 <Card id="138">
-    <Name>Infernal Charge</Name>
-    <Description>A thematic Infernal Charge card.</Description>
+    <Name>Placeholder Card 38</Name>
+    <Description>This is a placeholder card number 38.</Description>
     <Cost>9</Cost>
     <Power>3</Power>
     <Health>3</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/red_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

@@ -1,9 +1,9 @@
 <Card id="137">
-    <Name>Ember Scout</Name>
-    <Description>A thematic Ember Scout card.</Description>
+    <Name>Placeholder Card 37</Name>
+    <Description>This is a placeholder card number 37.</Description>
     <Cost>8</Cost>
     <Power>2</Power>
     <Health>2</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/red_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

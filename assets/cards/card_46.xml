@@ -1,9 +1,9 @@
 <Card id="146">
-    <Name>Verdant Growth</Name>
-    <Description>A thematic Verdant Growth card.</Description>
+    <Name>Placeholder Card 46</Name>
+    <Description>This is a placeholder card number 46.</Description>
     <Cost>7</Cost>
     <Power>1</Power>
     <Health>4</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/green_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>

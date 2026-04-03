@@ -1,9 +1,9 @@
 <Card id="127">
-    <Name>Cursed Chalice</Name>
-    <Description>A thematic Cursed Chalice card.</Description>
+    <Name>Placeholder Card 27</Name>
+    <Description>This is a placeholder card number 27.</Description>
     <Cost>8</Cost>
     <Power>2</Power>
     <Health>6</Health>
-    <Frame>art/ui/card_frame.png</Frame>
-    <Art>art/cards/black_1.png</Art>
+    <Frame>non_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
 </Card>
