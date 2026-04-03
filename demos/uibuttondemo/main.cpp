@@ -52,7 +52,7 @@ class UIButtonDemo : public engine::Application {
     float my = (mouse_pos.y + 1.0f) * 0.5f * 600.0f;
     glm::vec2 pixel_mouse_pos = {mx, my};
 
-    bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
+    bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
     for (auto& btn : buttons_) {
       btn->Update(pixel_mouse_pos, clicked);
     }

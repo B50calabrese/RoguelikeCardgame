@@ -1,7 +1,6 @@
 #include "scenes/combat_scene.h"
 
 #include <algorithm>
-#include <iostream>
 #include <vector>
 
 #include <glm/vec2.hpp>
@@ -11,25 +10,25 @@
 #include "core/game_config.h"
 #include "core/graphics/hand_renderer.h"
 #include "engine/scene/scene_manager.h"
+#include "engine/util/logger.h"
 #include "scenes/main_menu_scene.h"
 #include "engine/input/input_manager.h"
 
 namespace scenes {
 
 void CombatScene::OnAttach() {
-  std::cout << "[CombatScene] Attached" << std::endl;
+  LOG_INFO("[CombatScene] Attached");
 
   // Load cards from assets
   bool success =
       core::CardRegistry::Get().LoadCardsFromDirectory("assets/cards", false);
   if (!success) {
-    std::cerr << "[CombatScene] Failed to load some cards." << std::endl;
+    LOG_ERR("[CombatScene] Failed to load some cards.");
   }
 
   const auto& all_cards = core::CardRegistry::Get().GetAllCards();
   if (all_cards.empty()) {
-    std::cerr << "[CombatScene] No cards loaded to display in hand!"
-              << std::endl;
+    LOG_ERR("[CombatScene] No cards loaded to display in hand!");
     return;
   }
 
@@ -50,7 +49,7 @@ void CombatScene::OnAttach() {
 
 void CombatScene::OnUpdate(float delta_time_seconds) {
   // Game logic (AI, Card movement) goes here
-  if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
+  if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::kEscape)) {
     engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
   }
 }
