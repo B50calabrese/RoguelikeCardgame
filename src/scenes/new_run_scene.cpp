@@ -1,12 +1,13 @@
 #include "scenes/new_run_scene.h"
 
 #include <GLFW/glfw3.h>
+
 #include <algorithm>
 #include <memory>
 #include <vector>
 
-#include "core/constants.h"
 #include "core/character_config.h"
+#include "core/constants.h"
 #include "core/game_config.h"
 #include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
@@ -24,9 +25,9 @@ void NewRunScene::OnAttach() {
   float drawable_w = window_w - 2.0f * buffer;
 
   // Initialize characters
-  std::vector<glm::vec4> char_colors = {
-      core::characters::kCharColor1, core::characters::kCharColor2,
-      core::characters::kCharColor3};
+  std::vector<glm::vec4> char_colors = {core::characters::kCharColor1,
+                                        core::characters::kCharColor2,
+                                        core::characters::kCharColor3};
 
   float char_y = window_h * kNewRunCharacterYFactor;
   float char_spacing = drawable_w / (char_colors.size() - 1);
@@ -85,7 +86,7 @@ void NewRunScene::HandleInput() {
   glm::vec2 pixel_mouse_pos = input.mouse_screen_pos();
   auto& config = core::GameConfig::Get();
 
-  bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
+  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
 
   // Update fixed buttons
   for (auto& btn : buttons_) {
@@ -114,7 +115,7 @@ void NewRunScene::HandleInput() {
       if (core::util::PointInRect(pixel_mouse_pos, colors_[i].pos,
                                   kNewRunColorSize, true)) {
         auto it = std::find(selected_color_indices_.begin(),
-                           selected_color_indices_.end(), i);
+                            selected_color_indices_.end(), i);
         if (it != selected_color_indices_.end()) {
           // Deselect if already selected
           selected_color_indices_.erase(it);
@@ -135,36 +136,39 @@ void NewRunScene::OnRender() {
   auto& renderer = engine::graphics::Renderer::Get();
   auto& config = core::GameConfig::Get();
 
-  renderer.DrawText("default", "NEW RUN",
-                    {config.window_width * 0.5f - 100.0f,
-                     config.window_height * 0.9f},
-                    0.0f, 1.0f, {1, 1, 1, 1});
+  renderer.DrawText(
+      "default", "NEW RUN",
+      {config.window_width * 0.5f - 100.0f, config.window_height * 0.9f}, 0.0f,
+      1.0f, {1, 1, 1, 1});
 
   // Render Characters
   for (int i = 0; i < static_cast<int>(characters_.size()); ++i) {
     glm::vec4 color = characters_[i].color;
-    renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
-                      color, 0.0f, {0.5f, 0.5f});
+    renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize, color, 0.0f,
+                      {0.5f, 0.5f});
 
     if (i == selected_character_index_) {
-      // Draw outline - engine doesn't have DrawRectOutline, so draw 4 small rects or a slightly larger quad behind
+      // Draw outline - engine doesn't have DrawRectOutline, so draw 4 small
+      // rects or a slightly larger quad behind
       float outline_thickness = 4.0f;
-      glm::vec2 outline_size = kNewRunCharacterSize + glm::vec2(outline_thickness * 2.0f);
-      renderer.DrawQuad(characters_[i].pos, outline_size, {1, 1, 1, 1}, 0.0f, {0.5f, 0.5f});
+      glm::vec2 outline_size =
+          kNewRunCharacterSize + glm::vec2(outline_thickness * 2.0f);
+      renderer.DrawQuad(characters_[i].pos, outline_size, {1, 1, 1, 1}, 0.0f,
+                        {0.5f, 0.5f});
       // Redraw character on top
-      renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize,
-                        color, 0.0f, {0.5f, 0.5f});
+      renderer.DrawQuad(characters_[i].pos, kNewRunCharacterSize, color, 0.0f,
+                        {0.5f, 0.5f});
     }
   }
 
   // Render Colors
   for (int i = 0; i < static_cast<int>(colors_.size()); ++i) {
     bool selected = std::find(selected_color_indices_.begin(),
-                             selected_color_indices_.end(),
-                             i) != selected_color_indices_.end();
+                              selected_color_indices_.end(),
+                              i) != selected_color_indices_.end();
     glm::vec4 color = selected ? colors_[i].highlight_color : colors_[i].color;
-    renderer.DrawQuad(colors_[i].pos, kNewRunColorSize,
-                      color, 0.0f, {0.5f, 0.5f});
+    renderer.DrawQuad(colors_[i].pos, kNewRunColorSize, color, 0.0f,
+                      {0.5f, 0.5f});
   }
 
   // Render Buttons

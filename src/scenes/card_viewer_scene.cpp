@@ -1,10 +1,9 @@
 #include "scenes/card_viewer_scene.h"
 
 #include <algorithm>
+#include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
-
-#include <glm/glm.hpp>
 
 #include "core/card_registry.h"
 #include "core/constants.h"
@@ -81,8 +80,8 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   auto& config = core::GameConfig::Get();
 
   if (selected_card_index_ != -1) {
-    if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT) ||
-        input.IsKeyPressed(engine::KeyCode::KC_ESCAPE)) {
+    if (input.IsKeyPressed(engine::KeyCode::kMouseLeft) ||
+        input.IsKeyPressed(engine::KeyCode::kEscape)) {
       selected_card_index_ = -1;
     }
     return;
@@ -102,13 +101,13 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   float sb_y = 100.0f;
   float sb_height = config.window_height - 200.0f;
 
-  if (input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT)) {
+  if (input.IsKeyPressed(engine::KeyCode::kMouseLeft)) {
     if (core::util::PointInRect(pixel_mouse_pos, {sb_x, sb_y},
                                 {sb_width, sb_height}, false)) {
       is_dragging_scrollbar_ = true;
     }
   }
-  if (input.IsKeyReleased(engine::KeyCode::KC_MOUSE_LEFT)) {
+  if (input.IsKeyReleased(engine::KeyCode::kMouseLeft)) {
     is_dragging_scrollbar_ = false;
   }
 
@@ -119,7 +118,7 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   }
 
   // Update buttons
-  bool clicked = input.IsKeyPressed(engine::KeyCode::KC_MOUSE_LEFT);
+  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
   for (auto& btn : buttons_) {
     btn->Update(pixel_mouse_pos, clicked);
   }
@@ -158,18 +157,19 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   }
 
   // Keyboard scrolling
-  if (input.IsKeyDown(engine::KeyCode::KC_UP))
+  if (input.IsKeyDown(engine::KeyCode::kUp))
     scroll_offset_ -= 1000.0f * delta_time_seconds;
-  if (input.IsKeyDown(engine::KeyCode::KC_DOWN))
+  if (input.IsKeyDown(engine::KeyCode::kDown))
     scroll_offset_ += 1000.0f * delta_time_seconds;
-  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_UP))
+  if (input.IsKeyPressed(engine::KeyCode::kPageUp))
     scroll_offset_ -= config.window_height * 0.5f;
-  if (input.IsKeyPressed(engine::KeyCode::KC_PAGE_DOWN))
+  if (input.IsKeyPressed(engine::KeyCode::kPageDown))
     scroll_offset_ += config.window_height * 0.5f;
   scroll_offset_ = glm::clamp(scroll_offset_, 0.0f, max_scroll_);
 }
 
-bool CardViewerScene::IsMouseOverCard(const glm::vec2& pos, const glm::vec2& size,
+bool CardViewerScene::IsMouseOverCard(const glm::vec2& pos,
+                                      const glm::vec2& size,
                                       const glm::vec2& mouse_pos) const {
   return core::util::PointInRect(mouse_pos, pos, size, true);
 }
@@ -220,9 +220,10 @@ void CardViewerScene::RenderUI() {
   if (max_scroll_ > 0) {
     float handle_height =
         std::max(20.0f, sb_height * (sb_height / (sb_height + max_scroll_)));
-    float handle_y =
-        sb_y + (1.0f - (scroll_offset_ / max_scroll_)) * (sb_height - handle_height);
-    renderer.DrawRect(sb_x, handle_y, sb_width, handle_height, 0.5f, 0.5f, 0.5f);
+    float handle_y = sb_y + (1.0f - (scroll_offset_ / max_scroll_)) *
+                                (sb_height - handle_height);
+    renderer.DrawRect(sb_x, handle_y, sb_width, handle_height, 0.5f, 0.5f,
+                      0.5f);
   }
 
   // Render Buttons
