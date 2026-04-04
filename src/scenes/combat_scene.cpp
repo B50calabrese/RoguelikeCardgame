@@ -8,6 +8,7 @@
 
 #include "core/card_registry.h"
 #include "core/constants.h"
+#include "core/effects/effect_resolver.h"
 #include "core/game_config.h"
 #include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
@@ -50,12 +51,10 @@ void CombatScene::OnAttach() {
     VisualCard vc;
     vc.data = it->second;
     // Start off-screen
-    vc.current_pos = {config.window_width * 0.5f, -200.0f};
-    vc.current_scale = 0.5f;
-    vc.current_rotation = 0.0f;
-    vc.target_pos = vc.current_pos;
-    vc.target_scale = vc.current_scale;
-    vc.target_rotation = vc.current_rotation;
+    vc.current_transform.position = {config.window_width * 0.5f, -200.0f};
+    vc.current_transform.scale = glm::vec2(0.5f);
+    vc.current_transform.rotation = 0.0f;
+    vc.target_transform = vc.current_transform;
     hand_visuals_.push_back(vc);
   }
 
@@ -89,12 +88,14 @@ void CombatScene::HandleCardInteraction(float delta_time_seconds) {
   // 1. Handle Held Card
   if (held_card_index_) {
     VisualCard& held_card = hand_visuals_[*held_card_index_];
-    held_card.target_pos = mouse_pos;
-    held_card.target_scale = kCardHeldScale;
-    held_card.target_rotation = 0.0f;
+    held_card.target_transform.position = mouse_pos;
+    held_card.target_transform.scale = glm::vec2(kCardHeldScale);
+    held_card.target_transform.rotation = 0.0f;
 
     if (clicked) {
-      // Play card action (for now just return to hand)
+      // For now, playing just returns it to hand visuals
+      // In the future, this would be:
+      // core::effects::EffectResolver::Get().QueueAction(std::make_shared<core::effects::actions::PlayCardAction>(...));
       held_card.is_held = false;
       held_card_index_ = std::nullopt;
     }
@@ -104,8 +105,10 @@ void CombatScene::HandleCardInteraction(float delta_time_seconds) {
   // 2. Hover detection (top-to-bottom)
   for (int i = static_cast<int>(hand_visuals_.size()) - 1; i >= 0; --i) {
     const auto& vc = hand_visuals_[i];
-    glm::vec2 size = core::graphics::kBaseCardSize * vc.current_scale;
-    if (core::util::PointInRect(mouse_pos, vc.current_pos, size, true)) {
+    glm::vec2 size =
+        core::graphics::kBaseCardSize * vc.current_transform.scale.x;
+    if (core::util::PointInRect(mouse_pos, vc.current_transform.position, size,
+                                true)) {
       hovered_card_index_ = i;
       break;
     }
@@ -145,16 +148,14 @@ void CombatScene::UpdateHandLayout() {
     size_t vc_idx = in_hand_indices[i];
     VisualCard& vc = hand_visuals_[vc_idx];
 
-    vc.target_pos = layouts[i].position;
-    vc.target_scale = layouts[i].scale;
-    vc.target_rotation = layouts[i].rotation;
+    vc.target_transform = layouts[i];
 
     // Apply hover zoom
     if (hovered_card_index_ && *hovered_card_index_ == vc_idx) {
-      vc.target_scale *= kCardHoverScale;
-      vc.target_rotation = 0.0f;
+      vc.target_transform.scale *= kCardHoverScale;
+      vc.target_transform.rotation = 0.0f;
       // Slightly lift the hovered card
-      vc.target_pos.y += 50.0f;
+      vc.target_transform.position.y += 50.0f;
     }
   }
 }
@@ -163,9 +164,12 @@ void CombatScene::AnimateCards(float delta_time_seconds) {
   float t = glm::clamp(delta_time_seconds * kLerpSpeed, 0.0f, 1.0f);
 
   for (auto& vc : hand_visuals_) {
-    vc.current_pos = glm::mix(vc.current_pos, vc.target_pos, t);
-    vc.current_scale = glm::mix(vc.current_scale, vc.target_scale, t);
-    vc.current_rotation = glm::mix(vc.current_rotation, vc.target_rotation, t);
+    vc.current_transform.position =
+        glm::mix(vc.current_transform.position, vc.target_transform.position, t);
+    vc.current_transform.scale =
+        glm::mix(vc.current_transform.scale, vc.target_transform.scale, t);
+    vc.current_transform.rotation = glm::mix(
+        vc.current_transform.rotation, vc.target_transform.rotation, t);
   }
 }
 
@@ -181,16 +185,16 @@ void CombatScene::OnRender() {
   for (size_t i = 0; i < hand_visuals_.size(); ++i) {
     if (last_to_render && i == *last_to_render) continue;
     const auto& vc = hand_visuals_[i];
-    core::graphics::CardRenderer::RenderCard(vc.data, vc.current_pos,
-                                             vc.current_scale, 1.0f,
-                                             vc.current_rotation);
+    core::graphics::CardRenderer::RenderCard(
+        vc.data, vc.current_transform.position, vc.current_transform.scale.x,
+        1.0f, vc.current_transform.rotation);
   }
 
   if (last_to_render) {
     const auto& vc = hand_visuals_[*last_to_render];
-    core::graphics::CardRenderer::RenderCard(vc.data, vc.current_pos,
-                                             vc.current_scale, 1.0f,
-                                             vc.current_rotation);
+    core::graphics::CardRenderer::RenderCard(
+        vc.data, vc.current_transform.position, vc.current_transform.scale.x,
+        1.0f, vc.current_transform.rotation);
   }
 }
 

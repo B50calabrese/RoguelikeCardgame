@@ -7,6 +7,7 @@
 #include <glm/vec2.hpp>
 
 #include "core/card_data.h"
+#include "engine/ecs/components/transform.h"
 #include "engine/scene/scene.h"
 
 namespace scenes {
@@ -18,14 +19,10 @@ struct VisualCard {
   core::CardData data;
 
   // Current visual state (for rendering)
-  glm::vec2 current_pos;
-  float current_scale;
-  float current_rotation;
+  engine::ecs::components::Transform current_transform;
 
   // Target visual state (for animation)
-  glm::vec2 target_pos;
-  float target_scale;
-  float target_rotation;
+  engine::ecs::components::Transform target_transform;
 
   bool is_held = false;
 };

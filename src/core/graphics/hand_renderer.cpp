@@ -10,14 +10,16 @@
 
 namespace core::graphics {
 
-std::vector<CardLayout> HandRenderer::CalculateHandLayout(
-    size_t card_count, glm::vec2 bounds_pos, glm::vec2 bounds_size,
-    float arc_angle_degrees, float overlap_factor) {
+std::vector<engine::ecs::components::Transform>
+HandRenderer::CalculateHandLayout(size_t card_count, glm::vec2 bounds_pos,
+                                  glm::vec2 bounds_size,
+                                  float arc_angle_degrees,
+                                  float overlap_factor) {
   if (card_count == 0) {
     return {};
   }
 
-  std::vector<CardLayout> layout(card_count);
+  std::vector<engine::ecs::components::Transform> layout(card_count);
 
   // 1. Calculate Arc and Scaling
   glm::vec2 bounds_center = bounds_pos + bounds_size * 0.5f;
@@ -25,7 +27,7 @@ std::vector<CardLayout> HandRenderer::CalculateHandLayout(
   if (card_count == 1) {
     float scale = std::min(bounds_size.x / kBaseCardWidth,
                            bounds_size.y / kBaseCardHeight);
-    layout[0] = {bounds_center, scale, 0.0f};
+    layout[0] = {bounds_center, glm::vec2(scale), 0.0f};
     return layout;
   }
 
@@ -57,8 +59,8 @@ std::vector<CardLayout> HandRenderer::CalculateHandLayout(
     float start_x = bounds_center.x - total_width / 2.0f + card_width / 2.0f;
     float step_x = card_width * (1.0f - overlap_factor);
     for (size_t i = 0; i < card_count; ++i) {
-      layout[i] = {glm::vec2(start_x + i * step_x, bounds_center.y), scale,
-                   0.0f};
+      layout[i] = {glm::vec2(start_x + i * step_x, bounds_center.y),
+                   glm::vec2(scale), 0.0f};
     }
     return layout;
   }
@@ -95,7 +97,7 @@ std::vector<CardLayout> HandRenderer::CalculateHandLayout(
                   std::sin(current_angle_rad) * radius);
 
     float card_rotation = current_angle_deg - 90.0f;
-    layout[i] = {card_pos, scale, card_rotation};
+    layout[i] = {card_pos, glm::vec2(scale), card_rotation};
   }
 
   return layout;
@@ -112,7 +114,7 @@ void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
                                      arc_angle_degrees, overlap_factor);
 
   for (size_t i = 0; i < cards.size(); ++i) {
-    CardRenderer::RenderCard(cards[i], layouts[i].position, layouts[i].scale,
+    CardRenderer::RenderCard(cards[i], layouts[i].position, layouts[i].scale.x,
                              1.0f, layouts[i].rotation);
   }
 }

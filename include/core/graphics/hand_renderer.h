@@ -5,17 +5,9 @@
 #include <vector>
 
 #include "core/card_data.h"
+#include "engine/ecs/components/transform.h"
 
 namespace core::graphics {
-
-/**
- * @brief Represents the visual transformation for a card in the hand.
- */
-struct CardLayout {
-  glm::vec2 position;
-  float scale;
-  float rotation;
-};
 
 /**
  * @brief Utility class to render a hand of cards in an arc.
@@ -30,9 +22,9 @@ class HandRenderer {
    * @param bounds_size The width and height of the bounding box.
    * @param arc_angle_degrees The total angular spread of the cards in degrees.
    * @param overlap_factor The amount cards are allowed to overlap (0.0 to 1.0).
-   * @return A vector of CardLayout objects, one for each card.
+   * @return A vector of Transform objects, one for each card.
    */
-  static std::vector<CardLayout> CalculateHandLayout(
+  static std::vector<engine::ecs::components::Transform> CalculateHandLayout(
       size_t card_count, glm::vec2 bounds_pos, glm::vec2 bounds_size,
       float arc_angle_degrees, float overlap_factor);
 
