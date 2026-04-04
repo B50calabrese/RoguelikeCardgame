@@ -51,12 +51,7 @@ void MainMenuScene::OnUpdate(float delta_time_seconds) {
 
 void MainMenuScene::HandleInput() {
   auto& input = engine::InputManager::Get();
-  auto mouse_pos = input.mouse_screen_pos();
-  auto& config = core::GameConfig::Get();
-
-  float mx = (mouse_pos.x + 1.0f) * 0.5f * config.window_width;
-  float my = (mouse_pos.y + 1.0f) * 0.5f * config.window_height;
-  glm::vec2 pixel_mouse_pos = {mx, my};
+  glm::vec2 pixel_mouse_pos = input.mouse_screen_pos();
 
   bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
   for (auto& btn : buttons_) {

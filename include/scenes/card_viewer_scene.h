@@ -19,7 +19,6 @@ class CardViewerScene : public engine::Scene {
   void OnAttach() override;
   void OnUpdate(float delta_time_seconds) override;
   void OnRender() override;
-  void OnPostRender() override;
   bool OnInput() override;
 
  private:

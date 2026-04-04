@@ -3,6 +3,7 @@
 #include "core/game_config.h"
 #include "engine/core/application.h"
 #include "engine/core/engine.h"
+#include "engine/graphics/text_renderer.h"
 #include "engine/scene/scene_manager.h"
 #include "engine/util/logger.h"
 #include "scenes/main_menu_scene.h"
@@ -12,6 +13,11 @@ class DeckBuilderApp : public engine::Application {
   DeckBuilderApp() = default;
 
   void OnInit() override {
+    // Initialize text rendering
+    engine::graphics::TextRenderer::Get().Init();
+    engine::graphics::TextRenderer::Get().LoadFont("arial", "arial.ttf", 24);
+    engine::graphics::TextRenderer::Get().LoadFont("default", "arial.ttf", 18);
+
     // Push the first scene
     engine::SceneManager::Get().SetScene(
         std::make_unique<scenes::MainMenuScene>());
