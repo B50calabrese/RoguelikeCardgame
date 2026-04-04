@@ -13,7 +13,8 @@ enum class CardLocation {
   Hand,
   Board,
   Graveyard,
-  Exile
+  Exile,
+  Stack
 };
 
 /**

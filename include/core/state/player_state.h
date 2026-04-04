@@ -26,6 +26,7 @@ struct PlayerState {
   std::vector<std::unique_ptr<CardInstance>> hand;
   std::vector<std::unique_ptr<CardInstance>> board;
   std::vector<std::unique_ptr<CardInstance>> graveyard;
+  std::vector<std::unique_ptr<CardInstance>> stack;
 
   PlayerState(int player_id, int starting_health, int starting_mana)
       : id(player_id),

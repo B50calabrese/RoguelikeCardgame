@@ -21,6 +21,9 @@ class ActionBase {
   /** @brief Applies the action's effects to the game state. */
   virtual void Apply(state::GameState& state) const = 0;
 
+  /** @brief Returns true if the action (and any associated animations) is finished. */
+  virtual bool IsComplete(const state::GameState& state) const { return true; }
+
   /** @brief Human-readable name of the action. */
   virtual std::string name() const = 0;
 };
