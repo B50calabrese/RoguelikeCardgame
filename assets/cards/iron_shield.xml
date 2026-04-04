@@ -1,6 +1,5 @@
 <Card id="3">
     <Name>Iron Shield</Name>
-    <Description>Gives 3 armor.</Description>
     <Type>Spell</Type>
     <TypeLine>Instant</TypeLine>
     <Color>Colorless</Color>

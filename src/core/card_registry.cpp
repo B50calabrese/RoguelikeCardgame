@@ -10,6 +10,7 @@
 #include "engine/util/logger.h"
 #include "pugixml.hpp"
 #include "core/effects/effect.h"
+#include "core/effects/effect_registry.h"
 
 namespace core {
 
@@ -99,7 +100,6 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       CardData card;
       card.id = card_node.attribute("id").as_int();
       card.name = card_node.child("Name").text().as_string();
-      card.description = card_node.child("Description").text().as_string();
       card.type_line = card_node.child("TypeLine").text().as_string();
       card.type = StringToCardType(card_node.child("Type").text().as_string());
       card.color = StringToCardColor(card_node.child("Color").text().as_string());
@@ -125,6 +125,39 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
         ParseTargetFilter(effect_node.child("TargetFilter"), effect_def.filter);
 
         card.effects.push_back(effect_def);
+      }
+
+      // Generate Description from effects
+      card.description = "";
+      for (size_t i = 0; i < card.effects.size(); ++i) {
+        const auto& effect_def = card.effects[i];
+        auto effect = effects::EffectRegistry::Get().CreateEffect(effect_def.effect_type);
+        if (effect) {
+          std::string effect_desc = effect->GetDescription(effect_def.params);
+          std::string prefix = "";
+
+          if (card.type == CardType::Creature) {
+            switch (effect_def.trigger) {
+              case Trigger::OnPlay: prefix = "Battlecry: "; break;
+              case Trigger::OnDeath: prefix = "Deathrattle: "; break;
+              case Trigger::AtStartOfTurn: prefix = "At the start of your turn, "; break;
+              case Trigger::AtEndOfTurn: prefix = "At the end of your turn, "; break;
+              default: break;
+            }
+          } else if (card.type == CardType::Spell) {
+            // Usually no prefix for spells unless they are end of turn etc
+            if (effect_def.trigger == Trigger::AtEndOfTurn) {
+              prefix = "At the end of your turn, ";
+            } else if (effect_def.trigger == Trigger::AtStartOfTurn) {
+              prefix = "At the start of your turn, ";
+            }
+          }
+
+          if (!card.description.empty()) {
+            card.description += " ";
+          }
+          card.description += prefix + effect_desc;
+        }
       }
 
       std::string frame_path = card_node.child("Frame").text().as_string();

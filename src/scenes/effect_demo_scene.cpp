@@ -28,14 +28,6 @@ namespace scenes {
 void EffectDemoScene::OnAttach() {
     LOG_INFO("[EffectDemoScene] Attached");
 
-    // Register some effects for the demo
-    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::types::DamageEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::effects::types::DrawEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::types::StatModifyEffect>(); });
-
-    // Load cards
-    core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);
-
     InitializeGameState();
 }
 
