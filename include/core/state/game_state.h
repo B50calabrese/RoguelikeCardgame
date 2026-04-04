@@ -33,6 +33,7 @@ struct GameState {
       for (const auto& c : p.board) if (c->instance_id == id) return c.get();
       for (const auto& c : p.deck) if (c->instance_id == id) return c.get();
       for (const auto& c : p.graveyard) if (c->instance_id == id) return c.get();
+      for (const auto& c : p.limbo) if (c->instance_id == id) return c.get();
       return nullptr;
     };
 

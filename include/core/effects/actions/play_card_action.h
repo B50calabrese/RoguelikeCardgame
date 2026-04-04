@@ -5,6 +5,8 @@
 #include <algorithm>
 
 #include "core/effects/actions/action_base.h"
+#include "core/effects/actions/resolve_spell_action.h"
+#include "core/effects/effect_resolver.h"
 #include "core/effects/target.h"
 #include "core/effects/rule_result.h"
 #include "core/state/game_state.h"
@@ -36,6 +38,42 @@ class PlayCardAction : public ActionBase {
     if (!inst) return {false, "Card not in hand", false};
     if (p.mana < inst->current_cost) return {false, "Insufficient mana", false};
 
+    // If it's a spell, check if there are legal targets for EVERY effect that requires one.
+    if (inst->data->type == CardType::Spell) {
+      for (const auto& effect_def : inst->data->effects) {
+        if (!effect_def.filter.is_required) continue;
+
+        // Check if there is AT LEAST ONE legal target in the current state.
+        bool found_legal_target = false;
+
+        // 1. Check players
+        if (effect_def.filter.IsValid(state, player_id_, {Target::Type::Player, state.player->id})) found_legal_target = true;
+        if (!found_legal_target && effect_def.filter.IsValid(state, player_id_, {Target::Type::Enemy, state.enemy->id})) found_legal_target = true;
+
+        // 2. Check creatures on board
+        if (!found_legal_target) {
+          for (const auto& c : state.player->board) {
+            if (effect_def.filter.IsValid(state, player_id_, {Target::Type::Creature, c->instance_id})) {
+              found_legal_target = true;
+              break;
+            }
+          }
+        }
+        if (!found_legal_target) {
+          for (const auto& c : state.enemy->board) {
+            if (effect_def.filter.IsValid(state, player_id_, {Target::Type::Creature, c->instance_id})) {
+              found_legal_target = true;
+              break;
+            }
+          }
+        }
+
+        if (!found_legal_target) {
+          return {false, "No legal targets for spell effects", false};
+        }
+      }
+    }
+
     return {true, "Valid play", false};
   }
 
@@ -53,8 +91,11 @@ class PlayCardAction : public ActionBase {
             (*it)->location = CardLocation::Board;
             p.board.push_back(std::move(*it));
         } else {
-            (*it)->location = CardLocation::Graveyard;
-            p.graveyard.push_back(std::move(*it));
+            (*it)->location = CardLocation::Limbo;
+            int card_id = (*it)->instance_id;
+            p.limbo.push_back(std::move(*it));
+            // Queue resolution
+            EffectResolver::Get().QueueAction(std::make_shared<ResolveSpellAction>(player_id_, card_id, targets_));
         }
         p.hand.erase(it);
     }
