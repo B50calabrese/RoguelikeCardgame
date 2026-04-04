@@ -91,9 +91,9 @@ class PlayCardAction : public ActionBase {
             (*it)->location = CardLocation::Board;
             p.board.push_back(std::move(*it));
         } else {
-            (*it)->location = CardLocation::Limbo;
+            (*it)->location = CardLocation::Stack;
             int card_id = (*it)->instance_id;
-            p.limbo.push_back(std::move(*it));
+            p.stack.push_back(std::move(*it));
             // Queue resolution
             EffectResolver::Get().QueueAction(std::make_shared<ResolveSpellAction>(player_id_, card_id, targets_));
         }

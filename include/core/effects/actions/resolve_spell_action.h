@@ -24,8 +24,8 @@ class ResolveSpellAction : public ActionBase {
 
   void Apply(state::GameState& state) const override {
     CardInstance* inst = state.FindCardInstance(card_instance_id_);
-    if (!inst || inst->location != CardLocation::Limbo) {
-        LOG_ERR("[EffectResolver] Spell %d not found in limbo for resolution.", card_instance_id_);
+    if (!inst || inst->location != CardLocation::Stack) {
+        LOG_ERR("[EffectResolver] Spell %d not found on stack for resolution.", card_instance_id_);
         return;
     }
 

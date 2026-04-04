@@ -19,13 +19,13 @@ class MoveToGraveyardAction : public ActionBase {
 
   void Apply(state::GameState& state) const override {
     auto find_and_move = [this](PlayerState& p, int id) -> bool {
-      auto it = std::find_if(p.limbo.begin(), p.limbo.end(),
+      auto it = std::find_if(p.stack.begin(), p.stack.end(),
           [id](const auto& c) { return c->instance_id == id; });
-      if (it != p.limbo.end()) {
-          LOG_INFO("[EffectResolver] Moving card %s from Limbo to Graveyard.", (*it)->data->name.c_str());
+      if (it != p.stack.end()) {
+          LOG_INFO("[EffectResolver] Moving card %s from Stack to Graveyard.", (*it)->data->name.c_str());
           (*it)->location = CardLocation::Graveyard;
           p.graveyard.push_back(std::move(*it));
-          p.limbo.erase(it);
+          p.stack.erase(it);
           return true;
       }
       return false;

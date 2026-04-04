@@ -14,7 +14,7 @@ enum class CardLocation {
   Board,
   Graveyard,
   Exile,
-  Limbo
+  Stack
 };
 
 /**
