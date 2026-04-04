@@ -9,6 +9,8 @@
 #include "core/card_registry.h"
 #include "core/constants.h"
 #include "core/effects/effect_resolver.h"
+#include "core/effects/actions/start_turn_action.h"
+#include "core/ai/simple_ai.h"
 #include "core/game_config.h"
 #include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
@@ -42,6 +44,17 @@ void CombatScene::OnAttach() {
     return;
   }
 
+  // Setup initial state
+  game_state_.player->colors = {core::CardColor::White, core::CardColor::Blue};
+  game_state_.enemy->colors = {core::CardColor::Red, core::CardColor::Black};
+  game_state_.current_turn_player_id = game_state_.player->id;
+
+  enemy_ai_ = std::make_unique<core::ai::SimpleAI>(game_state_.enemy->id);
+
+  // Trigger first turn
+  core::effects::EffectResolver::Get().QueueAction(
+      std::make_shared<core::effects::actions::StartTurnAction>(game_state_.player->id));
+
   auto& config = core::GameConfig::Get();
 
   // Fill hand based on starting hand size from config
@@ -72,6 +85,11 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
     engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
     return;
   }
+
+  // Process game logic
+  core::effects::EffectResolver::Get().ProcessQueue(game_state_);
+  enemy_ai_->Update(delta_time_seconds, game_state_);
+  battle_ui_.Update(delta_time_seconds, game_state_);
 
   HandleCardInteraction(delta_time_seconds);
   UpdateHandLayout();
@@ -174,6 +192,9 @@ void CombatScene::AnimateCards(float delta_time_seconds) {
 }
 
 void CombatScene::OnRender() {
+  // Render battle UI
+  battle_ui_.Render(game_state_);
+
   // Render cards. Hovered and Held cards should be rendered last.
   std::optional<size_t> last_to_render = std::nullopt;
   if (held_card_index_) {

@@ -32,6 +32,9 @@ class UIButton {
   const glm::vec2& position() const { return position_; }
   const glm::vec2& size() const { return size_; }
 
+  void set_base_color(const glm::vec4& color) { base_color_ = color; }
+  void set_hover_color(const glm::vec4& color) { hover_color_ = color; }
+
  private:
   bool IsMouseOver(glm::vec2 mouse_pos) const;
 

@@ -4,29 +4,10 @@
 #include <string>
 #include <vector>
 
+#include "core/enums.h"
 #include "core/effects/effect.h"
 
 namespace core {
-
-/**
- * @brief Defines the type of card.
- */
-enum class CardType {
-  Creature,
-  Spell
-};
-
-/**
- * @brief Defines the color of the card.
- */
-enum class CardColor {
-  White,
-  Blue,
-  Black,
-  Red,
-  Green,
-  Colorless
-};
 
 /**
  * @brief The static, immutable definition of a card.
