@@ -42,6 +42,15 @@ class BattleTestScene : public engine::Scene {
   /** @brief Draws a card from the deck to the hand. */
   void DrawCardCommand(const std::vector<std::string>& args);
 
+  /** @brief Sets the mana of a player. */
+  void SetManaCommand(const std::vector<std::string>& args);
+
+  /** @brief Sets the current turn player. */
+  void SetTurnCommand(const std::vector<std::string>& args);
+
+  /** @brief Plays a card from hand. */
+  void PlayCardCommand(const std::vector<std::string>& args);
+
   core::GameState game_state_;
 };
 
