@@ -9,6 +9,7 @@
 #include "engine/util/logger.h"
 #include "scenes/new_run_scene.h"
 #include "scenes/card_viewer_scene.h"
+#include "scenes/combat_scene.h"
 #include "scenes/effect_demo_scene.h"
 
 namespace scenes {
@@ -39,7 +40,13 @@ void MainMenuScene::OnAttach() {
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
-      "Exit", glm::vec2{center_x - btn_width * 0.5f, start_y - 240.0f},
+      "Combat Scene", glm::vec2{center_x - btn_width * 0.5f, start_y - 240.0f},
+      glm::vec2{btn_width, btn_height}, []() {
+        engine::SceneManager::Get().SetScene(std::make_unique<CombatScene>());
+      }));
+
+  buttons_.push_back(std::make_unique<core::graphics::UIButton>(
+      "Exit", glm::vec2{center_x - btn_width * 0.5f, start_y - 320.0f},
       glm::vec2{btn_width, btn_height}, []() {
         LOG_INFO("Exit requested");
       }));

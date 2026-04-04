@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "core/card_data.h"
+#include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
 
 class HandRendererApp : public engine::Application {
@@ -40,8 +41,14 @@ class HandRendererApp : public engine::Application {
                                                bounds_size.x, bounds_size.y,
                                                0.2f, 0.2f, 0.2f);
 
-    core::graphics::HandRenderer::RenderHand(cards, bounds_pos, bounds_size,
-                                             arc_angle, overlap);
+    auto layouts = core::graphics::HandRenderer::CalculateHandLayout(
+        cards.size(), bounds_pos, bounds_size, arc_angle, overlap);
+
+    for (size_t i = 0; i < cards.size(); ++i) {
+      core::graphics::CardRenderer::RenderCard(
+          cards[i], layouts[i].position, layouts[i].scale.x, 1.0f,
+          layouts[i].rotation);
+    }
 
     // Controls
     if (engine::InputManager::Get().IsKeyDown(engine::KeyCode::kUp)) {
