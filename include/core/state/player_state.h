@@ -4,6 +4,8 @@
 #include <vector>
 #include <memory>
 
+#include "core/enums.h"
+#include "core/card_data.h"
 #include "core/card_instance.h"
 
 namespace core::state {
@@ -17,6 +19,8 @@ struct PlayerState {
   int max_health;
   int mana;
   int max_mana;
+
+  std::vector<CardColor> colors;
 
   std::vector<std::unique_ptr<CardInstance>> deck;
   std::vector<std::unique_ptr<CardInstance>> hand;
