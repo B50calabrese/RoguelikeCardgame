@@ -10,14 +10,14 @@
 
 namespace core::graphics {
 
-void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
-                              glm::vec2 bounds_pos, glm::vec2 bounds_size,
-                              float arc_angle_degrees, float overlap_factor) {
-  if (cards.empty()) {
-    return;
+std::vector<CardLayout> HandRenderer::CalculateHandLayout(
+    size_t card_count, glm::vec2 bounds_pos, glm::vec2 bounds_size,
+    float arc_angle_degrees, float overlap_factor) {
+  if (card_count == 0) {
+    return {};
   }
 
-  const size_t card_count = cards.size();
+  std::vector<CardLayout> layout(card_count);
 
   // 1. Calculate Arc and Scaling
   glm::vec2 bounds_center = bounds_pos + bounds_size * 0.5f;
@@ -25,8 +25,8 @@ void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
   if (card_count == 1) {
     float scale = std::min(bounds_size.x / kBaseCardWidth,
                            bounds_size.y / kBaseCardHeight);
-    CardRenderer::RenderCard(cards[0], bounds_center, scale, 1.0f, 0.0f);
-    return;
+    layout[0] = {bounds_center, scale, 0.0f};
+    return layout;
   }
 
   float arc_angle_abs = std::abs(arc_angle_degrees);
@@ -57,11 +57,10 @@ void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
     float start_x = bounds_center.x - total_width / 2.0f + card_width / 2.0f;
     float step_x = card_width * (1.0f - overlap_factor);
     for (size_t i = 0; i < card_count; ++i) {
-      CardRenderer::RenderCard(
-          cards[i], glm::vec2(start_x + i * step_x, bounds_center.y), scale,
-          1.0f, 0.0f);
+      layout[i] = {glm::vec2(start_x + i * step_x, bounds_center.y), scale,
+                   0.0f};
     }
-    return;
+    return layout;
   }
 
   float arc_radians = glm::radians(arc_angle_degrees);
@@ -81,7 +80,7 @@ void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
         (bounds_size.y - (card_height + std::abs(sagitta))) * 0.5f;
   }
 
-  // 3. Render Cards
+  // 3. Populate Layout
   float start_angle = 90.0f + arc_angle_degrees / 2.0f;
   float angle_step =
       (card_count > 1) ? (arc_angle_degrees / (card_count - 1)) : 0.0f;
@@ -96,8 +95,25 @@ void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
                   std::sin(current_angle_rad) * radius);
 
     float card_rotation = current_angle_deg - 90.0f;
+    layout[i] = {card_pos, scale, card_rotation};
+  }
 
-    CardRenderer::RenderCard(cards[i], card_pos, scale, 1.0f, card_rotation);
+  return layout;
+}
+
+void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
+                              glm::vec2 bounds_pos, glm::vec2 bounds_size,
+                              float arc_angle_degrees, float overlap_factor) {
+  if (cards.empty()) {
+    return;
+  }
+
+  auto layouts = CalculateHandLayout(cards.size(), bounds_pos, bounds_size,
+                                     arc_angle_degrees, overlap_factor);
+
+  for (size_t i = 0; i < cards.size(); ++i) {
+    CardRenderer::RenderCard(cards[i], layouts[i].position, layouts[i].scale,
+                             1.0f, layouts[i].rotation);
   }
 }
 
