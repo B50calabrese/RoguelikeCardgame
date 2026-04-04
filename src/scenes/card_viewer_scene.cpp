@@ -1,7 +1,6 @@
 #include "scenes/card_viewer_scene.h"
 
 #include <algorithm>
-#include "engine/graphics/gaussian_blur_effect.h"
 #include "engine/graphics/post_processor.h"
 #include <glm/glm.hpp>
 #include <iostream>
@@ -74,20 +73,6 @@ void CardViewerScene::SortCards() {
 
 void CardViewerScene::OnUpdate(float delta_time_seconds) {
   HandleInput(delta_time_seconds);
-
-  // Manage post-processing blur
-  auto& post = engine::graphics::PostProcessManager::Get();
-  if (selected_card_index_ != -1) {
-    if (!post.GetEffect("GaussianBlurEffect")) {
-      auto blur = std::make_unique<engine::graphics::GaussianBlurEffect>();
-      blur->SetBlurStrength(core::GameConfig::Get().card_viewer_blur_strength);
-      post.AddEffect(std::move(blur));
-    }
-  } else {
-    if (post.GetEffect("GaussianBlurEffect")) {
-      post.RemoveEffect("GaussianBlurEffect");
-    }
-  }
 }
 
 void CardViewerScene::HandleInput(float delta_time_seconds) {
@@ -200,9 +185,8 @@ bool CardViewerScene::IsMouseOverCard(const glm::vec2& pos,
 void CardViewerScene::OnRender() {
   RenderGrid();
   RenderUI();
+  RenderFullscreenOverlay();
 }
-
-void CardViewerScene::OnPostRender() { RenderFullscreenOverlay(); }
 
 void CardViewerScene::RenderGrid() {
   auto& config = core::GameConfig::Get();
@@ -214,7 +198,10 @@ void CardViewerScene::RenderGrid() {
       (config.window_width - (cols * card_w + (cols - 1) * padding)) * 0.5f;
   float start_y = config.window_height - 150.0f + scroll_offset_;
 
-  for (int i = 0; i < cards_.size(); ++i) {
+  int hovered_i = -1;
+  glm::vec2 hovered_pos;
+
+  for (int i = 0; i < (int)cards_.size(); ++i) {
     int row = i / cols;
     int col = i % cols;
     glm::vec2 pos = {start_x + col * (card_w + padding) + card_w * 0.5f,
