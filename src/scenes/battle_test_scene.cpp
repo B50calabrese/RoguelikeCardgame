@@ -12,6 +12,8 @@
 #include "core/constants.h"
 #include "core/game_config.h"
 #include "core/graphics/hand_renderer.h"
+#include "core/effects/effect_resolver.h"
+#include "core/effects/actions/play_card_action.h"
 #include "engine/scene/scene_manager.h"
 #include "engine/util/logger.h"
 #include "engine/util/console.h"
@@ -50,6 +52,15 @@ void BattleTestScene::RegisterCommands() {
   });
   console.RegisterCommand("draw", [this](const std::vector<std::string>& args) {
     this->DrawCardCommand(args);
+  });
+  console.RegisterCommand("set_mana", [this](const std::vector<std::string>& args) {
+    this->SetManaCommand(args);
+  });
+  console.RegisterCommand("set_turn", [this](const std::vector<std::string>& args) {
+    this->SetTurnCommand(args);
+  });
+  console.RegisterCommand("play_card", [this](const std::vector<std::string>& args) {
+    this->PlayCardCommand(args);
   });
 }
 
@@ -162,6 +173,48 @@ void BattleTestScene::DrawCardCommand(const std::vector<std::string>& args) {
   card->location = core::CardLocation::Hand;
   player->hand.push_back(std::move(card));
   console.Log(target + " drew a card.");
+}
+
+void BattleTestScene::SetManaCommand(const std::vector<std::string>& args) {
+  auto& console = engine::util::Console::Get();
+  if (args.size() < 2) {
+    console.Log("Usage: set_mana <player|enemy> <amount>");
+    return;
+  }
+  std::string target = args[0];
+  int amount = std::stoi(args[1]);
+  if (target == "player") {
+    game_state_.player->mana = amount;
+    console.Log("Player mana set to " + std::to_string(amount));
+  } else {
+    game_state_.enemy->mana = amount;
+    console.Log("Enemy mana set to " + std::to_string(amount));
+  }
+}
+
+void BattleTestScene::SetTurnCommand(const std::vector<std::string>& args) {
+  auto& console = engine::util::Console::Get();
+  if (args.empty()) {
+    console.Log("Usage: set_turn <player|enemy>");
+    return;
+  }
+  std::string target = args[0];
+  game_state_.current_turn_player_id = (target == "player") ? 0 : 1;
+  console.Log("Current turn set to " + target);
+}
+
+void BattleTestScene::PlayCardCommand(const std::vector<std::string>& args) {
+  auto& console = engine::util::Console::Get();
+  if (args.size() < 2) {
+    console.Log("Usage: play_card <player|enemy> <instance_id>");
+    return;
+  }
+  int player_id = (args[0] == "player") ? 0 : 1;
+  int instance_id = std::stoi(args[1]);
+
+  auto action = std::make_shared<core::effects::actions::PlayCardAction>(player_id, instance_id, std::vector<core::effects::Target>());
+  core::effects::EffectResolver::Get().QueueAction(action);
+  core::effects::EffectResolver::Get().ProcessQueue(game_state_);
 }
 
 void BattleTestScene::OnUpdate(float delta_time_seconds) {

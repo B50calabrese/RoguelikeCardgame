@@ -19,6 +19,10 @@ class PlayCardAction : public ActionBase {
       : player_id_(player_id), card_instance_id_(card_instance_id), targets_(std::move(targets)) {}
 
   RuleResult Validate(const state::GameState& state) const override {
+    if (state.current_turn_player_id != player_id_) {
+        return {false, "Not your turn", false};
+    }
+
     const PlayerState& p = (player_id_ == 0) ? *state.player : *state.enemy;
 
     CardInstance* inst = nullptr;
@@ -44,8 +48,14 @@ class PlayCardAction : public ActionBase {
     if (it != p.hand.end()) {
         LOG_INFO("[EffectResolver] Playing card: %s", (*it)->data->name.c_str());
         p.mana -= (*it)->current_cost;
-        (*it)->location = CardLocation::Board;
-        p.board.push_back(std::move(*it));
+
+        if ((*it)->data->type == CardType::Creature) {
+            (*it)->location = CardLocation::Board;
+            p.board.push_back(std::move(*it));
+        } else {
+            (*it)->location = CardLocation::Graveyard;
+            p.graveyard.push_back(std::move(*it));
+        }
         p.hand.erase(it);
     }
   }
