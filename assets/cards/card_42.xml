@@ -1,6 +1,5 @@
 <Card id="142">
     <Name>Placeholder Card 42</Name>
-    <Description>This is a placeholder card number 42.</Description>
     <Type>Creature</Type>
     <Color>Green</Color>
     <Cost>3</Cost>
