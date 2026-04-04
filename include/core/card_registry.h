@@ -43,6 +43,12 @@ class CardRegistry {
     return cards_;
   }
 
+  /**
+   * @brief Generates a display description string based on a set of effects.
+   */
+  std::string GenerateDescription(
+      CardType type, const std::vector<CardEffectDefinition>& effects) const;
+
  private:
   CardRegistry() = default;
   ~CardRegistry() = default;
