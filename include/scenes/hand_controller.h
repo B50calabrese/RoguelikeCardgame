@@ -27,14 +27,19 @@ struct VisualCard {
 };
 
 /**
- * @brief Manages input and logic for the player's hand.
+ * @brief Manages input and logic for a player's hand.
  */
 class HandController {
  public:
-  HandController();
+  HandController(int player_id);
 
   void Update(float delta_time_seconds, core::state::GameState& state);
   void Render();
+
+  void SetBounds(glm::vec2 pos, glm::vec2 size) { bounds_pos_ = pos; bounds_size_ = size; }
+  void SetArcAngle(float angle) { arc_angle_ = angle; }
+  void SetInteractive(bool interactive) { is_interactive_ = interactive; }
+  void SetFaceDown(bool face_down) { is_face_down_ = face_down; }
 
   std::optional<size_t> hovered_card_index() const { return hovered_card_index_; }
   std::optional<size_t> held_card_index() const { return held_card_index_; }
@@ -44,6 +49,13 @@ class HandController {
   void HandleInteraction(core::state::GameState& state);
   void UpdateLayout();
   void AnimateCards(float delta_time_seconds);
+
+  int player_id_;
+  glm::vec2 bounds_pos_;
+  glm::vec2 bounds_size_;
+  float arc_angle_;
+  bool is_interactive_ = true;
+  bool is_face_down_ = false;
 
   std::vector<VisualCard> hand_visuals_;
   std::optional<size_t> hovered_card_index_;
