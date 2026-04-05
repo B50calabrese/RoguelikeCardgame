@@ -7,6 +7,7 @@
 #include <glm/vec2.hpp>
 
 #include "core/card_registry.h"
+#include "core/card_instance.h"
 #include "core/constants.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/actions/start_turn_action.h"
@@ -22,12 +23,6 @@
 
 namespace scenes {
 
-namespace {
-constexpr float kCardHoverScale = 1.2f;
-constexpr float kCardHeldScale = 1.3f;
-constexpr float kLerpSpeed = 10.0f;
-}  // namespace
-
 void CombatScene::OnAttach() {
   LOG_INFO("[CombatScene] Attached");
 
@@ -40,7 +35,7 @@ void CombatScene::OnAttach() {
 
   const auto& all_cards = core::CardRegistry::Get().GetAllCards();
   if (all_cards.empty()) {
-    LOG_ERR("[CombatScene] No cards loaded to display in hand!");
+    LOG_ERR("[CombatScene] No cards loaded!");
     return;
   }
 
@@ -57,27 +52,51 @@ void CombatScene::OnAttach() {
 
   auto& config = core::GameConfig::Get();
 
-  // Fill hand based on starting hand size from config
-  int starting_hand_size = core::GameConfig::Get().starting_hand_size;
+  // Populate hand for demo
+  int starting_hand_size = config.starting_hand_size;
   auto it = all_cards.begin();
   for (int i = 0; i < starting_hand_size && it != all_cards.end(); ++i, ++it) {
-    VisualCard vc;
-    vc.data = it->second;
-    // Start off-screen
-    vc.current_transform.position = {config.window_width * 0.5f, -200.0f};
-    vc.current_transform.scale = glm::vec2(0.5f);
-    vc.current_transform.rotation = 0.0f;
-    vc.target_transform = vc.current_transform;
-    hand_visuals_.push_back(vc);
+    auto p_inst = std::make_unique<core::CardInstance>(&it->second, game_state_.next_instance_id++, game_state_.player->id);
+    p_inst->location = core::CardLocation::Hand;
+    game_state_.player->hand.push_back(std::move(p_inst));
+
+    auto e_inst = std::make_unique<core::CardInstance>(&it->second, game_state_.next_instance_id++, game_state_.enemy->id);
+    e_inst->location = core::CardLocation::Hand;
+    game_state_.enemy->hand.push_back(std::move(e_inst));
   }
 
-  // If we have fewer unique cards than starting hand size, duplicate some for
-  // demo
-  while (hand_visuals_.size() < static_cast<size_t>(starting_hand_size) &&
-         !hand_visuals_.empty()) {
-    VisualCard vc = hand_visuals_[hand_visuals_.size() % all_cards.size()];
-    hand_visuals_.push_back(vc);
-  }
+  // Configure hands
+  float border_thickness = config.window_width * 0.05f;
+  float icon_size = config.window_width * 0.1f;
+  float icon_top = border_thickness + icon_size;
+
+  player_hand_ = std::make_unique<HandController>(game_state_.player->id);
+  glm::vec2 p_bounds_size = {static_cast<float>(config.window_width) * 0.8f,
+                             static_cast<float>(config.window_height) * 0.4f};
+  glm::vec2 p_bounds_pos = {
+      (static_cast<float>(config.window_width) - p_bounds_size.x) * 0.5f,
+      icon_top + 20.0f
+  };
+  player_hand_->SetBounds(p_bounds_pos, p_bounds_size);
+  player_hand_->SetArcAngle(core::graphics::kDefaultArcAngle);
+  player_hand_->SetInteractive(true);
+  player_hand_->SetFaceDown(false);
+
+  enemy_hand_ = std::make_unique<HandController>(game_state_.enemy->id);
+  glm::vec2 e_bounds_size = {static_cast<float>(config.window_width) * 0.8f,
+                             static_cast<float>(config.window_height) * 0.4f};
+  // Enemy health icon is at the top:
+  // config.window_height - border_thickness - icon_size * 0.5f (center)
+  // config.window_height - border_thickness - icon_size (bottom edge of icon)
+  float enemy_icon_bottom = config.window_height - border_thickness - icon_size;
+  glm::vec2 e_bounds_pos = {
+      (static_cast<float>(config.window_width) - e_bounds_size.x) * 0.5f,
+      enemy_icon_bottom - e_bounds_size.y - 20.0f
+  };
+  enemy_hand_->SetBounds(e_bounds_pos, e_bounds_size);
+  enemy_hand_->SetArcAngle(-core::graphics::kDefaultArcAngle);
+  enemy_hand_->SetInteractive(false);
+  enemy_hand_->SetFaceDown(true);
 }
 
 void CombatScene::OnUpdate(float delta_time_seconds) {
@@ -91,141 +110,14 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
   enemy_ai_->Update(delta_time_seconds, game_state_);
   battle_ui_.Update(delta_time_seconds, game_state_);
 
-  HandleCardInteraction(delta_time_seconds);
-  UpdateHandLayout();
-  AnimateCards(delta_time_seconds);
-}
-
-void CombatScene::HandleCardInteraction(float delta_time_seconds) {
-  auto& input = engine::InputManager::Get();
-  glm::vec2 mouse_pos = input.mouse_screen_pos();
-  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
-
-  hovered_card_index_ = std::nullopt;
-
-  // 1. Handle Held Card
-  if (held_card_index_) {
-    VisualCard& held_card = hand_visuals_[*held_card_index_];
-    held_card.target_transform.position = mouse_pos;
-    held_card.target_transform.scale = glm::vec2(kCardHeldScale);
-    held_card.target_transform.rotation = 0.0f;
-
-    if (clicked) {
-      // For now, playing just returns it to hand visuals
-      // In the future, this would be:
-      // core::effects::EffectResolver::Get().QueueAction(std::make_shared<core::effects::actions::PlayCardAction>(...));
-      held_card.is_held = false;
-      held_card_index_ = std::nullopt;
-    }
-    return;
-  }
-
-  // 2. Hover detection (top-to-bottom)
-  for (int i = static_cast<int>(hand_visuals_.size()) - 1; i >= 0; --i) {
-    const auto& vc = hand_visuals_[i];
-    glm::vec2 size =
-        core::graphics::kBaseCardSize * vc.current_transform.scale.x;
-    if (core::util::PointInRect(mouse_pos, vc.current_transform.position, size,
-                                true)) {
-      hovered_card_index_ = i;
-      break;
-    }
-  }
-
-  // 3. Handle Click to Hold
-  if (clicked && hovered_card_index_) {
-    held_card_index_ = hovered_card_index_;
-    hand_visuals_[*held_card_index_].is_held = true;
-  }
-}
-
-void CombatScene::UpdateHandLayout() {
-  auto& config = core::GameConfig::Get();
-  float border_thickness = config.window_width * 0.05f;
-  float icon_size = config.window_width * 0.1f;
-
-  glm::vec2 bounds_size = {static_cast<float>(config.window_width) * 0.8f,
-                           static_cast<float>(config.window_height) * 0.4f};
-
-  // Position hand above the player's health icon.
-  // The icon is centered at border_thickness + icon_size * 0.5f.
-  // So its top is at border_thickness + icon_size.
-  float icon_top = border_thickness + icon_size;
-
-  glm::vec2 bounds_pos = {
-      (static_cast<float>(config.window_width) - bounds_size.x) * 0.5f,
-      icon_top + 20.0f  // 20px padding above the icon
-  };
-
-  // Only calculate layout for cards that are NOT being held
-  std::vector<size_t> in_hand_indices;
-  for (size_t i = 0; i < hand_visuals_.size(); ++i) {
-    if (!hand_visuals_[i].is_held) {
-      in_hand_indices.push_back(i);
-    }
-  }
-
-  if (in_hand_indices.empty()) return;
-
-  auto layouts = core::graphics::HandRenderer::CalculateHandLayout(
-      in_hand_indices.size(), bounds_pos, bounds_size,
-      core::graphics::kDefaultArcAngle, core::graphics::kDefaultOverlapFactor);
-
-  for (size_t i = 0; i < in_hand_indices.size(); ++i) {
-    size_t vc_idx = in_hand_indices[i];
-    VisualCard& vc = hand_visuals_[vc_idx];
-
-    vc.target_transform = layouts[i];
-
-    // Apply hover zoom
-    if (hovered_card_index_ && *hovered_card_index_ == vc_idx) {
-      vc.target_transform.scale *= kCardHoverScale;
-      vc.target_transform.rotation = 0.0f;
-      // Slightly lift the hovered card
-      vc.target_transform.position.y += 50.0f;
-    }
-  }
-}
-
-void CombatScene::AnimateCards(float delta_time_seconds) {
-  float t = glm::clamp(delta_time_seconds * kLerpSpeed, 0.0f, 1.0f);
-
-  for (auto& vc : hand_visuals_) {
-    vc.current_transform.position =
-        glm::mix(vc.current_transform.position, vc.target_transform.position, t);
-    vc.current_transform.scale =
-        glm::mix(vc.current_transform.scale, vc.target_transform.scale, t);
-    vc.current_transform.rotation = glm::mix(
-        vc.current_transform.rotation, vc.target_transform.rotation, t);
-  }
+  player_hand_->Update(delta_time_seconds, game_state_);
+  enemy_hand_->Update(delta_time_seconds, game_state_);
 }
 
 void CombatScene::OnRender() {
-  // Render battle UI
   battle_ui_.Render(game_state_);
-
-  // Render cards. Hovered and Held cards should be rendered last.
-  std::optional<size_t> last_to_render = std::nullopt;
-  if (held_card_index_) {
-    last_to_render = held_card_index_;
-  } else if (hovered_card_index_) {
-    last_to_render = hovered_card_index_;
-  }
-
-  for (size_t i = 0; i < hand_visuals_.size(); ++i) {
-    if (last_to_render && i == *last_to_render) continue;
-    const auto& vc = hand_visuals_[i];
-    core::graphics::CardRenderer::RenderCard(
-        vc.data, vc.current_transform.position, vc.current_transform.scale.x,
-        1.0f, vc.current_transform.rotation);
-  }
-
-  if (last_to_render) {
-    const auto& vc = hand_visuals_[*last_to_render];
-    core::graphics::CardRenderer::RenderCard(
-        vc.data, vc.current_transform.position, vc.current_transform.scale.x,
-        1.0f, vc.current_transform.rotation);
-  }
+  player_hand_->Render();
+  enemy_hand_->Render();
 }
 
 }  // namespace scenes
