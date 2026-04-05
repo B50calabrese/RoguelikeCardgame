@@ -23,6 +23,15 @@ enum class CardColor {
   Colorless
 };
 
+/**
+ * @brief Identifies a player or game-driven actor.
+ */
+enum class ActorId : int {
+  Player = 0,
+  Enemy = 1,
+  None = -1
+};
+
 }  // namespace core
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_ENUMS_H_

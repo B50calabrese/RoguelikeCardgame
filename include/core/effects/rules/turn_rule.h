@@ -13,10 +13,10 @@ class TurnRule : public IRule {
  public:
   RuleResult Validate(const state::GameState& state, const Action& action) const override {
     int actor_id = action->GetActorId();
-    if (actor_id != -1 && state.current_turn_player_id != actor_id) {
-      return {false, "Not your turn", false};
+    if (actor_id != static_cast<int>(ActorId::None) && state.current_turn_player_id != actor_id) {
+      return RuleResult::Failure("Not your turn");
     }
-    return {true, "Correct turn", false};
+    return RuleResult::Success("Correct turn");
   }
 };
 

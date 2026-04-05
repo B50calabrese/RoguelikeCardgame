@@ -24,7 +24,7 @@ class PlayCardAction : public ActionBase {
 
   RuleResult Validate(const state::GameState& state) const override {
     // Basic structure validation only. Logic-based rules are now in RulesEngine.
-    return {true, "OK", false};
+    return RuleResult::Success();
   }
 
   void Apply(state::GameState& state) const override {

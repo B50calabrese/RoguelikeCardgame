@@ -15,12 +15,12 @@ class TargetingRule : public IRule {
  public:
   RuleResult Validate(const state::GameState& state, const Action& action) const override {
     auto play_action = std::dynamic_pointer_cast<actions::PlayCardAction>(action);
-    if (!play_action) return {true, "", false};
+    if (!play_action) return RuleResult::Success();
 
     int player_id = play_action->GetActorId();
     int card_id = play_action->card_instance_id();
 
-    const PlayerState& p = (player_id == 0) ? *state.player : *state.enemy;
+    const PlayerState& p = (player_id == static_cast<int>(ActorId::Player)) ? *state.player : *state.enemy;
 
     const CardInstance* inst = nullptr;
     for (const auto& c : p.hand) {
@@ -30,7 +30,7 @@ class TargetingRule : public IRule {
       }
     }
 
-    if (!inst) return {false, "Card not in hand", false};
+    if (!inst) return RuleResult::Failure("Card not in hand");
 
     // If it's a spell, check if there are legal targets for EVERY effect that requires one.
     if (inst->data->type == CardType::Spell) {
@@ -59,12 +59,12 @@ class TargetingRule : public IRule {
         }
 
         if (!found_legal_target) {
-          return {false, "No legal targets for spell effects", false};
+          return RuleResult::Failure("No legal targets for spell effects");
         }
       }
     }
 
-    return {true, "Targeting valid", false};
+    return RuleResult::Success("Targeting valid");
   }
 };
 

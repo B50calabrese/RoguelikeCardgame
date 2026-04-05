@@ -16,12 +16,12 @@ class ManaRule : public IRule {
   RuleResult Validate(const state::GameState& state, const Action& action) const override {
     // Only check mana for PlayCardAction
     auto play_action = std::dynamic_pointer_cast<actions::PlayCardAction>(action);
-    if (!play_action) return {true, "", false};
+    if (!play_action) return RuleResult::Success();
 
     int player_id = play_action->GetActorId();
     int card_id = play_action->card_instance_id();
 
-    const PlayerState& p = (player_id == 0) ? *state.player : *state.enemy;
+    const PlayerState& p = (player_id == static_cast<int>(ActorId::Player)) ? *state.player : *state.enemy;
 
     // We need a way to find the card in hand to check its cost
     const CardInstance* inst = nullptr;
@@ -32,10 +32,10 @@ class ManaRule : public IRule {
       }
     }
 
-    if (!inst) return {false, "Card not in hand", false};
-    if (p.mana < inst->current_cost) return {false, "Insufficient mana", false};
+    if (!inst) return RuleResult::Failure("Card not in hand");
+    if (p.mana < inst->current_cost) return RuleResult::Failure("Insufficient mana");
 
-    return {true, "Enough mana", false};
+    return RuleResult::Success("Enough mana");
   }
 };
 
