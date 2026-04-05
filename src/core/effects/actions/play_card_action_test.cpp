@@ -4,6 +4,7 @@
 #include "core/card_instance.h"
 #include "core/card_data.h"
 #include "core/effects/effect_resolver.h"
+#include "core/effects/rules_engine.h"
 
 namespace core::effects::actions {
 namespace {
@@ -55,8 +56,8 @@ TEST_F(PlayCardActionTest, InsufficientMana) {
     auto instance = std::make_unique<CardInstance>(creature_data.get(), 100, 0);
     state->player->hand.push_back(std::move(instance));
 
-    PlayCardAction action(0, 100, {});
-    EXPECT_FALSE(action.Validate(*state).success);
+    auto action = std::make_shared<PlayCardAction>(0, 100, std::vector<Target>{});
+    EXPECT_FALSE(RulesEngine::Get().ValidateAction(*state, action).success);
 }
 
 TEST_F(PlayCardActionTest, NotYourTurn) {
@@ -64,8 +65,8 @@ TEST_F(PlayCardActionTest, NotYourTurn) {
     auto instance = std::make_unique<CardInstance>(creature_data.get(), 100, 0);
     state->player->hand.push_back(std::move(instance));
 
-    PlayCardAction action(0, 100, {});
-    EXPECT_FALSE(action.Validate(*state).success);
+    auto action = std::make_shared<PlayCardAction>(0, 100, std::vector<Target>{});
+    EXPECT_FALSE(RulesEngine::Get().ValidateAction(*state, action).success);
 }
 
 TEST_F(PlayCardActionTest, PlaySpellQueuesResolution) {
