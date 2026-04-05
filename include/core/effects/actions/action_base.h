@@ -26,6 +26,9 @@ class ActionBase {
 
   /** @brief Human-readable name of the action. */
   virtual std::string name() const = 0;
+
+  /** @brief Returns the ID of the player performing the action, or -1 if game-driven. */
+  virtual int GetActorId() const { return -1; }
 };
 
 }  // namespace core::effects::actions
