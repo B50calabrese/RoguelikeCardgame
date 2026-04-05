@@ -73,6 +73,15 @@ class EffectResolver {
   /** @brief Returns true if there are pending or active actions. */
   bool IsBusy() const { return !action_queue_.empty() || current_action_ != nullptr; }
 
+  /** @brief Clears the action queue. Useful for tests. */
+  void ClearQueue() {
+    action_queue_.clear();
+    current_action_ = nullptr;
+  }
+
+  /** @brief Returns the number of actions in the queue. */
+  size_t QueueSize() const { return action_queue_.size(); }
+
  private:
   EffectResolver() = default;
   std::deque<Action> action_queue_;
