@@ -1,6 +1,7 @@
 #include "scenes/card_viewer_scene.h"
 
 #include <algorithm>
+#include "engine/graphics/post_processor.h"
 #include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
@@ -198,8 +199,6 @@ void CardViewerScene::RenderGrid() {
       (config.window_width - (cols * card_w + (cols - 1) * padding)) * 0.5f;
   float start_y = config.window_height - 150.0f + scroll_offset_;
 
-  int hovered_i = -1;
-  glm::vec2 hovered_pos;
   for (int i = 0; i < cards_.size(); ++i) {
     int row = i / cols;
     int col = i % cols;
