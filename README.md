@@ -57,4 +57,4 @@ cd build && ctest
 
 ## Adding New Tests
 
-New unit tests should be placed in the `src/tests/` directory and follow the `*_test.cpp` naming convention. The CMake build system will automatically discover and add them to the test suite.
+Following Google's C++ standards, new unit tests should be placed in the same directory as the source files they test and follow the `*_test.cpp` naming convention. The CMake build system will automatically discover and add them to the test suite.

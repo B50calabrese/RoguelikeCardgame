@@ -89,8 +89,8 @@ if(BUILD_GAME_TESTS)
         set_target_properties(${TEST_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
     endfunction()
 
-    # Automatically discover and add tests from src/tests
-    file(GLOB_RECURSE GAME_TEST_SOURCES "src/tests/*_test.cpp")
+    # Automatically discover and add tests from src/
+    file(GLOB_RECURSE GAME_TEST_SOURCES "src/*_test.cpp")
     foreach(TEST_SOURCE ${GAME_TEST_SOURCES})
         get_filename_component(TEST_NAME ${TEST_SOURCE} NAME_WE)
         add_game_test(${TEST_NAME} ${TEST_SOURCE})
