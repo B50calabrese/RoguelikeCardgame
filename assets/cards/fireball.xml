@@ -1,6 +1,5 @@
 <Card id="1">
     <Name>Fireball</Name>
-    <Description>Deals 5 damage to a target.</Description>
     <Type>Spell</Type>
     <TypeLine>Sorcery</TypeLine>
     <Color>Red</Color>

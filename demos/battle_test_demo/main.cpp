@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
   config.window_width = 1280;
   config.window_height = 720;
   config.window_title = "Mage Tower - Battle Test Demo";
-  config.asset_path = "assets";
+  config.asset_path = ENGINE_ASSETS_PATH;
 
   Engine::Init(config);
 

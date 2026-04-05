@@ -9,6 +9,7 @@
 #include "engine/util/logger.h"
 #include "scenes/new_run_scene.h"
 #include "scenes/card_viewer_scene.h"
+#include "scenes/combat_scene.h"
 #include "scenes/effect_demo_scene.h"
 
 namespace scenes {
@@ -39,7 +40,13 @@ void MainMenuScene::OnAttach() {
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
-      "Exit", glm::vec2{center_x - btn_width * 0.5f, start_y - 240.0f},
+      "Combat Scene", glm::vec2{center_x - btn_width * 0.5f, start_y - 240.0f},
+      glm::vec2{btn_width, btn_height}, []() {
+        engine::SceneManager::Get().SetScene(std::make_unique<CombatScene>());
+      }));
+
+  buttons_.push_back(std::make_unique<core::graphics::UIButton>(
+      "Exit", glm::vec2{center_x - btn_width * 0.5f, start_y - 320.0f},
       glm::vec2{btn_width, btn_height}, []() {
         LOG_INFO("Exit requested");
       }));
@@ -51,12 +58,7 @@ void MainMenuScene::OnUpdate(float delta_time_seconds) {
 
 void MainMenuScene::HandleInput() {
   auto& input = engine::InputManager::Get();
-  auto mouse_pos = input.mouse_screen_pos();
-  auto& config = core::GameConfig::Get();
-
-  float mx = (mouse_pos.x + 1.0f) * 0.5f * config.window_width;
-  float my = (mouse_pos.y + 1.0f) * 0.5f * config.window_height;
-  glm::vec2 pixel_mouse_pos = {mx, my};
+  glm::vec2 pixel_mouse_pos = input.mouse_screen_pos();
 
   bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
   for (auto& btn : buttons_) {

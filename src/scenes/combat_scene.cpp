@@ -3,16 +3,23 @@
 #include <algorithm>
 #include <vector>
 
+#include <glm/glm.hpp>
 #include <glm/vec2.hpp>
 
 #include "core/card_registry.h"
+#include "core/card_instance.h"
 #include "core/constants.h"
+#include "core/effects/effect_resolver.h"
+#include "core/effects/actions/start_turn_action.h"
+#include "core/ai/simple_ai.h"
 #include "core/game_config.h"
+#include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
+#include "core/util/math_util.h"
+#include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
 #include "engine/util/logger.h"
 #include "scenes/main_menu_scene.h"
-#include "engine/input/input_manager.h"
 
 namespace scenes {
 
@@ -28,45 +35,89 @@ void CombatScene::OnAttach() {
 
   const auto& all_cards = core::CardRegistry::Get().GetAllCards();
   if (all_cards.empty()) {
-    LOG_ERR("[CombatScene] No cards loaded to display in hand!");
+    LOG_ERR("[CombatScene] No cards loaded!");
     return;
   }
 
-  // Fill hand based on starting hand size from config
-  int starting_hand_size = core::GameConfig::Get().starting_hand_size;
+  // Setup initial state
+  game_state_.player->colors = {core::CardColor::White, core::CardColor::Blue};
+  game_state_.enemy->colors = {core::CardColor::Red, core::CardColor::Black};
+  game_state_.current_turn_player_id = game_state_.player->id;
+
+  enemy_ai_ = std::make_unique<core::ai::SimpleAI>(game_state_.enemy->id);
+
+  // Trigger first turn
+  core::effects::EffectResolver::Get().QueueAction(
+      std::make_shared<core::effects::actions::StartTurnAction>(game_state_.player->id));
+
+  auto& config = core::GameConfig::Get();
+
+  // Populate hand for demo
+  int starting_hand_size = config.starting_hand_size;
   auto it = all_cards.begin();
   for (int i = 0; i < starting_hand_size && it != all_cards.end(); ++i, ++it) {
-    hand_.push_back(it->second);
+    auto p_inst = std::make_unique<core::CardInstance>(&it->second, game_state_.next_instance_id++, game_state_.player->id);
+    p_inst->location = core::CardLocation::Hand;
+    game_state_.player->hand.push_back(std::move(p_inst));
+
+    auto e_inst = std::make_unique<core::CardInstance>(&it->second, game_state_.next_instance_id++, game_state_.enemy->id);
+    e_inst->location = core::CardLocation::Hand;
+    game_state_.enemy->hand.push_back(std::move(e_inst));
   }
 
-  // If we have fewer unique cards than starting hand size, duplicate some for
-  // demo
-  while (hand_.size() < static_cast<size_t>(starting_hand_size) &&
-         !hand_.empty()) {
-    hand_.push_back(hand_[hand_.size() % all_cards.size()]);
-  }
+  // Configure hands
+  float border_thickness = config.window_width * 0.05f;
+  float icon_size = config.window_width * 0.1f;
+  float icon_top = border_thickness + icon_size;
+
+  player_hand_ = std::make_unique<HandController>(game_state_.player->id);
+  glm::vec2 p_bounds_size = {static_cast<float>(config.window_width) * 0.8f,
+                             static_cast<float>(config.window_height) * 0.4f};
+  glm::vec2 p_bounds_pos = {
+      (static_cast<float>(config.window_width) - p_bounds_size.x) * 0.5f,
+      icon_top + 20.0f
+  };
+  player_hand_->SetBounds(p_bounds_pos, p_bounds_size);
+  player_hand_->SetArcAngle(core::graphics::kDefaultArcAngle);
+  player_hand_->SetInteractive(true);
+  player_hand_->SetFaceDown(false);
+
+  enemy_hand_ = std::make_unique<HandController>(game_state_.enemy->id);
+  glm::vec2 e_bounds_size = {static_cast<float>(config.window_width) * 0.8f,
+                             static_cast<float>(config.window_height) * 0.4f};
+  // Enemy health icon is at the top:
+  // config.window_height - border_thickness - icon_size * 0.5f (center)
+  // config.window_height - border_thickness - icon_size (bottom edge of icon)
+  float enemy_icon_bottom = config.window_height - border_thickness - icon_size;
+  glm::vec2 e_bounds_pos = {
+      (static_cast<float>(config.window_width) - e_bounds_size.x) * 0.5f,
+      enemy_icon_bottom - e_bounds_size.y - 20.0f
+  };
+  enemy_hand_->SetBounds(e_bounds_pos, e_bounds_size);
+  enemy_hand_->SetArcAngle(-core::graphics::kDefaultArcAngle);
+  enemy_hand_->SetInteractive(false);
+  enemy_hand_->SetFaceDown(true);
 }
 
 void CombatScene::OnUpdate(float delta_time_seconds) {
-  // Game logic (AI, Card movement) goes here
   if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::kEscape)) {
     engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
+    return;
   }
+
+  // Process game logic
+  core::effects::EffectResolver::Get().ProcessQueue(game_state_);
+  enemy_ai_->Update(delta_time_seconds, game_state_);
+  battle_ui_.Update(delta_time_seconds, game_state_);
+
+  player_hand_->Update(delta_time_seconds, game_state_);
+  enemy_hand_->Update(delta_time_seconds, game_state_);
 }
 
 void CombatScene::OnRender() {
-  // Render the hand at the bottom of the screen
-  auto& config = core::GameConfig::Get();
-  glm::vec2 bounds_size = {static_cast<float>(config.window_width) * 0.8f,
-                           static_cast<float>(config.window_height) * 0.4f};
-  glm::vec2 bounds_pos = {
-      (static_cast<float>(config.window_width) - bounds_size.x) * 0.5f,
-      20.0f  // Padding from bottom
-  };
-
-  core::graphics::HandRenderer::RenderHand(
-      hand_, bounds_pos, bounds_size, core::graphics::kDefaultArcAngle,
-      core::graphics::kDefaultOverlapFactor);
+  battle_ui_.Render(game_state_);
+  player_hand_->Render();
+  enemy_hand_->Render();
 }
 
 }  // namespace scenes

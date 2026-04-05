@@ -27,6 +27,15 @@ class DamageEffect : public Effect {
     actions.push_back(std::make_shared<actions::DealDamageAction>(source_id, targets[0], amount));
     return actions;
   }
+
+  std::string GetDescription(const EffectParams& params) const override {
+    int amount = 0;
+    auto it = params.find("amount");
+    if (it != params.end()) {
+      amount = std::stoi(it->second);
+    }
+    return "Deal " + std::to_string(amount) + " damage.";
+  }
 };
 
 }  // namespace core::effects::types

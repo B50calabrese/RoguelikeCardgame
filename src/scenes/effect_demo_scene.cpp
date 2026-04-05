@@ -28,14 +28,6 @@ namespace scenes {
 void EffectDemoScene::OnAttach() {
     LOG_INFO("[EffectDemoScene] Attached");
 
-    // Register some effects for the demo
-    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::types::DamageEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::effects::types::DrawEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::types::StatModifyEffect>(); });
-
-    // Load cards
-    core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);
-
     InitializeGameState();
 }
 
@@ -107,7 +99,7 @@ void EffectDemoScene::SelectCard(int index) {
     core::CardInstance* inst = state_.player->hand[index].get();
 
     // Check if card can be played
-    core::effects::RuleResult rule = core::effects::RulesEngine::CanPerformAction(state_, std::make_shared<core::effects::actions::PlayCardAction>(0, inst->instance_id, std::vector<core::effects::Target>{}));
+    core::effects::RuleResult rule = core::effects::RulesEngine::Get().ValidateAction(state_, std::make_shared<core::effects::actions::PlayCardAction>(0, inst->instance_id, std::vector<core::effects::Target>{}));
     if (!rule.success) {
         status_message_ = "Cannot play card: " + rule.message;
         selected_hand_card_idx_ = -1;
