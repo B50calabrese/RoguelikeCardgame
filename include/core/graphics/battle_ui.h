@@ -6,6 +6,7 @@
 #include <glm/vec2.hpp>
 #include "core/state/game_state.h"
 #include "core/graphics/ui_button.h"
+#include "core/graphics/health_icon.h"
 
 namespace core::graphics {
 
@@ -20,6 +21,8 @@ class BattleUI {
   void RenderManaPool(const state::PlayerState& player, bool is_player) const;
 
   std::unique_ptr<UIButton> pass_turn_button_;
+  std::unique_ptr<HealthIcon> player_health_icon_;
+  std::unique_ptr<HealthIcon> enemy_health_icon_;
 };
 
 }  // namespace core::graphics

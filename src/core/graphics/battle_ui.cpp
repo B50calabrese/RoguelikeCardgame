@@ -19,6 +19,13 @@ BattleUI::BattleUI() {
   pass_turn_button_ = std::make_unique<UIButton>("Pass Turn", button_pos, button_size, []() {
     // This will be updated in the scene to use the actual player ID
   });
+
+  float icon_size = config.window_width * 0.1f;
+  glm::vec2 player_pos = {config.window_width * 0.5f, border_thickness + icon_size * 0.5f};
+  glm::vec2 enemy_pos = {config.window_width * 0.5f, config.window_height - border_thickness - icon_size * 0.5f};
+
+  player_health_icon_ = std::make_unique<HealthIcon>(player_pos, icon_size, glm::vec4(0.0f, 0.8f, 0.0f, 1.0f));
+  enemy_health_icon_ = std::make_unique<HealthIcon>(enemy_pos, icon_size, glm::vec4(0.8f, 0.0f, 0.0f, 1.0f));
 }
 
 void BattleUI::Update(float delta_time, const GameState& state) {
@@ -56,6 +63,13 @@ void BattleUI::Render(const GameState& state) const {
   RenderManaPool(*state.player, true);
   RenderManaPool(*state.enemy, false);
   pass_turn_button_->Render();
+
+  if (player_health_icon_) {
+    player_health_icon_->Render(state.player->health);
+  }
+  if (enemy_health_icon_) {
+    enemy_health_icon_->Render(state.enemy->health);
+  }
 }
 
 void BattleUI::RenderBorder() const {

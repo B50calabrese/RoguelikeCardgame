@@ -19,6 +19,7 @@ set(SOURCE_FILES
     "src/core/graphics/card_renderer.cpp"
     "src/core/graphics/hand_renderer.cpp"
     "src/core/graphics/ui_button.cpp"
+    "src/core/graphics/health_icon.cpp"
     "src/core/effects/effect_registry.cpp"
     "src/core/effects/target_filter.cpp"
     "src/core/effects/rules_engine.cpp"
