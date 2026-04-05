@@ -141,11 +141,20 @@ void CombatScene::HandleCardInteraction(float delta_time_seconds) {
 
 void CombatScene::UpdateHandLayout() {
   auto& config = core::GameConfig::Get();
+  float border_thickness = config.window_width * 0.05f;
+  float icon_size = config.window_width * 0.1f;
+
   glm::vec2 bounds_size = {static_cast<float>(config.window_width) * 0.8f,
                            static_cast<float>(config.window_height) * 0.4f};
+
+  // Position hand above the player's health icon.
+  // The icon is centered at border_thickness + icon_size * 0.5f.
+  // So its top is at border_thickness + icon_size.
+  float icon_top = border_thickness + icon_size;
+
   glm::vec2 bounds_pos = {
       (static_cast<float>(config.window_width) - bounds_size.x) * 0.5f,
-      20.0f  // Padding from bottom
+      icon_top + 20.0f  // 20px padding above the icon
   };
 
   // Only calculate layout for cards that are NOT being held
