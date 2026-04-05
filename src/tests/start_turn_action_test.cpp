@@ -2,10 +2,12 @@
 #include "core/effects/actions/start_turn_action.h"
 #include "core/state/game_state.h"
 
-using namespace core;
-using namespace core::effects::actions;
+namespace core::effects::actions {
+namespace {
 
-class StartTurnActionTest : public ::testing::Test {
+using ::testing::Test;
+
+class StartTurnActionTest : public Test {
 protected:
     void SetUp() override {
         state = std::make_unique<GameState>();
@@ -46,3 +48,6 @@ TEST_F(StartTurnActionTest, EnemyManaIncrement) {
     EXPECT_EQ(state->enemy->max_mana, 6);
     EXPECT_EQ(state->enemy->mana, 6);
 }
+
+}  // namespace
+}  // namespace core::effects::actions

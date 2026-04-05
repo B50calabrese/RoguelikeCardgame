@@ -6,11 +6,12 @@
 #include "core/effects/effect_resolver.h"
 #include "core/effects/target.h"
 
-using namespace core;
-using namespace core::effects;
-using namespace core::effects::actions;
+namespace core::effects::actions {
+namespace {
 
-class DealDamageActionTest : public ::testing::Test {
+using ::testing::Test;
+
+class DealDamageActionTest : public Test {
 protected:
     void SetUp() override {
         state = std::make_unique<GameState>();
@@ -93,3 +94,6 @@ TEST_F(DealDamageActionTest, CreatureDies) {
 
     EXPECT_EQ(instance_ptr->current_health, 0);
 }
+
+}  // namespace
+}  // namespace core::effects::actions
