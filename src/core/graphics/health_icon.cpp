@@ -10,10 +10,13 @@ HealthIcon::HealthIcon(const glm::vec2& position, float size, const glm::vec4& c
 void HealthIcon::Render(int health) const {
   auto& renderer = engine::graphics::Renderer::Get();
 
+  // Use a high Z-index for UI to ensure it's on top of game elements.
+  const float ui_z = 1000.0f;
+
   // Render the colored square centered at position_
   // DrawQuad uses the origin for rotation and positioning relative to size.
   // Origin (0.5, 0.5) centers the quad on position_.
-  renderer.DrawQuad(position_, {size_, size_}, color_, 0.0f, {0.5f, 0.5f});
+  renderer.DrawQuad(position_, {size_, size_}, color_, 0.0f, {0.5f, 0.5f}, ui_z);
 
   // Render the health text
   std::string health_text = std::to_string(health);
@@ -25,7 +28,8 @@ void HealthIcon::Render(int health) const {
   // Very rough centering offset - in a real engine we'd use GetTextBounds
   glm::vec2 text_pos = position_ + glm::vec2(-size_ * 0.25f, -size_ * 0.15f);
 
-  renderer.DrawText("default", health_text, text_pos, 0.0f, text_scale, {0.0f, 0.0f, 0.0f, 1.0f});
+  renderer.DrawText("default", health_text, text_pos, 0.0f, text_scale,
+                    {0.0f, 0.0f, 0.0f, 1.0f}, ui_z + 0.1f);
 }
 
 }  // namespace core::graphics

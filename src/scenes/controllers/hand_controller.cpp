@@ -233,27 +233,30 @@ void HandController::Render() {
   for (size_t i = 0; i < hand_visuals_.size(); ++i) {
     if (last_to_render && i == *last_to_render) continue;
     const auto& vc = hand_visuals_[i];
+    float z_index = 100.0f + static_cast<float>(i);
     if (is_face_down_) {
       core::graphics::CardRenderer::RenderCardBack(
           vc.current_transform.position, vc.current_transform.scale.x, 1.0f,
-          vc.current_transform.rotation);
+          vc.current_transform.rotation, z_index);
     } else {
       core::graphics::CardRenderer::RenderCard(
           vc.data, vc.current_transform.position, vc.current_transform.scale.x,
-          1.0f, vc.current_transform.rotation);
+          1.0f, vc.current_transform.rotation, z_index);
     }
   }
 
   if (last_to_render && *last_to_render < hand_visuals_.size()) {
     const auto& vc = hand_visuals_[*last_to_render];
+    // Render last_to_render on top of everything else in the hand.
+    float z_index = 200.0f;
     if (is_face_down_) {
       core::graphics::CardRenderer::RenderCardBack(
           vc.current_transform.position, vc.current_transform.scale.x, 1.0f,
-          vc.current_transform.rotation);
+          vc.current_transform.rotation, z_index);
     } else {
       core::graphics::CardRenderer::RenderCard(
           vc.data, vc.current_transform.position, vc.current_transform.scale.x,
-          1.0f, vc.current_transform.rotation);
+          1.0f, vc.current_transform.rotation, z_index);
     }
   }
 }
