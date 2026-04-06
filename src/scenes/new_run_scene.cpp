@@ -21,7 +21,7 @@ void NewRunScene::OnAttach() {
   auto& config = core::GameConfig::Get();
   float window_w = config.window_width;
   float window_h = config.window_height;
-  float buffer = window_w * buffer_factor_;
+  float buffer = window_w * kBufferFactor;
   float drawable_w = window_w - 2.0f * buffer;
 
   // Initialize characters
@@ -29,7 +29,7 @@ void NewRunScene::OnAttach() {
                                         core::characters::kCharColor2,
                                         core::characters::kCharColor3};
 
-  float char_y = window_h * character_y_factor_;
+  float char_y = window_h * kCharacterYFactor;
   float char_spacing = drawable_w / (char_colors.size() - 1);
 
   for (size_t i = 0; i < char_colors.size(); ++i) {
@@ -49,7 +49,7 @@ void NewRunScene::OnAttach() {
       {core::graphics::kColorRed, core::graphics::kColorRedHighlight},
       {core::graphics::kColorGreen, core::graphics::kColorGreenHighlight}};
 
-  float color_y = window_h * color_y_factor_;
+  float color_y = window_h * kColorYFactor;
   float color_spacing = drawable_w / (gameplay_colors.size() - 1);
 
   for (size_t i = 0; i < gameplay_colors.size(); ++i) {
@@ -104,7 +104,7 @@ void NewRunScene::HandleInput() {
     // Check characters
     for (int i = 0; i < static_cast<int>(characters_.size()); ++i) {
       if (core::util::PointInRect(pixel_mouse_pos, characters_[i].pos,
-                                  character_size_, true)) {
+                                  kCharacterSize, true)) {
         selected_character_index_ = i;
         break;
       }
@@ -113,7 +113,7 @@ void NewRunScene::HandleInput() {
     // Check colors
     for (int i = 0; i < static_cast<int>(colors_.size()); ++i) {
       if (core::util::PointInRect(pixel_mouse_pos, colors_[i].pos,
-                                  color_size_, true)) {
+                                  kColorSize, true)) {
         auto it = std::find(selected_color_indices_.begin(),
                             selected_color_indices_.end(), i);
         if (it != selected_color_indices_.end()) {
@@ -144,7 +144,7 @@ void NewRunScene::OnRender() {
   // Render Characters
   for (int i = 0; i < static_cast<int>(characters_.size()); ++i) {
     glm::vec4 color = characters_[i].color;
-    renderer.DrawQuad(characters_[i].pos, character_size_, color, 0.0f,
+    renderer.DrawQuad(characters_[i].pos, kCharacterSize, color, 0.0f,
                       {0.5f, 0.5f});
 
     if (i == selected_character_index_) {
@@ -152,11 +152,11 @@ void NewRunScene::OnRender() {
       // rects or a slightly larger quad behind
       float outline_thickness = 4.0f;
       glm::vec2 outline_size =
-          character_size_ + glm::vec2(outline_thickness * 2.0f);
+          kCharacterSize + glm::vec2(outline_thickness * 2.0f);
       renderer.DrawQuad(characters_[i].pos, outline_size, {1, 1, 1, 1}, 0.0f,
                         {0.5f, 0.5f});
       // Redraw character on top
-      renderer.DrawQuad(characters_[i].pos, character_size_, color, 0.0f,
+      renderer.DrawQuad(characters_[i].pos, kCharacterSize, color, 0.0f,
                         {0.5f, 0.5f});
     }
   }
@@ -172,12 +172,12 @@ void NewRunScene::OnRender() {
     if (selected) {
       // Draw outline for selected colors
       float outline_thickness = 4.0f;
-      glm::vec2 outline_size = color_size_ + glm::vec2(outline_thickness * 2.0f);
+      glm::vec2 outline_size = kColorSize + glm::vec2(outline_thickness * 2.0f);
       renderer.DrawQuad(colors_[i].pos, outline_size, {1, 1, 1, 1}, 0.0f,
                         {0.5f, 0.5f});
     }
 
-    renderer.DrawQuad(colors_[i].pos, color_size_, color, 0.0f, {0.5f, 0.5f});
+    renderer.DrawQuad(colors_[i].pos, kColorSize, color, 0.0f, {0.5f, 0.5f});
   }
 
   // Render Buttons

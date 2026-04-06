@@ -34,11 +34,11 @@ class CardViewerScene : public engine::Scene {
                        const glm::vec2& mouse_pos) const;
 
   // UI Constants
-  float btn_width_ = 150.0f;
-  float btn_height_ = 50.0f;
-  float margin_ = 20.0f;
-  float card_padding_ = 40.0f;
-  float scrollbar_width_ = 20.0f;
+  const float kBtnWidth = 150.0f;
+  const float kBtnHeight = 50.0f;
+  const float kMargin = 20.0f;
+  const float kCardPadding = 40.0f;
+  const float kScrollbarWidth = 20.0f;
 
   std::vector<core::CardData> cards_;
   SortOption current_sort_ = SortOption::kAlphabetical;

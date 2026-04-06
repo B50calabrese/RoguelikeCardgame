@@ -32,7 +32,8 @@ set(SOURCE_FILES
     "src/core/ai/simple_ai.cpp"
     "src/scenes/main_menu_scene.cpp"
     "src/scenes/combat_scene.cpp"
-    "src/core/controllers/hand_controller.cpp"
+    "src/scenes/combat_commander.cpp"
+    "src/scenes/controllers/hand_controller.cpp"
     "src/scenes/card_viewer_scene.cpp"
     "src/scenes/new_run_scene.cpp"
     "third_party/pugixml/pugixml.cpp")

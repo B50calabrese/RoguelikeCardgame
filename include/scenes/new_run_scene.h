@@ -36,11 +36,11 @@ class NewRunScene : public engine::Scene {
   void HandleInput();
 
   // UI Constants
-  float buffer_factor_ = 0.1f;
-  float character_y_factor_ = 0.75f;
-  float color_y_factor_ = 0.25f;
-  glm::vec2 character_size_ = {120.0f, 120.0f};
-  glm::vec2 color_size_ = {80.0f, 80.0f};
+  const float kBufferFactor = 0.1f;
+  const float kCharacterYFactor = 0.75f;
+  const float kColorYFactor = 0.25f;
+  const glm::vec2 kCharacterSize = {120.0f, 120.0f};
+  const glm::vec2 kColorSize = {80.0f, 80.0f};
 
   std::vector<CharacterData> characters_;
   std::vector<ColorData> colors_;

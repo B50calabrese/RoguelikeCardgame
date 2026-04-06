@@ -19,29 +19,28 @@ void MainMenuScene::OnAttach() {
   float start_y = config.window_height * 0.7f;
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
-      "New Run", glm::vec2{center_x - btn_width_ * 0.5f, start_y},
-      glm::vec2{btn_width_, btn_height_}, []() {
+      "New Run", glm::vec2{center_x - kBtnWidth * 0.5f, start_y},
+      glm::vec2{kBtnWidth, kBtnHeight}, []() {
         engine::SceneManager::Get().SetScene(std::make_unique<NewRunScene>());
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
-      "Combat Scene",
-      glm::vec2{center_x - btn_width_ * 0.5f, start_y - btn_spacing_},
-      glm::vec2{btn_width_, btn_height_}, []() {
+      "Combat Scene", glm::vec2{center_x - kBtnWidth * 0.5f, start_y - kBtnSpacing},
+      glm::vec2{kBtnWidth, kBtnHeight}, []() {
         engine::SceneManager::Get().SetScene(std::make_unique<CombatScene>());
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
       "Card Viewer",
-      glm::vec2{center_x - btn_width_ * 0.5f, start_y - 2.0f * btn_spacing_},
-      glm::vec2{btn_width_, btn_height_}, []() {
+      glm::vec2{center_x - kBtnWidth * 0.5f, start_y - 2.0f * kBtnSpacing},
+      glm::vec2{kBtnWidth, kBtnHeight}, []() {
         engine::SceneManager::Get().SetScene(std::make_unique<CardViewerScene>());
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
       "Exit",
-      glm::vec2{center_x - btn_width_ * 0.5f, start_y - 3.0f * btn_spacing_},
-      glm::vec2{btn_width_, btn_height_}, []() {
+      glm::vec2{center_x - kBtnWidth * 0.5f, start_y - 3.0f * kBtnSpacing},
+      glm::vec2{kBtnWidth, kBtnHeight}, []() {
         LOG_INFO("Exit requested");
       }));
 }
