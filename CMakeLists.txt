@@ -32,11 +32,9 @@ set(SOURCE_FILES
     "src/core/ai/simple_ai.cpp"
     "src/scenes/main_menu_scene.cpp"
     "src/scenes/combat_scene.cpp"
-    "src/scenes/hand_controller.cpp"
+    "src/core/controllers/hand_controller.cpp"
     "src/scenes/card_viewer_scene.cpp"
-    "src/scenes/effect_demo_scene.cpp"
     "src/scenes/new_run_scene.cpp"
-    "src/scenes/battle_test_scene.cpp"
     "third_party/pugixml/pugixml.cpp")
 file(GLOB_RECURSE INCLUDE_FILES "src/*.h" "include/*.h" "include/core/*.h" "include/core/graphics/*.h" "include/scenes/*.h" "src/scenes/*.h" "third_party/pugixml/*.hpp")
 

@@ -1,4 +1,4 @@
-#include "scenes/hand_controller.h"
+#include "core/controllers/hand_controller.h"
 
 #include <algorithm>
 #include <vector>
@@ -17,7 +17,7 @@
 #include "engine/input/input_manager.h"
 #include "engine/util/logger.h"
 
-namespace scenes {
+namespace core::controllers {
 
 namespace {
 constexpr float kCardHoverScale = 1.2f;
@@ -258,4 +258,4 @@ void HandController::Render() {
   }
 }
 
-}  // namespace scenes
+}  // namespace core::controllers

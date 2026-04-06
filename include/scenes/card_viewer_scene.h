@@ -33,6 +33,13 @@ class CardViewerScene : public engine::Scene {
   bool IsMouseOverCard(const glm::vec2& pos, const glm::vec2& size,
                        const glm::vec2& mouse_pos) const;
 
+  // UI Constants
+  float btn_width_ = 150.0f;
+  float btn_height_ = 50.0f;
+  float margin_ = 20.0f;
+  float card_padding_ = 40.0f;
+  float scrollbar_width_ = 20.0f;
+
   std::vector<core::CardData> cards_;
   SortOption current_sort_ = SortOption::kAlphabetical;
   float scroll_offset_ = 0.0f;
