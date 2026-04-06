@@ -10,9 +10,9 @@
 #include "core/state/game_state.h"
 #include "core/graphics/battle_ui.h"
 #include "core/ai/battle_ai.h"
+#include "scenes/controllers/hand_controller.h"
 #include "engine/ecs/components/transform.h"
 #include "engine/scene/scene.h"
-#include "scenes/hand_controller.h"
 
 namespace scenes {
 
@@ -30,12 +30,22 @@ class CombatScene : public engine::Scene {
   void OnRender() override;
 
  private:
+  // UI Constants (Relative to window size)
+  float kBorderThickness = 0.0f;
+  float kIconSize = 0.0f;
+  float kIconTop = 0.0f;
+  float kEnemyIconBottom = 0.0f;
+
+  glm::vec2 kHandBoundsSize = {0.0f, 0.0f};
+  glm::vec2 kPlayerHandPos = {0.0f, 0.0f};
+  glm::vec2 kEnemyHandPos = {0.0f, 0.0f};
+
   core::GameState game_state_;
   core::graphics::BattleUI battle_ui_;
   std::unique_ptr<core::ai::IBattleAI> enemy_ai_;
 
-  std::unique_ptr<HandController> player_hand_;
-  std::unique_ptr<HandController> enemy_hand_;
+  std::unique_ptr<controllers::HandController> player_hand_;
+  std::unique_ptr<controllers::HandController> enemy_hand_;
 };
 
 }  // namespace scenes

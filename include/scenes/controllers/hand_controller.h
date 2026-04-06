@@ -1,5 +1,5 @@
-#ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_HAND_CONTROLLER_H_
-#define DECK_BUILDER_GAME_INCLUDE_SCENES_HAND_CONTROLLER_H_
+#ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_CONTROLLERS_HAND_CONTROLLER_H_
+#define DECK_BUILDER_GAME_INCLUDE_SCENES_CONTROLLERS_HAND_CONTROLLER_H_
 
 #include <vector>
 #include <optional>
@@ -8,7 +8,7 @@
 #include "core/state/game_state.h"
 #include "engine/ecs/components/transform.h"
 
-namespace scenes {
+namespace scenes::controllers {
 
 /**
  * @brief Visual representation of a card in the hand with animation state.
@@ -62,6 +62,6 @@ class HandController {
   std::optional<size_t> held_card_index_;
 };
 
-}  // namespace scenes
+}  // namespace scenes::controllers
 
-#endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_HAND_CONTROLLER_H_
+#endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_CONTROLLERS_HAND_CONTROLLER_H_

@@ -12,13 +12,17 @@
 #include "core/effects/effect_resolver.h"
 #include "core/effects/actions/start_turn_action.h"
 #include "core/ai/simple_ai.h"
+#include "scenes/controllers/hand_controller.h"
 #include "core/game_config.h"
 #include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
+#include "core/effects/actions/play_card_action.h"
 #include "core/util/math_util.h"
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
+#include "engine/util/console.h"
 #include "engine/util/logger.h"
+#include "scenes/combat_command_system.h"
 #include "scenes/main_menu_scene.h"
 
 namespace scenes {
@@ -32,6 +36,8 @@ void CombatScene::OnAttach() {
   if (!success) {
     LOG_ERR("[CombatScene] Failed to load some cards.");
   }
+
+  CombatCommandSystem::Register(game_state_);
 
   const auto& all_cards = core::CardRegistry::Get().GetAllCards();
   if (all_cards.empty()) {
@@ -66,40 +72,36 @@ void CombatScene::OnAttach() {
   }
 
   // Configure hands
-  float border_thickness = config.window_width * 0.05f;
-  float icon_size = config.window_width * 0.1f;
-  float icon_top = border_thickness + icon_size;
+  kBorderThickness = config.window_width * 0.05f;
+  kIconSize = config.window_width * 0.1f;
+  kIconTop = kBorderThickness + kIconSize;
+  kEnemyIconBottom = config.window_height - kBorderThickness - kIconSize;
 
-  player_hand_ = std::make_unique<HandController>(game_state_.player->id);
-  glm::vec2 p_bounds_size = {static_cast<float>(config.window_width) * 0.8f,
-                             static_cast<float>(config.window_height) * 0.4f};
-  glm::vec2 p_bounds_pos = {
-      (static_cast<float>(config.window_width) - p_bounds_size.x) * 0.5f,
-      icon_top + 20.0f
-  };
-  player_hand_->SetBounds(p_bounds_pos, p_bounds_size);
+  kHandBoundsSize = {static_cast<float>(config.window_width) * 0.8f,
+                     static_cast<float>(config.window_height) * 0.4f};
+  kPlayerHandPos = {
+      (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
+      kIconTop + 20.0f};
+  kEnemyHandPos = {
+      (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
+      kEnemyIconBottom - kHandBoundsSize.y - 20.0f};
+
+  player_hand_ = std::make_unique<controllers::HandController>(game_state_.player->id);
+  player_hand_->SetBounds(kPlayerHandPos, kHandBoundsSize);
   player_hand_->SetArcAngle(core::graphics::kDefaultArcAngle);
   player_hand_->SetInteractive(true);
   player_hand_->SetFaceDown(false);
 
-  enemy_hand_ = std::make_unique<HandController>(game_state_.enemy->id);
-  glm::vec2 e_bounds_size = {static_cast<float>(config.window_width) * 0.8f,
-                             static_cast<float>(config.window_height) * 0.4f};
-  // Enemy health icon is at the top:
-  // config.window_height - border_thickness - icon_size * 0.5f (center)
-  // config.window_height - border_thickness - icon_size (bottom edge of icon)
-  float enemy_icon_bottom = config.window_height - border_thickness - icon_size;
-  glm::vec2 e_bounds_pos = {
-      (static_cast<float>(config.window_width) - e_bounds_size.x) * 0.5f,
-      enemy_icon_bottom - e_bounds_size.y - 20.0f
-  };
-  enemy_hand_->SetBounds(e_bounds_pos, e_bounds_size);
+  enemy_hand_ = std::make_unique<controllers::HandController>(game_state_.enemy->id);
+  enemy_hand_->SetBounds(kEnemyHandPos, kHandBoundsSize);
   enemy_hand_->SetArcAngle(-core::graphics::kDefaultArcAngle);
   enemy_hand_->SetInteractive(false);
   enemy_hand_->SetFaceDown(true);
 }
 
 void CombatScene::OnUpdate(float delta_time_seconds) {
+  engine::util::Console::Get().Update();
+
   if (engine::InputManager::Get().IsKeyPressed(engine::KeyCode::kEscape)) {
     engine::SceneManager::Get().SetScene(std::make_unique<MainMenuScene>());
     return;
@@ -118,6 +120,7 @@ void CombatScene::OnRender() {
   battle_ui_.Render(game_state_);
   player_hand_->Render();
   enemy_hand_->Render();
+  engine::util::Console::Get().Render();
 }
 
 }  // namespace scenes

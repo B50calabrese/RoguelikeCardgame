@@ -22,6 +22,11 @@ class MainMenuScene : public engine::Scene {
  private:
   void HandleInput();
 
+  // UI Constants
+  const float kBtnWidth = 300.0f;
+  const float kBtnHeight = 60.0f;
+  const float kBtnSpacing = 80.0f;
+
   std::vector<std::unique_ptr<core::graphics::UIButton>> buttons_;
 };
 

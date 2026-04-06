@@ -11,13 +11,6 @@
 
 namespace scenes {
 
-// New Run Scene Constants
-constexpr float kNewRunBufferFactor = 0.1f;
-constexpr float kNewRunCharacterYFactor = 0.75f;
-constexpr float kNewRunColorYFactor = 0.25f;
-const glm::vec2 kNewRunCharacterSize = {120.0f, 120.0f};
-const glm::vec2 kNewRunColorSize = {80.0f, 80.0f};
-
 struct CharacterData {
   glm::vec4 color;
   glm::vec2 pos;
@@ -41,6 +34,13 @@ class NewRunScene : public engine::Scene {
 
  private:
   void HandleInput();
+
+  // UI Constants
+  const float kBufferFactor = 0.1f;
+  const float kCharacterYFactor = 0.75f;
+  const float kColorYFactor = 0.25f;
+  const glm::vec2 kCharacterSize = {120.0f, 120.0f};
+  const glm::vec2 kColorSize = {80.0f, 80.0f};
 
   std::vector<CharacterData> characters_;
   std::vector<ColorData> colors_;
