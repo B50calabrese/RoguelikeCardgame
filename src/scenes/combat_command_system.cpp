@@ -1,4 +1,4 @@
-#include "scenes/combat_commander.h"
+#include "scenes/combat_command_system.h"
 
 #include <algorithm>
 #include <iostream>
@@ -13,7 +13,7 @@
 
 namespace scenes {
 
-void CombatCommander::Register(core::GameState& state) {
+void CombatCommandSystem::Register(core::GameState& state) {
   auto& console = engine::util::Console::Get();
   console.RegisterCommand("add_card", [&state](const std::vector<std::string>& args) {
     AddCardCommand(state, args);
@@ -41,7 +41,7 @@ void CombatCommander::Register(core::GameState& state) {
   });
 }
 
-void CombatCommander::AddCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::AddCardCommand(core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 3) {
     console.Log("Usage: add_card <player|enemy> <card_id> <hand|deck>");
@@ -74,7 +74,7 @@ void CombatCommander::AddCardCommand(core::GameState& state, const std::vector<s
   }
 }
 
-void CombatCommander::RemoveCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::RemoveCardCommand(core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: remove_card <instance_id>");
@@ -106,7 +106,7 @@ void CombatCommander::RemoveCardCommand(core::GameState& state, const std::vecto
   }
 }
 
-void CombatCommander::ListCardsCommand(const std::vector<std::string>& args) {
+void CombatCommandSystem::ListCardsCommand(const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   const auto& all_cards = core::CardRegistry::Get().GetAllCards();
   console.Log("Available Cards:");
@@ -115,7 +115,7 @@ void CombatCommander::ListCardsCommand(const std::vector<std::string>& args) {
   }
 }
 
-void CombatCommander::SetHealthCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::SetHealthCommand(core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: set_health <player|enemy> <amount>");
@@ -132,7 +132,7 @@ void CombatCommander::SetHealthCommand(core::GameState& state, const std::vector
   }
 }
 
-void CombatCommander::DrawCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::DrawCardCommand(core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: draw <player|enemy>");
@@ -151,7 +151,7 @@ void CombatCommander::DrawCardCommand(core::GameState& state, const std::vector<
   console.Log(target + " drew a card.");
 }
 
-void CombatCommander::SetManaCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::SetManaCommand(core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: set_mana <player|enemy> <amount>");
@@ -168,7 +168,7 @@ void CombatCommander::SetManaCommand(core::GameState& state, const std::vector<s
   }
 }
 
-void CombatCommander::SetTurnCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::SetTurnCommand(core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: set_turn <player|enemy>");
@@ -179,7 +179,7 @@ void CombatCommander::SetTurnCommand(core::GameState& state, const std::vector<s
   console.Log("Current turn set to " + target);
 }
 
-void CombatCommander::PlayCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::PlayCardCommand(core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: play_card <player|enemy> <instance_id>");

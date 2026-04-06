@@ -22,7 +22,7 @@
 #include "engine/scene/scene_manager.h"
 #include "engine/util/console.h"
 #include "engine/util/logger.h"
-#include "scenes/combat_commander.h"
+#include "scenes/combat_command_system.h"
 #include "scenes/main_menu_scene.h"
 
 namespace scenes {
@@ -37,7 +37,7 @@ void CombatScene::OnAttach() {
     LOG_ERR("[CombatScene] Failed to load some cards.");
   }
 
-  CombatCommander::Register(game_state_);
+  CombatCommandSystem::Register(game_state_);
 
   const auto& all_cards = core::CardRegistry::Get().GetAllCards();
   if (all_cards.empty()) {

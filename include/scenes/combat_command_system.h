@@ -1,5 +1,5 @@
-#ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMMANDER_H_
-#define DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMMANDER_H_
+#ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMMAND_SYSTEM_H_
+#define DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMMAND_SYSTEM_H_
 
 #include <string>
 #include <vector>
@@ -11,7 +11,7 @@ namespace scenes {
 /**
  * @brief Handles registration and execution of console commands for CombatScene.
  */
-class CombatCommander {
+class CombatCommandSystem {
  public:
   static void Register(core::GameState& state);
 
@@ -28,4 +28,4 @@ class CombatCommander {
 
 }  // namespace scenes
 
-#endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMMANDER_H_
+#endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMMAND_SYSTEM_H_
