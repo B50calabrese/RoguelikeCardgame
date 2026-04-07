@@ -87,14 +87,14 @@ void CombatScene::OnAttach() {
       kEnemyIconBottom - kHandBoundsSize.y - 20.0f};
 
   // Configure boards
-  kBoardBoundsSize = {static_cast<float>(config.window_width) * 0.8f,
-                      static_cast<float>(config.window_height) * 0.25f};
+  kBoardBoundsSize = {static_cast<float>(config.window_width) * kBoardWidthPercent,
+                      static_cast<float>(config.window_height) * kBoardHeightPercent};
   kPlayerBoardPos = {
       (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) * 0.25f};
+      static_cast<float>(config.window_height) * kPlayerBoardYPercent};
   kEnemyBoardPos = {
       (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) * 0.5f};
+      static_cast<float>(config.window_height) * kEnemyBoardYPercent};
 
   player_hand_ = std::make_unique<controllers::HandController>(game_state_.player->id);
   player_hand_->SetBounds(kPlayerHandPos, kHandBoundsSize);

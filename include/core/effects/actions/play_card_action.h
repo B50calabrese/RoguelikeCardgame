@@ -28,7 +28,7 @@ class PlayCardAction : public ActionBase {
   }
 
   void Apply(state::GameState& state) const override {
-    PlayerState& p = (player_id_ == 0) ? *state.player : *state.enemy;
+    PlayerState& p = (player_id_ == state.player->id) ? *state.player : *state.enemy;
 
     auto it = std::find_if(p.hand.begin(), p.hand.end(),
         [id = card_instance_id_](const auto& c) { return c->instance_id == id; });

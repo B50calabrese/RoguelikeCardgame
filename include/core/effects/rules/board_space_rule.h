@@ -5,6 +5,7 @@
 #include "core/effects/actions/play_card_action.h"
 #include "core/state/player_state.h"
 #include "core/card_instance.h"
+#include "core/card_data.h"
 
 namespace core::effects::rules {
 
@@ -21,7 +22,7 @@ class BoardSpaceRule : public IRule {
     int player_id = play_action->GetActorId();
     int card_id = play_action->card_instance_id();
 
-    const PlayerState& p = (player_id == 0) ? *state.player : *state.enemy;
+    const PlayerState& p = (player_id == state.player->id) ? *state.player : *state.enemy;
 
     // Find the card in hand to check its type
     const CardInstance* inst = nullptr;
