@@ -25,7 +25,7 @@ class CardRenderer {
    */
   static void RenderCard(const core::CardData& data, glm::vec2 position,
                          float scale = 1.0f, float alpha = 1.0f,
-                         float rotation = 0.0f);
+                         float rotation = 0.0f, float z_index = 0.0f);
 
   /**
    * @brief Renders the card back.
@@ -33,9 +33,11 @@ class CardRenderer {
    * @param scale Overall size multiplier.
    * @param alpha Transparency.
    * @param rotation Rotation in degrees.
+   * @param z_index The Z-order for sorting.
    */
   static void RenderCardBack(glm::vec2 position, float scale = 1.0f,
-                             float alpha = 1.0f, float rotation = 0.0f);
+                             float alpha = 1.0f, float rotation = 0.0f,
+                             float z_index = 0.0f);
 };
 
 }  // namespace core::graphics

@@ -114,8 +114,11 @@ void HandRenderer::RenderHand(const std::vector<core::CardData>& cards,
                                      arc_angle_degrees, overlap_factor);
 
   for (size_t i = 0; i < cards.size(); ++i) {
+    // We use a Z-index that increases with each card, so later cards are
+    // rendered on top of earlier ones. We start at a base Z-index.
+    float card_z = 100.0f + static_cast<float>(i) * 1.0f;
     CardRenderer::RenderCard(cards[i], layouts[i].position, layouts[i].scale.x,
-                             1.0f, layouts[i].rotation);
+                             1.0f, layouts[i].rotation, card_z);
   }
 }
 

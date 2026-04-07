@@ -6,6 +6,7 @@
 #include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
 #include "engine/graphics/primitive_renderer.h"
+#include "engine/graphics/utils/render_queue.h"
 #include "engine/input/input_manager.h"
 
 namespace core::graphics {
@@ -78,14 +79,22 @@ void BattleUI::RenderBorder() const {
   float t = config.window_width * 0.05f;
   glm::vec4 border_color = {0.3f, 0.3f, 0.3f, 1.0f};
 
+  // Border should be below other UI elements but potentially above cards if
+  // they fly out. Let's put it at a high Z but lower than buttons/health.
+  const float border_z = 900.0f;
+
   // Top
-  renderer.DrawRect(0, config.window_height - t, config.window_width, t, border_color.r, border_color.g, border_color.b);
+  renderer.DrawRect(0, config.window_height - t, config.window_width, t,
+                    border_color.r, border_color.g, border_color.b, border_z);
   // Bottom
-  renderer.DrawRect(0, 0, config.window_width, t, border_color.r, border_color.g, border_color.b);
+  renderer.DrawRect(0, 0, config.window_width, t, border_color.r, border_color.g,
+                    border_color.b, border_z);
   // Left
-  renderer.DrawRect(0, 0, t, config.window_height, border_color.r, border_color.g, border_color.b);
+  renderer.DrawRect(0, 0, t, config.window_height, border_color.r,
+                    border_color.g, border_color.b, border_z);
   // Right
-  renderer.DrawRect(config.window_width - t, 0, t, config.window_height, border_color.r, border_color.g, border_color.b);
+  renderer.DrawRect(config.window_width - t, 0, t, config.window_height,
+                    border_color.r, border_color.g, border_color.b, border_z);
 }
 
 void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) const {
@@ -108,6 +117,8 @@ void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) 
     color2 = (player.colors.size() > 1) ? util::GetColorVector(player.colors[1]) : color1;
   }
 
+  const float ui_z = 1000.0f;
+
   for (int i = 0; i < player.max_mana; ++i) {
     glm::vec2 offset = is_player ? glm::vec2(- (i + 1) * radius * 2.5f, 0.0f) : glm::vec2((i + 1) * radius * 2.5f, 0.0f);
     glm::vec2 pos = base_pos + offset;
@@ -120,13 +131,21 @@ void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) 
       c2.a = 0.3f;
     }
 
-    engine::graphics::PrimitiveRenderer::SubmitCircle(pos, radius, c1, 0.0f, c2, 1); // 1 = Linear Gradient
+    engine::graphics::utils::RenderCommand cmd;
+    cmd.z_order = ui_z;
+    cmd.shape_type = engine::graphics::utils::ShapeType::kCircle;
+    cmd.position = pos;
+    cmd.size = glm::vec2(radius); // For circles, size.x is radius
+    cmd.color = c1;
+    cmd.color2 = c2;
+    cmd.gradient_type = 1; // Linear
+    engine::graphics::utils::RenderQueue::Default().Submit(cmd);
   }
 
   // Draw mana text
   std::string mana_text = std::to_string(player.mana) + "/" + std::to_string(player.max_mana);
   glm::vec2 text_pos = base_pos + (is_player ? glm::vec2(-radius, radius * 1.5f) : glm::vec2(-radius, -radius * 2.5f));
-  engine::graphics::Renderer::Get().DrawText("default", mana_text, text_pos, 0.0f, 0.5f, {1.0f, 1.0f, 1.0f, 1.0f});
+  engine::graphics::Renderer::Get().DrawText("default", mana_text, text_pos, 0.0f, 0.5f, {1.0f, 1.0f, 1.0f, 1.0f}, ui_z + 0.1f);
 }
 
 }  // namespace core::graphics

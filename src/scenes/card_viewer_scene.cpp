@@ -206,14 +206,16 @@ void CardViewerScene::RenderGrid() {
       hovered_i = i;
       hovered_pos = pos;
     } else {
-      core::graphics::CardRenderer::RenderCard(cards_[i], pos, 1.0f);
+      core::graphics::CardRenderer::RenderCard(cards_[i], pos, 1.0f, 1.0f, 0.0f,
+                                               10.0f);
     }
   }
 
   // Render hovered card last so it's on top
   if (hovered_i != -1) {
     core::graphics::CardRenderer::RenderCard(cards_[hovered_i], hovered_pos,
-                                             config.card_viewer_hover_zoom);
+                                             config.card_viewer_hover_zoom,
+                                             1.0f, 0.0f, 20.0f);
   }
 }
 
@@ -254,7 +256,7 @@ void CardViewerScene::RenderFullscreenOverlay() {
   core::graphics::CardRenderer::RenderCard(
       cards_[selected_card_index_],
       {config.window_width * 0.5f, config.window_height * 0.5f},
-      config.card_viewer_fullscreen_zoom);
+      config.card_viewer_fullscreen_zoom, 1.0f, 0.0f, 1000.0f);
 }
 
 bool CardViewerScene::OnInput() { return false; }
