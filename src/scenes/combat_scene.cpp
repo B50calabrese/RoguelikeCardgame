@@ -86,6 +86,16 @@ void CombatScene::OnAttach() {
       (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
       kEnemyIconBottom - kHandBoundsSize.y - 20.0f};
 
+  // Configure boards
+  kBoardBoundsSize = {static_cast<float>(config.window_width) * 0.8f,
+                      static_cast<float>(config.window_height) * 0.25f};
+  kPlayerBoardPos = {
+      (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
+      static_cast<float>(config.window_height) * 0.25f};
+  kEnemyBoardPos = {
+      (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
+      static_cast<float>(config.window_height) * 0.5f};
+
   player_hand_ = std::make_unique<controllers::HandController>(game_state_.player->id);
   player_hand_->SetBounds(kPlayerHandPos, kHandBoundsSize);
   player_hand_->SetArcAngle(core::graphics::kDefaultArcAngle);
@@ -118,6 +128,27 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
 
 void CombatScene::OnRender() {
   battle_ui_.Render(game_state_);
+
+  // Render boards
+  auto player_board_layouts = core::graphics::HandRenderer::CalculateHandLayout(
+      game_state_.player->board.size(), kPlayerBoardPos, kBoardBoundsSize, 0.0f,
+      0.2f);
+  for (size_t i = 0; i < game_state_.player->board.size(); ++i) {
+    // Note: This is where we could add interaction logic (e.g. hover/click)
+    core::graphics::CardRenderer::RenderCard(
+        *game_state_.player->board[i]->data, player_board_layouts[i].position,
+        player_board_layouts[i].scale.x, 1.0f, player_board_layouts[i].rotation);
+  }
+
+  auto enemy_board_layouts = core::graphics::HandRenderer::CalculateHandLayout(
+      game_state_.enemy->board.size(), kEnemyBoardPos, kBoardBoundsSize, 0.0f,
+      0.2f);
+  for (size_t i = 0; i < game_state_.enemy->board.size(); ++i) {
+    core::graphics::CardRenderer::RenderCard(
+        *game_state_.enemy->board[i]->data, enemy_board_layouts[i].position,
+        enemy_board_layouts[i].scale.x, 1.0f, enemy_board_layouts[i].rotation);
+  }
+
   player_hand_->Render();
   enemy_hand_->Render();
   engine::util::Console::Get().Render();

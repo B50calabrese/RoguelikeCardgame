@@ -40,6 +40,10 @@ class CombatScene : public engine::Scene {
   glm::vec2 kPlayerHandPos = {0.0f, 0.0f};
   glm::vec2 kEnemyHandPos = {0.0f, 0.0f};
 
+  glm::vec2 kBoardBoundsSize = {0.0f, 0.0f};
+  glm::vec2 kPlayerBoardPos = {0.0f, 0.0f};
+  glm::vec2 kEnemyBoardPos = {0.0f, 0.0f};
+
   core::GameState game_state_;
   core::graphics::BattleUI battle_ui_;
   std::unique_ptr<core::ai::IBattleAI> enemy_ai_;
