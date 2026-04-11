@@ -10,6 +10,13 @@ This is a Roguelike Card Game project built on top of a custom C++ game engine (
 4.  **Creating New Tests**: Following Google's C++ standards, new unit tests should be placed in the same directory as the source files they test and follow the `*_test.cpp` naming convention. The CMake build system will automatically discover and include it.
 5.  **Namespace Usage**: Avoid `using namespace` in headers. In source files and tests, use specific `using` declarations or explicit qualifiers. Tests should ideally reside in an anonymous namespace within the appropriate project namespace (e.g., `core::effects::actions`).
 
+## Project Tracking and Maintenance
+1.  **Status Updates**: After completing any task and before every commit, you **MUST** update the `STATUS.md` file located in the root directory.
+    -   Update the **Most Recent Changes** section with a concise summary of your work.
+    -   Review and update the **Technical Status Report** if your changes affected any major scenes or infrastructure.
+    -   Add or refine **Recommendations & Next Steps** based on your findings during the task.
+2.  **Reference Status**: Always refer to [STATUS.md](STATUS.md) to understand the current progress and state of the game before starting a new task.
+
 ## Build and Test Commands
 ```bash
 # Configure with tests enabled
