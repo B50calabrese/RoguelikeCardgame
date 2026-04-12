@@ -1,0 +1,10 @@
+<Card id="82">
+    <Name>Green Placeholder 82</Name>
+    <Type>Creature</Type>
+    <Color>Green</Color>
+    <Cost>3</Cost>
+    <Power>2</Power>
+    <Health>0</Health>
+    <Frame></Frame>
+    <Art>card_back.png</Art>
+</Card>

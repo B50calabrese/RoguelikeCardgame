@@ -1,0 +1,10 @@
+<Card id="47">
+    <Name>Black Placeholder 47</Name>
+    <Type>Creature</Type>
+    <Color>Black</Color>
+    <Cost>8</Cost>
+    <Power>2</Power>
+    <Health>6</Health>
+    <Frame></Frame>
+    <Art>card_back.png</Art>
+</Card>

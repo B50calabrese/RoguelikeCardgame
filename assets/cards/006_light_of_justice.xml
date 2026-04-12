@@ -1,0 +1,11 @@
+<Card id="6">
+    <Name>Light of Justice</Name>
+    <Type>Creature</Type>
+    <TypeLine>Creature - Elemental</TypeLine>
+    <Color>White</Color>
+    <Cost>4</Cost>
+    <Power>3</Power>
+    <Health>6</Health>
+    <Frame>white_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

@@ -1,0 +1,10 @@
+<Card id="64">
+    <Name>Red Placeholder 64</Name>
+    <Type>Creature</Type>
+    <Color>Red</Color>
+    <Cost>5</Cost>
+    <Power>4</Power>
+    <Health>6</Health>
+    <Frame></Frame>
+    <Art>card_back.png</Art>
+</Card>
