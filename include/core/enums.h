@@ -32,6 +32,26 @@ enum class ActorId : int {
   None = -1
 };
 
+/**
+ * @brief Defines the subtypes (creature types) of a card.
+ */
+enum class CreatureType {
+  None,
+  Human,
+  Soldier,
+  Knight,
+  Cleric,
+  Elf,
+  Warrior,
+  Dwarf,
+  Elemental,
+  Cat,
+  Wizard,
+  Angel,
+  Avatar,
+  Placeholder
+};
+
 }  // namespace core
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_ENUMS_H_

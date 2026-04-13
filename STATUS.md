@@ -1,6 +1,12 @@
 # Project Status
 
 ## Most Recent Changes
+- **Standardized Base Card Set**: Implemented a new color-coded ID system and naming convention for cards.
+    - White: IDs 1-20 (1-10 are new creatures: Lowly Squire, White Knight, etc.; 11-20 are placeholder spells).
+    - Blue: IDs 21-40 (21-30 are placeholders).
+    - Black: IDs 41-60 (41-50 are placeholders).
+    - Red: IDs 61-80 (61-70 are placeholders).
+    - Green: IDs 81-100 (81-90 are placeholders).
 - **Established Project Tracking System**: Created `STATUS.md` and updated `AGENTS.md` with maintenance directives to ensure continuous documentation of project progress.
 - **Battle Scene Board Support**: Implemented support for rendering and managing creatures on the board within `CombatScene`.
 - **Card Rendering Refinement**: Creatures on the board are now centered and spread out using `HandRenderer::CalculateHandLayout` with a 0-degree arc.
@@ -30,6 +36,7 @@
 - **InputManager**: Handles mouse and keyboard input. Includes synchronization with window height to prevent vertical offsets.
 - **SceneManager**: Manages scene transitions using a deferred mechanism to prevent crashes during input callbacks.
 - **CombatCommandSystem**: Decouples debug and cheat commands from the main scene logic.
+- **Card Naming Convention**: Standardized card XML filenames as `XXX_name_with_underscores.xml` (e.g., `001_lowly_squire.xml`) for better organization and easier replacement.
 
 ## Recommendations & Next Steps
 

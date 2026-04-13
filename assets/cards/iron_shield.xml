@@ -1,9 +1,0 @@
-<Card id="3">
-    <Name>Iron Shield</Name>
-    <Type>Spell</Type>
-    <TypeLine>Instant</TypeLine>
-    <Color>Colorless</Color>
-    <Cost>1</Cost>
-    <Frame></Frame>
-    <Art>shield.png</Art>
-</Card>
