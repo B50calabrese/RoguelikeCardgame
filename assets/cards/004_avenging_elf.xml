@@ -1,7 +1,8 @@
 <Card id="4">
     <Name>Avenging Elf</Name>
     <Type>Creature</Type>
-    <Subtypes>Elf, Warrior</Subtypes>
+    <Subtype>Elf</Subtype>
+    <Subtype>Warrior</Subtype>
     <Color>White</Color>
     <Cost>3</Cost>
     <Power>4</Power>

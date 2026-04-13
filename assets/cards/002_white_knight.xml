@@ -1,7 +1,8 @@
 <Card id="2">
     <Name>White Knight</Name>
     <Type>Creature</Type>
-    <Subtypes>Human, Knight</Subtypes>
+    <Subtype>Human</Subtype>
+    <Subtype>Knight</Subtype>
     <Color>White</Color>
     <Cost>2</Cost>
     <Power>3</Power>

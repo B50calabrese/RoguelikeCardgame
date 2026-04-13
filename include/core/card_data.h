@@ -23,7 +23,7 @@ struct CardData {
 
   // Gameplay attributes
   CardType type = CardType::Spell;
-  std::vector<std::string> subtypes;
+  std::vector<CreatureType> subtypes;
   CardColor color = CardColor::Colorless;
   int cost = 0;
   int power = 0;

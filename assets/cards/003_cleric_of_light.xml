@@ -1,7 +1,8 @@
 <Card id="3">
     <Name>Cleric of Light</Name>
     <Type>Creature</Type>
-    <Subtypes>Human, Cleric</Subtypes>
+    <Subtype>Human</Subtype>
+    <Subtype>Cleric</Subtype>
     <Color>White</Color>
     <Cost>2</Cost>
     <Power>2</Power>

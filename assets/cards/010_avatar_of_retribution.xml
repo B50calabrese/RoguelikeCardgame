@@ -1,7 +1,7 @@
 <Card id="10">
     <Name>Avatar of Retribution</Name>
     <Type>Creature</Type>
-    <Subtypes>Avatar</Subtypes>
+    <Subtype>Avatar</Subtype>
     <Color>White</Color>
     <Cost>10</Cost>
     <Power>10</Power>

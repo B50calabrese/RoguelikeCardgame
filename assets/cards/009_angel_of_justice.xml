@@ -1,7 +1,7 @@
 <Card id="9">
     <Name>Angel of Justice</Name>
     <Type>Creature</Type>
-    <Subtypes>Angel</Subtypes>
+    <Subtype>Angel</Subtype>
     <Color>White</Color>
     <Cost>7</Cost>
     <Power>7</Power>

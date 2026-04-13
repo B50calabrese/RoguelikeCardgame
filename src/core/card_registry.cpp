@@ -40,6 +40,43 @@ CardColor StringToCardColor(const std::string& str) {
   return CardColor::Colorless;
 }
 
+CreatureType StringToCreatureType(const std::string& str) {
+  if (str == "Human") return CreatureType::Human;
+  if (str == "Soldier") return CreatureType::Soldier;
+  if (str == "Knight") return CreatureType::Knight;
+  if (str == "Cleric") return CreatureType::Cleric;
+  if (str == "Elf") return CreatureType::Elf;
+  if (str == "Warrior") return CreatureType::Warrior;
+  if (str == "Dwarf") return CreatureType::Dwarf;
+  if (str == "Elemental") return CreatureType::Elemental;
+  if (str == "Cat") return CreatureType::Cat;
+  if (str == "Wizard") return CreatureType::Wizard;
+  if (str == "Angel") return CreatureType::Angel;
+  if (str == "Avatar") return CreatureType::Avatar;
+  if (str == "Placeholder") return CreatureType::Placeholder;
+  if (str == "Spell") return CreatureType::Placeholder; // Map Spell subtype to Placeholder for now
+  return CreatureType::None;
+}
+
+std::string CreatureTypeToString(CreatureType type) {
+  switch (type) {
+    case CreatureType::Human: return "Human";
+    case CreatureType::Soldier: return "Soldier";
+    case CreatureType::Knight: return "Knight";
+    case CreatureType::Cleric: return "Cleric";
+    case CreatureType::Elf: return "Elf";
+    case CreatureType::Warrior: return "Warrior";
+    case CreatureType::Dwarf: return "Dwarf";
+    case CreatureType::Elemental: return "Elemental";
+    case CreatureType::Cat: return "Cat";
+    case CreatureType::Wizard: return "Wizard";
+    case CreatureType::Angel: return "Angel";
+    case CreatureType::Avatar: return "Avatar";
+    case CreatureType::Placeholder: return "Placeholder";
+    default: return "";
+  }
+}
+
 void ParseTargetFilter(pugi::xml_node filter_node, effects::TargetFilter& filter) {
   if (filter_node.empty()) return;
   filter.is_required = filter_node.attribute("required").as_bool(true);
@@ -103,21 +140,30 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       card.name = card_node.child("Name").text().as_string();
 
       // Parse Subtypes and generate TypeLine
-      std::string subtypes_str = card_node.child("Subtypes").text().as_string();
-      if (!subtypes_str.empty()) {
-        std::stringstream ss(subtypes_str);
-        std::string subtype;
-        while (std::getline(ss, subtype, ',')) {
-          // Trim whitespace
-          size_t first = subtype.find_first_not_of(' ');
-          if (std::string::npos != first) {
-            size_t last = subtype.find_last_not_of(' ');
-            card.subtypes.push_back(subtype.substr(first, (last - first + 1)));
+      for (pugi::xml_node subtype_node = card_node.child("Subtype"); !subtype_node.empty();
+           subtype_node = subtype_node.next_sibling("Subtype")) {
+        card.subtypes.push_back(StringToCreatureType(subtype_node.text().as_string()));
+      }
+
+      // Backward compatibility for <Subtypes> (comma separated)
+      if (card.subtypes.empty()) {
+        std::string subtypes_str = card_node.child("Subtypes").text().as_string();
+        if (!subtypes_str.empty()) {
+          std::stringstream ss(subtypes_str);
+          std::string subtype;
+          while (std::getline(ss, subtype, ',')) {
+            size_t first = subtype.find_first_not_of(' ');
+            if (std::string::npos != first) {
+              size_t last = subtype.find_last_not_of(' ');
+              card.subtypes.push_back(StringToCreatureType(subtype.substr(first, (last - first + 1))));
+            }
           }
         }
+      }
 
+      if (!card.subtypes.empty()) {
         for (size_t i = 0; i < card.subtypes.size(); ++i) {
-          card.type_line += card.subtypes[i];
+          card.type_line += CreatureTypeToString(card.subtypes[i]);
           if (i < card.subtypes.size() - 1) {
             card.type_line += " ";
           }

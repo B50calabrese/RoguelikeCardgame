@@ -1,7 +1,8 @@
 <Card id="7">
     <Name>Herald of Dawn</Name>
     <Type>Creature</Type>
-    <Subtypes>Cat, Warrior</Subtypes>
+    <Subtype>Cat</Subtype>
+    <Subtype>Warrior</Subtype>
     <Color>White</Color>
     <Cost>4</Cost>
     <Power>5</Power>
