@@ -1,7 +1,7 @@
 <Card id="8">
     <Name>White Mage Apprentice</Name>
     <Type>Creature</Type>
-    <TypeLine>Creature - Human Wizard</TypeLine>
+    <Subtypes>Human, Wizard</Subtypes>
     <Color>White</Color>
     <Cost>5</Cost>
     <Power>5</Power>

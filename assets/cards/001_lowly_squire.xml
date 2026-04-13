@@ -1,7 +1,7 @@
 <Card id="1">
     <Name>Lowly Squire</Name>
     <Type>Creature</Type>
-    <TypeLine>Creature - Human Soldier</TypeLine>
+    <Subtypes>Human, Soldier</Subtypes>
     <Color>White</Color>
     <Cost>1</Cost>
     <Power>1</Power>

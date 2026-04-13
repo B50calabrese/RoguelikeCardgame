@@ -19,10 +19,11 @@ struct CardData {
   // Display properties
   std::string name;
   std::string description;
-  std::string type_line;  // e.g., "Creature - Human Soldier"
+  std::string type_line;  // Generated: e.g., "Human Soldier"
 
   // Gameplay attributes
   CardType type = CardType::Spell;
+  std::vector<std::string> subtypes;
   CardColor color = CardColor::Colorless;
   int cost = 0;
   int power = 0;

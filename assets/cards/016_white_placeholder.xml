@@ -1,7 +1,7 @@
 <Card id="16">
     <Name>White Placeholder 16</Name>
     <Type>Spell</Type>
-    <TypeLine>Spell</TypeLine>
+    <Subtypes>Spell</Subtypes>
     <Color>White</Color>
     <Cost>1</Cost>
     <Frame>white_noncreature_frame.png</Frame>

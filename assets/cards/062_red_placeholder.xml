@@ -1,6 +1,7 @@
 <Card id="62">
     <Name>Red Placeholder 62</Name>
     <Type>Creature</Type>
+    <Subtypes>Placeholder</Subtypes>
     <Color>Red</Color>
     <Cost>3</Cost>
     <Power>2</Power>

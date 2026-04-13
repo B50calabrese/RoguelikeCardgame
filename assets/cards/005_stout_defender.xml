@@ -1,7 +1,7 @@
 <Card id="5">
     <Name>Stout Defender</Name>
     <Type>Creature</Type>
-    <TypeLine>Creature - Dwarf Warrior</TypeLine>
+    <Subtypes>Dwarf, Warrior</Subtypes>
     <Color>White</Color>
     <Cost>3</Cost>
     <Power>2</Power>

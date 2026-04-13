@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -100,7 +101,31 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       CardData card;
       card.id = card_node.attribute("id").as_int();
       card.name = card_node.child("Name").text().as_string();
-      card.type_line = card_node.child("TypeLine").text().as_string();
+
+      // Parse Subtypes and generate TypeLine
+      std::string subtypes_str = card_node.child("Subtypes").text().as_string();
+      if (!subtypes_str.empty()) {
+        std::stringstream ss(subtypes_str);
+        std::string subtype;
+        while (std::getline(ss, subtype, ',')) {
+          // Trim whitespace
+          size_t first = subtype.find_first_not_of(' ');
+          if (std::string::npos != first) {
+            size_t last = subtype.find_last_not_of(' ');
+            card.subtypes.push_back(subtype.substr(first, (last - first + 1)));
+          }
+        }
+
+        for (size_t i = 0; i < card.subtypes.size(); ++i) {
+          card.type_line += card.subtypes[i];
+          if (i < card.subtypes.size() - 1) {
+            card.type_line += " ";
+          }
+        }
+      } else {
+        card.type_line = card_node.child("TypeLine").text().as_string();
+      }
+
       card.type = StringToCardType(card_node.child("Type").text().as_string());
       card.color = StringToCardColor(card_node.child("Color").text().as_string());
       card.cost = card_node.child("Cost").text().as_int();

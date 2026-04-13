@@ -1,7 +1,7 @@
 <Card id="6">
     <Name>Light of Justice</Name>
     <Type>Creature</Type>
-    <TypeLine>Creature - Elemental</TypeLine>
+    <Subtypes>Elemental</Subtypes>
     <Color>White</Color>
     <Cost>4</Cost>
     <Power>3</Power>
