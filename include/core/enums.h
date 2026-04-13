@@ -49,6 +49,9 @@ enum class CreatureType {
   Wizard,
   Angel,
   Avatar,
+  Merfolk,
+  Rogue,
+  Sphinx,
   Placeholder
 };
 

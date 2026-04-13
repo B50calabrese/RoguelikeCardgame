@@ -1,0 +1,11 @@
+<Card id="29">
+    <Name>Sphinx of Intellect</Name>
+    <Type>Creature</Type>
+    <Subtype>Sphinx</Subtype>
+    <Color>Blue</Color>
+    <Cost>8</Cost>
+    <Power>7</Power>
+    <Health>10</Health>
+    <Frame>blue_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

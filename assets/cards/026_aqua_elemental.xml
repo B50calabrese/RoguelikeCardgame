@@ -1,0 +1,11 @@
+<Card id="26">
+    <Name>Aqua Elemental</Name>
+    <Type>Creature</Type>
+    <Subtype>Elemental</Subtype>
+    <Color>Blue</Color>
+    <Cost>4</Cost>
+    <Power>4</Power>
+    <Health>5</Health>
+    <Frame>blue_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

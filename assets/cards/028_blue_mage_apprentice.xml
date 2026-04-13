@@ -1,0 +1,12 @@
+<Card id="28">
+    <Name>Blue Mage Apprentice</Name>
+    <Type>Creature</Type>
+    <Subtype>Human</Subtype>
+    <Subtype>Wizard</Subtype>
+    <Color>Blue</Color>
+    <Cost>5</Cost>
+    <Power>4</Power>
+    <Health>7</Health>
+    <Frame>blue_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>
