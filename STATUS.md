@@ -3,7 +3,7 @@
 ## Most Recent Changes
 - **Standardized Base Card Set**: Implemented a new color-coded ID system and naming convention for cards.
     - White: IDs 1-20 (1-10 are new creatures: Lowly Squire, White Knight, etc.; 11-20 are placeholder spells).
-    - Blue: IDs 21-40 (21-30 are placeholders).
+    - Blue: IDs 21-40 (21-30 are new creatures: Merfolk Fledgling, Blue Knight, etc.; 31-40 are placeholder spells).
     - Black: IDs 41-60 (41-50 are placeholders).
     - Red: IDs 61-80 (61-70 are placeholders).
     - Green: IDs 81-100 (81-90 are placeholders).
@@ -37,6 +37,7 @@
 - **SceneManager**: Manages scene transitions using a deferred mechanism to prevent crashes during input callbacks.
 - **CombatCommandSystem**: Decouples debug and cheat commands from the main scene logic.
 - **Card Naming Convention**: Standardized card XML filenames as `XXX_name_with_underscores.xml` (e.g., `001_lowly_squire.xml`) for better organization and easier replacement.
+- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, and `Sphinx` in the core engine.
 
 ## Recommendations & Next Steps
 
