@@ -1,0 +1,12 @@
+<Card id="48">
+    <Name>Black Mage Apprentice</Name>
+    <Type>Creature</Type>
+    <Subtype>Human</Subtype>
+    <Subtype>Wizard</Subtype>
+    <Color>Black</Color>
+    <Cost>5</Cost>
+    <Power>3</Power>
+    <Health>8</Health>
+    <Frame>black_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

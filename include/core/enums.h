@@ -52,6 +52,9 @@ enum class CreatureType {
   Merfolk,
   Rogue,
   Sphinx,
+  Zombie,
+  Vampire,
+  Demon,
   Placeholder
 };
 
