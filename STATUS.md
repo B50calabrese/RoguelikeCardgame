@@ -6,7 +6,8 @@
     - Blue: IDs 21-40 (21-30 are new creatures: Merfolk Fledgling, Blue Knight, etc.; 31-40 are placeholder spells).
     - Black: IDs 41-60 (41-50 are new creatures: Brittle Husk, Black Knight, etc.; 51-60 are placeholder spells).
     - Red: IDs 61-80 (61-70 are placeholders).
-    - Green: IDs 81-100 (81-90 are placeholders).
+    - Green: IDs 81-100 (81-90 are new creatures: Elvish Recruit, Green Knight, etc.; 91-100 are placeholders).
+- **Submodule Fixes**: Added `z_index` support to the `GameEngine` submodule's `Renderer` class and converted drawing methods to use the sorted `RenderQueue` to resolve pre-existing build errors and ensure correct UI layering.
 - **Established Project Tracking System**: Created `STATUS.md` and updated `AGENTS.md` with maintenance directives to ensure continuous documentation of project progress.
 - **Battle Scene Board Support**: Implemented support for rendering and managing creatures on the board within `CombatScene`.
 - **Card Rendering Refinement**: Creatures on the board are now centered and spread out using `HandRenderer::CalculateHandLayout` with a 0-degree arc.
@@ -37,7 +38,7 @@
 - **SceneManager**: Manages scene transitions using a deferred mechanism to prevent crashes during input callbacks.
 - **CombatCommandSystem**: Decouples debug and cheat commands from the main scene logic.
 - **Card Naming Convention**: Standardized card XML filenames as `XXX_name_with_underscores.xml` (e.g., `001_lowly_squire.xml`) for better organization and easier replacement.
-- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, and `Demon` in the core engine.
+- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Druid`, `Archer`, `Treefolk`, and `Beast` in the core engine.
 
 ## Recommendations & Next Steps
 

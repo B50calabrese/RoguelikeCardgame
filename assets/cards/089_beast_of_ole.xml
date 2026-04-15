@@ -1,0 +1,11 @@
+<Card id="89">
+    <Name>Beast of Ole</Name>
+    <Type>Creature</Type>
+    <Subtype>Beast</Subtype>
+    <Color>Green</Color>
+    <Cost>8</Cost>
+    <Power>9</Power>
+    <Health>8</Health>
+    <Frame>green_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

@@ -1,0 +1,12 @@
+<Card id="84">
+    <Name>Elvish Archer</Name>
+    <Type>Creature</Type>
+    <Subtype>Elf</Subtype>
+    <Subtype>Archer</Subtype>
+    <Color>Green</Color>
+    <Cost>3</Cost>
+    <Power>3</Power>
+    <Health>4</Health>
+    <Frame>green_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>
