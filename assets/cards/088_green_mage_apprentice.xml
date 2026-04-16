@@ -1,0 +1,12 @@
+<Card id="88">
+    <Name>Green Mage Apprentice</Name>
+    <Type>Creature</Type>
+    <Subtype>Human</Subtype>
+    <Subtype>Wizard</Subtype>
+    <Color>Green</Color>
+    <Cost>5</Cost>
+    <Power>5</Power>
+    <Health>6</Health>
+    <Frame>green_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

@@ -1,0 +1,11 @@
+<Card id="81">
+    <Name>Elvish Recruit</Name>
+    <Type>Creature</Type>
+    <Subtype>Elf</Subtype>
+    <Color>Green</Color>
+    <Cost>1</Cost>
+    <Power>1</Power>
+    <Health>2</Health>
+    <Frame>green_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>
