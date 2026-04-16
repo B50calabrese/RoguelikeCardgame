@@ -15,6 +15,12 @@ void StartTurnAction::Apply(state::GameState& state) const {
     // Refresh mana and add one more up to ten
     p->max_mana = std::min(10, p->max_mana + 1);
     p->mana = p->max_mana;
+
+    // Reset attack flags for creatures on board
+    for (auto& creature : p->board) {
+        creature->has_attacked = false;
+        creature->can_attack = true;
+    }
 }
 
 }  // namespace core::effects::actions

@@ -16,6 +16,7 @@ set(SOURCE_FILES
     "src/core/ai/simple_ai.cpp"
     "src/core/card_instance.cpp"
     "src/core/card_registry.cpp"
+        src/core/effects/actions/creature_attack_action.cpp
     "src/core/effects/actions/deal_damage_action.cpp"
     "src/core/effects/actions/end_turn_action.cpp"
     "src/core/effects/actions/modify_stats_action.cpp"

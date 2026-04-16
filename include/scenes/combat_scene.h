@@ -13,6 +13,7 @@
 #include "scenes/controllers/hand_controller.h"
 #include "engine/ecs/components/transform.h"
 #include "engine/scene/scene.h"
+#include "core/effects/game_event.h"
 
 namespace scenes {
 
@@ -30,6 +31,27 @@ class CombatScene : public engine::Scene {
   void OnRender() override;
 
  private:
+  enum class CombatState {
+    Idle,
+    PickingTarget,
+    AnimatingAttack
+  };
+
+  struct AttackAnimation {
+    int attacker_id;
+    core::effects::Target target;
+    glm::vec2 start_pos;
+    glm::vec2 target_pos;
+    float elapsed_time;
+    float duration;
+    bool moving_to_target;
+  };
+
+  void HandleInput();
+  void UpdateAnimations(float delta_time);
+  void DrawTargetingLine();
+  void OnCreatureAttacked(core::state::GameState& state, const core::effects::GameEvent& event);
+
   // UI Constants (Relative to window size)
   float kBorderThickness = 0.0f;
   float kIconSize = 0.0f;
@@ -56,6 +78,19 @@ class CombatScene : public engine::Scene {
 
   std::unique_ptr<controllers::HandController> player_hand_;
   std::unique_ptr<controllers::HandController> enemy_hand_;
+
+  CombatState current_state_ = CombatState::Idle;
+  std::optional<int> selected_attacker_id_;
+  std::optional<AttackAnimation> active_animation_;
+
+  // Hitbox cache for board creatures
+  struct BoardHitbox {
+    int instance_id;
+    glm::vec2 position;
+    glm::vec2 size;
+    bool is_enemy;
+  };
+  std::vector<BoardHitbox> board_hitboxes_;
 };
 
 }  // namespace scenes

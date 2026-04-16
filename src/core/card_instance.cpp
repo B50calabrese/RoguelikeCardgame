@@ -11,6 +11,8 @@ CardInstance::CardInstance(const CardData* card_data, int inst_id, int owner)
       current_cost(card_data->cost),
       current_power(card_data->power),
       current_health(card_data->health),
-      max_health(card_data->health) {}
+      max_health(card_data->health),
+      has_attacked(false),
+      can_attack(false) {}
 
 }  // namespace core
