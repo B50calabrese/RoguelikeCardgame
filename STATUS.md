@@ -12,6 +12,11 @@
 - **Battle Scene Board Support**: Implemented support for rendering and managing creatures on the board within `CombatScene`.
 - **Card Rendering Refinement**: Creatures on the board are now centered and spread out using `HandRenderer::CalculateHandLayout` with a 0-degree arc.
 - **Rules Enforcement**: Integrated `BoardSpaceRule` into the `RulesEngine` to cap the number of creatures per player at seven.
+- **Creature Combat Implementation**:
+    - Implemented `AttackRule` and `CreatureAttackAction` to handle combat logic.
+    - Added UI support for initiating attacks (targeting line, highlights).
+    - Integrated combat animations (lunge) synchronized with resolution via `VisualBlocker`.
+    - Added new events (`CreatureAttacked`, `CreatureTookDamage`, etc.) for ability triggers.
 
 ## Technical Status Report
 

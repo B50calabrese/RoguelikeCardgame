@@ -11,8 +11,13 @@
 #include "core/graphics/battle_ui.h"
 #include "core/ai/battle_ai.h"
 #include "scenes/controllers/hand_controller.h"
+#include "scenes/controllers/combat_controller.h"
+#include "scenes/combat/combat_state.h"
+#include "scenes/combat/attack_animation.h"
+#include "scenes/combat/board_hitbox.h"
 #include "engine/ecs/components/transform.h"
 #include "engine/scene/scene.h"
+#include "core/effects/game_event.h"
 
 namespace scenes {
 
@@ -30,6 +35,8 @@ class CombatScene : public engine::Scene {
   void OnRender() override;
 
  private:
+  void DrawTargetingLine();
+
   // UI Constants (Relative to window size)
   float kBorderThickness = 0.0f;
   float kIconSize = 0.0f;
@@ -56,6 +63,10 @@ class CombatScene : public engine::Scene {
 
   std::unique_ptr<controllers::HandController> player_hand_;
   std::unique_ptr<controllers::HandController> enemy_hand_;
+  std::unique_ptr<controllers::CombatController> combat_controller_;
+
+  // Hitbox cache for board creatures
+  std::vector<BoardHitbox> board_hitboxes_;
 };
 
 }  // namespace scenes

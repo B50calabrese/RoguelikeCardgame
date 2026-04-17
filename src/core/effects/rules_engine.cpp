@@ -3,6 +3,7 @@
 #include "core/effects/rules/mana_rule.h"
 #include "core/effects/rules/targeting_rule.h"
 #include "core/effects/rules/board_space_rule.h"
+#include "core/effects/rules/attack_rule.h"
 
 namespace core::effects {
 
@@ -11,6 +12,7 @@ RulesEngine::RulesEngine() {
   RegisterRule(std::make_unique<rules::ManaRule>());
   RegisterRule(std::make_unique<rules::TargetingRule>());
   RegisterRule(std::make_unique<rules::BoardSpaceRule>());
+  RegisterRule(std::make_unique<rules::AttackRule>());
 }
 
 }  // namespace core::effects

@@ -11,7 +11,11 @@ enum class GameEventType {
   CreatureDied,
   TurnStarted,
   TurnEnded,
-  DamageDealt
+  DamageDealt,
+  CreatureAttacked,
+  CreatureDealtDamage,
+  CreatureTookDamage,
+  PlayerTookDamage
 };
 
 /**
