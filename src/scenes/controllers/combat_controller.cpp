@@ -9,22 +9,14 @@
 
 namespace scenes::controllers {
 
-void CombatController::Update(float delta_time, core::state::GameState& state, const std::vector<BoardHitbox>& hitboxes, float icon_top, float icon_size) {
-    if (active_animation_) {
-        active_animation_->elapsed_time += delta_time;
-        if (active_animation_->moving_to_target && active_animation_->elapsed_time >= active_animation_->duration * 0.5f) {
-            active_animation_->moving_to_target = false;
-        }
-
-        if (active_animation_->elapsed_time >= active_animation_->duration) {
-            core::effects::VisualBlocker::Get().RemoveBlocker("CreatureAttack_" + std::to_string(active_animation_->attacker_id));
-            active_animation_.reset();
-            current_state_ = CombatState::Idle;
-        }
+void CombatController::Update(float delta_time, core::state::GameState& state, float icon_top, float icon_size) {
+    animator_.Update(delta_time, state);
+    if (current_state_ == CombatState::AnimatingAttack && !animator_.active_animation()) {
+        current_state_ = CombatState::Idle;
     }
 }
 
-void CombatController::HandleInput(core::state::GameState& state, const std::vector<BoardHitbox>& hitboxes, float icon_top, float icon_size) {
+void CombatController::HandleInput(core::state::GameState& state, float icon_top, float icon_size) {
     if (core::effects::VisualBlocker::Get().IsBlocking()) return;
 
     auto& input = engine::InputManager::Get();
@@ -32,11 +24,11 @@ void CombatController::HandleInput(core::state::GameState& state, const std::vec
 
     if (input.IsKeyPressed(engine::KeyCode::kMouseLeft)) {
         if (current_state_ == CombatState::Idle) {
-            for (const auto& hitbox : hitboxes) {
-                if (!hitbox.is_enemy && core::util::PointInRect(mouse_pos, hitbox.position, hitbox.size, true)) {
-                    auto* inst = state.FindCardInstance(hitbox.instance_id);
+            if (auto hitbox = hitbox_manager_.GetHitboxAt(mouse_pos)) {
+                if (!hitbox->is_enemy) {
+                    auto* inst = state.FindCardInstance(hitbox->instance_id);
                     if (inst && inst->can_attack && !inst->has_attacked && state.current_turn_player_id == inst->owner_id) {
-                        selected_attacker_id_ = hitbox.instance_id;
+                        selected_attacker_id_ = hitbox->instance_id;
                         current_state_ = CombatState::PickingTarget;
                         LOG_INFO("[CombatController] Selected attacker %d", *selected_attacker_id_);
                         return;
@@ -45,17 +37,16 @@ void CombatController::HandleInput(core::state::GameState& state, const std::vec
             }
         } else if (current_state_ == CombatState::PickingTarget) {
             bool target_found = false;
-            for (const auto& hitbox : hitboxes) {
-                if (hitbox.is_enemy && core::util::PointInRect(mouse_pos, hitbox.position, hitbox.size, true)) {
+            if (auto hitbox = hitbox_manager_.GetHitboxAt(mouse_pos)) {
+                if (hitbox->is_enemy) {
                     core::effects::Target target;
                     target.type = core::effects::Target::Type::Creature;
-                    target.id = hitbox.instance_id;
+                    target.id = hitbox->instance_id;
 
                     core::effects::EffectResolver::Get().QueueAction(
                         std::make_shared<core::effects::actions::CreatureAttackAction>(*selected_attacker_id_, target));
 
                     target_found = true;
-                    break;
                 }
             }
 
@@ -81,7 +72,7 @@ void CombatController::HandleInput(core::state::GameState& state, const std::vec
     }
 }
 
-void CombatController::OnCreatureAttacked(core::state::GameState& state, const core::effects::GameEvent& event, const std::vector<BoardHitbox>& hitboxes, float icon_top, float icon_size) {
+void CombatController::OnCreatureAttacked(core::state::GameState& state, const core::effects::GameEvent& event, float icon_top, float icon_size) {
     AttackAnimation anim;
     anim.attacker_id = event.source_id;
     anim.target.id = event.target_id;
@@ -98,25 +89,19 @@ void CombatController::OnCreatureAttacked(core::state::GameState& state, const c
          }
     } else {
         anim.target.type = core::effects::Target::Type::Creature;
-        bool found = false;
-        for (const auto& hitbox : hitboxes) {
-            if (hitbox.instance_id == event.target_id) {
-                target_pos = hitbox.position;
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        if (auto hitbox = hitbox_manager_.GetHitboxFor(event.target_id)) {
+            target_pos = hitbox->position;
+        } else {
             LOG_ERR("[CombatController] Animation target creature %d not found in hitboxes!", event.target_id);
             target_pos = {config.window_width * 0.5f, config.window_height * 0.5f};
         }
     }
 
-    for (const auto& hitbox : hitboxes) {
-        if (hitbox.instance_id == event.source_id) {
-            anim.start_pos = hitbox.position;
-            break;
-        }
+    if (auto hitbox = hitbox_manager_.GetHitboxFor(event.source_id)) {
+        anim.start_pos = hitbox->position;
+    } else {
+        LOG_ERR("[CombatController] Animation source creature %d not found in hitboxes!", event.source_id);
+        anim.start_pos = {0,0};
     }
 
     anim.target_pos = target_pos;
@@ -124,7 +109,7 @@ void CombatController::OnCreatureAttacked(core::state::GameState& state, const c
     anim.elapsed_time = 0.0f;
     anim.moving_to_target = true;
 
-    active_animation_ = anim;
+    animator_.StartAnimation(anim);
     current_state_ = CombatState::AnimatingAttack;
 }
 

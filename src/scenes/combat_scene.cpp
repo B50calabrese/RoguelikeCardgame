@@ -120,7 +120,7 @@ void CombatScene::OnAttach() {
   core::effects::EventBus::Get().Subscribe(
       [this](core::state::GameState& state, const core::effects::GameEvent& event) {
         if (event.type == core::effects::GameEventType::CreatureAttacked) {
-          this->combat_controller_->OnCreatureAttacked(state, event, this->board_hitboxes_, this->kIconTop, this->kIconSize);
+          this->combat_controller_->OnCreatureAttacked(state, event, this->kIconTop, this->kIconSize);
         }
       });
 }
@@ -141,15 +141,15 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
   player_hand_->Update(delta_time_seconds, game_state_);
   enemy_hand_->Update(delta_time_seconds, game_state_);
 
-  combat_controller_->Update(delta_time_seconds, game_state_, board_hitboxes_, kIconTop, kIconSize);
-  combat_controller_->HandleInput(game_state_, board_hitboxes_, kIconTop, kIconSize);
+  combat_controller_->Update(delta_time_seconds, game_state_, kIconTop, kIconSize);
+  combat_controller_->HandleInput(game_state_, kIconTop, kIconSize);
 }
 
 void CombatScene::OnRender() {
   battle_ui_.Render(game_state_);
 
   // Update board hitboxes and render creatures
-  board_hitboxes_.clear();
+  combat_controller_->hitboxes().Clear();
   auto& config = core::GameConfig::Get();
   float card_base_width = core::graphics::kBaseCardWidth;
   float card_base_height = core::graphics::kBaseCardHeight;
@@ -159,32 +159,21 @@ void CombatScene::OnRender() {
       0.2f);
   for (size_t i = 0; i < game_state_.player->board.size(); ++i) {
     int inst_id = game_state_.player->board[i]->instance_id;
-    glm::vec2 pos = player_board_layouts[i].position;
+    glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(inst_id, player_board_layouts[i].position);
     float scale = player_board_layouts[i].scale.x;
+    glm::vec2 size = glm::vec2(card_base_width * scale, card_base_height * scale);
 
-    // Handle animation position
-    auto& active_animation = combat_controller_->active_animation();
-    if (active_animation && active_animation->attacker_id == inst_id) {
-        if (active_animation->moving_to_target) {
-            float local_t = active_animation->elapsed_time / (active_animation->duration * 0.5f);
-            pos = glm::mix(active_animation->start_pos, active_animation->target_pos, local_t * local_t);
-        } else {
-            float local_t = (active_animation->elapsed_time - active_animation->duration * 0.5f) / (active_animation->duration * 0.5f);
-            pos = glm::mix(active_animation->target_pos, active_animation->start_pos, local_t);
-        }
-    }
-
-    board_hitboxes_.push_back({inst_id, pos, glm::vec2(card_base_width * scale, card_base_height * scale), false});
+    combat_controller_->hitboxes().AddHitbox({inst_id, pos, size, false});
 
     // Render highlight if it can attack
     if (game_state_.current_turn_player_id == game_state_.player->id &&
         game_state_.player->board[i]->can_attack && !game_state_.player->board[i]->has_attacked) {
-        engine::graphics::PrimitiveRenderer::SubmitQuad(pos, board_hitboxes_.back().size * 1.1f, glm::vec4(1.0f, 1.0f, 0.0f, 0.5f), 0.0f, {0.5f, 0.5f});
+        engine::graphics::PrimitiveRenderer::SubmitQuad(pos, size * 1.1f, glm::vec4(1.0f, 1.0f, 0.0f, 0.5f), 0.0f, {0.5f, 0.5f});
     }
 
     // Render selection highlight
     if (combat_controller_->selected_attacker_id() == inst_id) {
-        engine::graphics::PrimitiveRenderer::SubmitQuad(pos, board_hitboxes_.back().size * 1.15f, glm::vec4(0.0f, 1.0f, 0.0f, 0.7f), 0.0f, {0.5f, 0.5f});
+        engine::graphics::PrimitiveRenderer::SubmitQuad(pos, size * 1.15f, glm::vec4(0.0f, 1.0f, 0.0f, 0.7f), 0.0f, {0.5f, 0.5f});
     }
 
     core::graphics::CardRenderer::RenderCard(
@@ -197,22 +186,11 @@ void CombatScene::OnRender() {
       0.2f);
   for (size_t i = 0; i < game_state_.enemy->board.size(); ++i) {
     int inst_id = game_state_.enemy->board[i]->instance_id;
-    glm::vec2 pos = enemy_board_layouts[i].position;
+    glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(inst_id, enemy_board_layouts[i].position);
     float scale = enemy_board_layouts[i].scale.x;
+    glm::vec2 size = glm::vec2(card_base_width * scale, card_base_height * scale);
 
-    // Handle animation position for enemy (if they attack)
-    auto& active_animation = combat_controller_->active_animation();
-    if (active_animation && active_animation->attacker_id == inst_id) {
-         if (active_animation->moving_to_target) {
-            float local_t = active_animation->elapsed_time / (active_animation->duration * 0.5f);
-            pos = glm::mix(active_animation->start_pos, active_animation->target_pos, local_t * local_t);
-        } else {
-            float local_t = (active_animation->elapsed_time - active_animation->duration * 0.5f) / (active_animation->duration * 0.5f);
-            pos = glm::mix(active_animation->target_pos, active_animation->start_pos, local_t);
-        }
-    }
-
-    board_hitboxes_.push_back({inst_id, pos, glm::vec2(card_base_width * scale, card_base_height * scale), true});
+    combat_controller_->hitboxes().AddHitbox({inst_id, pos, size, true});
 
     core::graphics::CardRenderer::RenderCard(
         *game_state_.enemy->board[i]->data, pos,
@@ -229,11 +207,10 @@ void CombatScene::OnRender() {
 void CombatScene::DrawTargetingLine() {
     if (combat_controller_->current_state() == CombatState::PickingTarget && combat_controller_->selected_attacker_id()) {
         glm::vec2 start_pos;
-        for (const auto& hitbox : board_hitboxes_) {
-            if (hitbox.instance_id == *combat_controller_->selected_attacker_id()) {
-                start_pos = hitbox.position;
-                break;
-            }
+        if (auto hitbox = combat_controller_->hitboxes().GetHitboxFor(*combat_controller_->selected_attacker_id())) {
+            start_pos = hitbox->position;
+        } else {
+            return;
         }
         glm::vec2 end_pos = engine::InputManager::Get().mouse_screen_pos();
         engine::graphics::PrimitiveRenderer::SubmitLine(start_pos, end_pos, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);

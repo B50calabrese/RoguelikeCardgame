@@ -33,6 +33,8 @@ set(SOURCE_FILES
     "src/core/graphics/ui_button.cpp"
     "src/scenes/card_viewer_scene.cpp"
     "src/scenes/combat_command_system.cpp"
+     "src/scenes/combat/combat_animator.cpp"
+     "src/scenes/combat/hitbox_manager.cpp"
     "src/scenes/combat_scene.cpp"
      "src/scenes/controllers/combat_controller.cpp"
     "src/scenes/controllers/hand_controller.cpp"
