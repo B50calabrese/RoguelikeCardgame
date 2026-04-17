@@ -34,6 +34,22 @@ class AttackRule : public IRule {
         return {false, "Creature cannot attack this turn (Summoning Sickness?)", false};
     }
 
+    // Check that target is an opposing creature or player
+    if (attack_action->target().type == Target::Type::Creature) {
+        CardInstance* target_inst = state.FindCardInstance(attack_action->target().id);
+        if (target_inst && target_inst->owner_id == attacker->owner_id) {
+            return {false, "Cannot attack your own creatures", false};
+        }
+    } else if (attack_action->target().type == Target::Type::Player) {
+        if (attacker->owner_id == state.player->id) {
+            return {false, "Cannot attack yourself", false};
+        }
+    } else if (attack_action->target().type == Target::Type::Enemy) {
+        if (attacker->owner_id == state.enemy->id) {
+            return {false, "Cannot attack yourself", false};
+        }
+    }
+
     return {true, "Attack valid", false};
   }
 };

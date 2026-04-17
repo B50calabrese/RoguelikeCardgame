@@ -115,10 +115,12 @@ void CombatScene::OnAttach() {
   enemy_hand_->SetInteractive(false);
   enemy_hand_->SetFaceDown(true);
 
+  combat_controller_ = std::make_unique<controllers::CombatController>();
+
   core::effects::EventBus::Get().Subscribe(
       [this](core::state::GameState& state, const core::effects::GameEvent& event) {
         if (event.type == core::effects::GameEventType::CreatureAttacked) {
-          this->OnCreatureAttacked(state, event);
+          this->combat_controller_->OnCreatureAttacked(state, event, this->board_hitboxes_, this->kIconTop, this->kIconSize);
         }
       });
 }
@@ -139,8 +141,8 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
   player_hand_->Update(delta_time_seconds, game_state_);
   enemy_hand_->Update(delta_time_seconds, game_state_);
 
-  UpdateAnimations(delta_time_seconds);
-  HandleInput();
+  combat_controller_->Update(delta_time_seconds, game_state_, board_hitboxes_, kIconTop, kIconSize);
+  combat_controller_->HandleInput(game_state_, board_hitboxes_, kIconTop, kIconSize);
 }
 
 void CombatScene::OnRender() {
@@ -161,19 +163,14 @@ void CombatScene::OnRender() {
     float scale = player_board_layouts[i].scale.x;
 
     // Handle animation position
-    if (active_animation_ && active_animation_->attacker_id == inst_id) {
-        float t = active_animation_->elapsed_time / active_animation_->duration;
-        // Simple easing: move to target then back
-        // 0 to 0.5: move to target
-        // 0.5 to 1.0: move back
-        if (active_animation_->moving_to_target) {
-            // Accelerate towards target: t^2
-            float local_t = active_animation_->elapsed_time / (active_animation_->duration * 0.5f);
-            pos = glm::mix(active_animation_->start_pos, active_animation_->target_pos, local_t * local_t);
+    auto& active_animation = combat_controller_->active_animation();
+    if (active_animation && active_animation->attacker_id == inst_id) {
+        if (active_animation->moving_to_target) {
+            float local_t = active_animation->elapsed_time / (active_animation->duration * 0.5f);
+            pos = glm::mix(active_animation->start_pos, active_animation->target_pos, local_t * local_t);
         } else {
-            // Constant rate back: linear
-            float local_t = (active_animation_->elapsed_time - active_animation_->duration * 0.5f) / (active_animation_->duration * 0.5f);
-            pos = glm::mix(active_animation_->target_pos, active_animation_->start_pos, local_t);
+            float local_t = (active_animation->elapsed_time - active_animation->duration * 0.5f) / (active_animation->duration * 0.5f);
+            pos = glm::mix(active_animation->target_pos, active_animation->start_pos, local_t);
         }
     }
 
@@ -186,7 +183,7 @@ void CombatScene::OnRender() {
     }
 
     // Render selection highlight
-    if (selected_attacker_id_ == inst_id) {
+    if (combat_controller_->selected_attacker_id() == inst_id) {
         engine::graphics::PrimitiveRenderer::SubmitQuad(pos, board_hitboxes_.back().size * 1.15f, glm::vec4(0.0f, 1.0f, 0.0f, 0.7f), 0.0f, {0.5f, 0.5f});
     }
 
@@ -204,13 +201,14 @@ void CombatScene::OnRender() {
     float scale = enemy_board_layouts[i].scale.x;
 
     // Handle animation position for enemy (if they attack)
-    if (active_animation_ && active_animation_->attacker_id == inst_id) {
-         if (active_animation_->moving_to_target) {
-            float local_t = active_animation_->elapsed_time / (active_animation_->duration * 0.5f);
-            pos = glm::mix(active_animation_->start_pos, active_animation_->target_pos, local_t * local_t);
+    auto& active_animation = combat_controller_->active_animation();
+    if (active_animation && active_animation->attacker_id == inst_id) {
+         if (active_animation->moving_to_target) {
+            float local_t = active_animation->elapsed_time / (active_animation->duration * 0.5f);
+            pos = glm::mix(active_animation->start_pos, active_animation->target_pos, local_t * local_t);
         } else {
-            float local_t = (active_animation_->elapsed_time - active_animation_->duration * 0.5f) / (active_animation_->duration * 0.5f);
-            pos = glm::mix(active_animation_->target_pos, active_animation_->start_pos, local_t);
+            float local_t = (active_animation->elapsed_time - active_animation->duration * 0.5f) / (active_animation->duration * 0.5f);
+            pos = glm::mix(active_animation->target_pos, active_animation->start_pos, local_t);
         }
     }
 
@@ -228,88 +226,11 @@ void CombatScene::OnRender() {
   engine::util::Console::Get().Render();
 }
 
-void CombatScene::HandleInput() {
-    if (core::effects::VisualBlocker::Get().IsBlocking()) return;
-
-    auto& input = engine::InputManager::Get();
-    glm::vec2 mouse_pos = input.mouse_screen_pos();
-
-    if (input.IsKeyPressed(engine::KeyCode::kMouseLeft)) {
-        if (current_state_ == CombatState::Idle) {
-            // Check for clicking own creature
-            for (const auto& hitbox : board_hitboxes_) {
-                if (!hitbox.is_enemy && core::util::PointInRect(mouse_pos, hitbox.position, hitbox.size, true)) {
-                    // Check if it can attack
-                    auto* inst = game_state_.FindCardInstance(hitbox.instance_id);
-                    if (inst && inst->can_attack && !inst->has_attacked && game_state_.current_turn_player_id == inst->owner_id) {
-                        selected_attacker_id_ = hitbox.instance_id;
-                        current_state_ = CombatState::PickingTarget;
-                        LOG_INFO("[CombatScene] Selected attacker %d", *selected_attacker_id_);
-                        return;
-                    }
-                }
-            }
-        } else if (current_state_ == CombatState::PickingTarget) {
-            bool target_found = false;
-            // Check for clicking enemy creature
-            for (const auto& hitbox : board_hitboxes_) {
-                if (hitbox.is_enemy && core::util::PointInRect(mouse_pos, hitbox.position, hitbox.size, true)) {
-                    core::effects::Target target;
-                    target.type = core::effects::Target::Type::Creature;
-                    target.id = hitbox.instance_id;
-
-                    core::effects::EffectResolver::Get().QueueAction(
-                        std::make_shared<core::effects::actions::CreatureAttackAction>(*selected_attacker_id_, target));
-
-                    target_found = true;
-                    break;
-                }
-            }
-
-            // Check for clicking enemy health icon
-            if (!target_found) {
-                // Approximate health icon position (top center)
-                auto& config = core::GameConfig::Get();
-                glm::vec2 enemy_health_pos = {config.window_width * 0.5f, config.window_height - kIconTop + kIconSize * 0.5f};
-                glm::vec2 icon_size = {kIconSize, kIconSize};
-                if (core::util::PointInRect(mouse_pos, enemy_health_pos, icon_size, true)) {
-                    core::effects::Target target;
-                    target.type = core::effects::Target::Type::Enemy;
-                    target.id = -1;
-
-                    core::effects::EffectResolver::Get().QueueAction(
-                        std::make_shared<core::effects::actions::CreatureAttackAction>(*selected_attacker_id_, target));
-
-                    target_found = true;
-                }
-            }
-
-            current_state_ = CombatState::Idle;
-            selected_attacker_id_.reset();
-        }
-    }
-}
-
-void CombatScene::UpdateAnimations(float delta_time) {
-    if (active_animation_) {
-        active_animation_->elapsed_time += delta_time;
-        if (active_animation_->moving_to_target && active_animation_->elapsed_time >= active_animation_->duration * 0.5f) {
-            active_animation_->moving_to_target = false;
-        }
-
-        if (active_animation_->elapsed_time >= active_animation_->duration) {
-            core::effects::VisualBlocker::Get().RemoveBlocker("CreatureAttack_" + std::to_string(active_animation_->attacker_id));
-            active_animation_.reset();
-            current_state_ = CombatState::Idle;
-        }
-    }
-}
-
 void CombatScene::DrawTargetingLine() {
-    if (current_state_ == CombatState::PickingTarget && selected_attacker_id_) {
+    if (combat_controller_->current_state() == CombatState::PickingTarget && combat_controller_->selected_attacker_id()) {
         glm::vec2 start_pos;
         for (const auto& hitbox : board_hitboxes_) {
-            if (hitbox.instance_id == *selected_attacker_id_) {
+            if (hitbox.instance_id == *combat_controller_->selected_attacker_id()) {
                 start_pos = hitbox.position;
                 break;
             }
@@ -318,60 +239,5 @@ void CombatScene::DrawTargetingLine() {
         engine::graphics::PrimitiveRenderer::SubmitLine(start_pos, end_pos, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
     }
 }
-
-void CombatScene::OnCreatureAttacked(core::state::GameState& state, const core::effects::GameEvent& event) {
-    AttackAnimation anim;
-    anim.attacker_id = event.source_id;
-    anim.target.id = event.target_id;
-
-    // Determine target position
-    glm::vec2 target_pos(0.0f);
-    if (event.target_id == -1) { // Player or Enemy target
-         auto& config = core::GameConfig::Get();
-         if (state.current_turn_player_id == state.player->id) {
-             // Attacking Enemy
-             target_pos = {config.window_width * 0.5f, config.window_height - kIconTop + kIconSize * 0.5f};
-             anim.target.type = core::effects::Target::Type::Enemy;
-         } else {
-             // Attacking Player
-             target_pos = {config.window_width * 0.5f, kIconTop - kIconSize * 0.5f};
-             anim.target.type = core::effects::Target::Type::Player;
-         }
-    } else {
-        // Attacking creature
-        anim.target.type = core::effects::Target::Type::Creature;
-        bool found = false;
-        for (const auto& hitbox : board_hitboxes_) {
-            if (hitbox.instance_id == event.target_id) {
-                target_pos = hitbox.position;
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            LOG_ERR("[CombatScene] Animation target creature %d not found in hitboxes!", event.target_id);
-            // Fallback to center of screen or something safe
-            target_pos = {core::GameConfig::Get().window_width * 0.5f, core::GameConfig::Get().window_height * 0.5f};
-        }
-    }
-
-    // Determine start position
-    for (const auto& hitbox : board_hitboxes_) {
-        if (hitbox.instance_id == event.source_id) {
-            anim.start_pos = hitbox.position;
-            break;
-        }
-    }
-
-    anim.target_pos = target_pos;
-    anim.duration = 1.0f;
-    anim.elapsed_time = 0.0f;
-    anim.moving_to_target = true;
-
-    active_animation_ = anim;
-    current_state_ = CombatState::AnimatingAttack;
-}
-
-}  // namespace scenes
 
 }  // namespace scenes
