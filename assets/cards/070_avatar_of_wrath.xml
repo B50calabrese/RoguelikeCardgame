@@ -1,0 +1,11 @@
+<Card id="70">
+    <Name>Avatar of Wrath</Name>
+    <Type>Creature</Type>
+    <Subtype>Avatar</Subtype>
+    <Color>Red</Color>
+    <Cost>10</Cost>
+    <Power>12</Power>
+    <Health>9</Health>
+    <Frame>red_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

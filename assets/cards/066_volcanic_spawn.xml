@@ -1,0 +1,11 @@
+<Card id="66">
+    <Name>Volcanic Spawn</Name>
+    <Type>Creature</Type>
+    <Subtype>Elemental</Subtype>
+    <Color>Red</Color>
+    <Cost>4</Cost>
+    <Power>6</Power>
+    <Health>3</Health>
+    <Frame>red_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

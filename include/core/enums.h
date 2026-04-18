@@ -55,6 +55,9 @@ enum class CreatureType {
   Zombie,
   Vampire,
   Demon,
+  Goblin,
+  Minotaur,
+  Dragon,
   Placeholder
 };
 

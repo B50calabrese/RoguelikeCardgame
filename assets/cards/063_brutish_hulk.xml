@@ -1,0 +1,12 @@
+<Card id="63">
+    <Name>Brutish Hulk</Name>
+    <Type>Creature</Type>
+    <Subtype>Minotaur</Subtype>
+    <Subtype>Warrior</Subtype>
+    <Color>Red</Color>
+    <Cost>2</Cost>
+    <Power>4</Power>
+    <Health>1</Health>
+    <Frame>red_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

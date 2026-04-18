@@ -1,0 +1,12 @@
+<Card id="64">
+    <Name>Novice Pyromage</Name>
+    <Type>Creature</Type>
+    <Subtype>Human</Subtype>
+    <Subtype>Wizard</Subtype>
+    <Color>Red</Color>
+    <Cost>3</Cost>
+    <Power>3</Power>
+    <Health>4</Health>
+    <Frame>red_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

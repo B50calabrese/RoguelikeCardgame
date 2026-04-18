@@ -37,7 +37,9 @@
 - **SceneManager**: Manages scene transitions using a deferred mechanism to prevent crashes during input callbacks.
 - **CombatCommandSystem**: Decouples debug and cheat commands from the main scene logic.
 - **Card Naming Convention**: Standardized card XML filenames as `XXX_name_with_underscores.xml` (e.g., `001_lowly_squire.xml`) for better organization and easier replacement.
-- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, and `Demon` in the core engine.
+- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Goblin`, `Minotaur`, and `Dragon` in the core engine.
+- **Red Base Creature Set**: Implemented 10 new red creature cards (IDs 61-70), replacing placeholders.
+- **Engine Z-Sorting Support**: Updated the `GameEngine` submodule to support `z_index` in `Renderer` and `PrimitiveRenderer` methods, enabling proper 2D layer sorting via depth buffer.
 
 ## Recommendations & Next Steps
 
