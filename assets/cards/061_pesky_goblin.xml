@@ -1,0 +1,11 @@
+<Card id="61">
+    <Name>Pesky Goblin</Name>
+    <Type>Creature</Type>
+    <Subtype>Goblin</Subtype>
+    <Color>Red</Color>
+    <Cost>1</Cost>
+    <Power>2</Power>
+    <Health>1</Health>
+    <Frame>red_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

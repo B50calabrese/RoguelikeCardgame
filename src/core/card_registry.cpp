@@ -59,6 +59,9 @@ CreatureType StringToCreatureType(const std::string& str) {
   if (str == "Zombie") return CreatureType::Zombie;
   if (str == "Vampire") return CreatureType::Vampire;
   if (str == "Demon") return CreatureType::Demon;
+  if (str == "Goblin") return CreatureType::Goblin;
+  if (str == "Minotaur") return CreatureType::Minotaur;
+  if (str == "Dragon") return CreatureType::Dragon;
   if (str == "Druid") return CreatureType::Druid;
   if (str == "Archer") return CreatureType::Archer;
   if (str == "Treefolk") return CreatureType::Treefolk;
@@ -88,6 +91,9 @@ std::string CreatureTypeToString(CreatureType type) {
     case CreatureType::Zombie: return "Zombie";
     case CreatureType::Vampire: return "Vampire";
     case CreatureType::Demon: return "Demon";
+    case CreatureType::Goblin: return "Goblin";
+    case CreatureType::Minotaur: return "Minotaur";
+    case CreatureType::Dragon: return "Dragon";
     case CreatureType::Druid: return "Druid";
     case CreatureType::Archer: return "Archer";
     case CreatureType::Treefolk: return "Treefolk";
