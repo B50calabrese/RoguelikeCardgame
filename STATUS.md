@@ -6,11 +6,17 @@
     - Blue: IDs 21-40 (21-30 are new creatures: Merfolk Fledgling, Blue Knight, etc.; 31-40 are placeholder spells).
     - Black: IDs 41-60 (41-50 are new creatures: Brittle Husk, Black Knight, etc.; 51-60 are placeholder spells).
     - Red: IDs 61-80 (61-70 are placeholders).
-    - Green: IDs 81-100 (81-90 are placeholders).
+    - Green: IDs 81-100 (81-90 are new creatures: Elvish Recruit, Green Knight, etc.; 91-100 are placeholders).
+- **Submodule Fixes**: Added `z_index` support to the `GameEngine` submodule's `Renderer` class and converted drawing methods to use the sorted `RenderQueue` to resolve pre-existing build errors and ensure correct UI layering.
 - **Established Project Tracking System**: Created `STATUS.md` and updated `AGENTS.md` with maintenance directives to ensure continuous documentation of project progress.
 - **Battle Scene Board Support**: Implemented support for rendering and managing creatures on the board within `CombatScene`.
 - **Card Rendering Refinement**: Creatures on the board are now centered and spread out using `HandRenderer::CalculateHandLayout` with a 0-degree arc.
 - **Rules Enforcement**: Integrated `BoardSpaceRule` into the `RulesEngine` to cap the number of creatures per player at seven.
+- **Creature Combat Implementation**:
+    - Implemented `AttackRule` and `CreatureAttackAction` to handle combat logic.
+    - Added UI support for initiating attacks (targeting line, highlights).
+    - Integrated combat animations (lunge) synchronized with resolution via `VisualBlocker`.
+    - Added new events (`CreatureAttacked`, `CreatureTookDamage`, etc.) for ability triggers.
 
 ## Technical Status Report
 
@@ -40,6 +46,7 @@
 - **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Goblin`, `Minotaur`, and `Dragon` in the core engine.
 - **Red Base Creature Set**: Implemented 10 new red creature cards (IDs 61-70), replacing placeholders.
 - **Engine Z-Sorting Support**: Updated the `GameEngine` submodule to support `z_index` in `Renderer` and `PrimitiveRenderer` methods, enabling proper 2D layer sorting via depth buffer.
+- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Druid`, `Archer`, `Treefolk`, and `Beast` in the core engine.
 
 ## Recommendations & Next Steps
 

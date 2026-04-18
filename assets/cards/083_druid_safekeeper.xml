@@ -1,0 +1,12 @@
+<Card id="83">
+    <Name>Druid Safekeeper</Name>
+    <Type>Creature</Type>
+    <Subtype>Human</Subtype>
+    <Subtype>Druid</Subtype>
+    <Color>Green</Color>
+    <Cost>2</Cost>
+    <Power>1</Power>
+    <Health>4</Health>
+    <Frame>green_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

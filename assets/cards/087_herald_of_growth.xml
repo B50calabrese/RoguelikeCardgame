@@ -1,0 +1,12 @@
+<Card id="87">
+    <Name>Herald of Growth</Name>
+    <Type>Creature</Type>
+    <Subtype>Elf</Subtype>
+    <Subtype>Knight</Subtype>
+    <Color>Green</Color>
+    <Cost>4</Cost>
+    <Power>5</Power>
+    <Health>4</Health>
+    <Frame>green_creature_frame.png</Frame>
+    <Art>card_back.png</Art>
+</Card>

@@ -62,6 +62,10 @@ CreatureType StringToCreatureType(const std::string& str) {
   if (str == "Goblin") return CreatureType::Goblin;
   if (str == "Minotaur") return CreatureType::Minotaur;
   if (str == "Dragon") return CreatureType::Dragon;
+  if (str == "Druid") return CreatureType::Druid;
+  if (str == "Archer") return CreatureType::Archer;
+  if (str == "Treefolk") return CreatureType::Treefolk;
+  if (str == "Beast") return CreatureType::Beast;
   if (str == "Placeholder") return CreatureType::Placeholder;
   if (str == "Spell") return CreatureType::Placeholder; // Map Spell subtype to Placeholder for now
   return CreatureType::None;
@@ -90,6 +94,10 @@ std::string CreatureTypeToString(CreatureType type) {
     case CreatureType::Goblin: return "Goblin";
     case CreatureType::Minotaur: return "Minotaur";
     case CreatureType::Dragon: return "Dragon";
+    case CreatureType::Druid: return "Druid";
+    case CreatureType::Archer: return "Archer";
+    case CreatureType::Treefolk: return "Treefolk";
+    case CreatureType::Beast: return "Beast";
     case CreatureType::Placeholder: return "Placeholder";
     default: return "";
   }

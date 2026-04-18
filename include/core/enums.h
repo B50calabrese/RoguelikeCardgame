@@ -58,6 +58,10 @@ enum class CreatureType {
   Goblin,
   Minotaur,
   Dragon,
+  Druid,
+  Archer,
+  Treefolk,
+  Beast,
   Placeholder
 };
 

@@ -33,6 +33,9 @@ struct CardInstance {
   int current_health;
   int max_health;
 
+  bool has_attacked;
+  bool can_attack; // Used for summoning sickness and other "can't attack" effects
+
   CardInstance(const CardData* card_data, int inst_id, int owner);
 };
 
