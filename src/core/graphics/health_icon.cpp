@@ -1,5 +1,6 @@
 #include "core/graphics/health_icon.h"
 #include "engine/graphics/renderer.h"
+#include "engine/graphics/utils/render_queue.h"
 #include <string>
 
 namespace core::graphics {
@@ -14,9 +15,13 @@ void HealthIcon::Render(int health) const {
   const float ui_z = 1000.0f;
 
   // Render the colored square centered at position_
-  // DrawQuad uses the origin for rotation and positioning relative to size.
-  // Origin (0.5, 0.5) centers the quad on position_.
-  renderer.DrawQuad(position_, {size_, size_}, color_, 0.0f, {0.5f, 0.5f}, ui_z);
+  engine::graphics::utils::RenderCommand cmd;
+  cmd.z_order = ui_z;
+  cmd.position = position_;
+  cmd.size = {size_, size_};
+  cmd.color = color_;
+  cmd.origin = {0.5f, 0.5f};
+  engine::graphics::utils::RenderQueue::Default().Submit(cmd);
 
   // Render the health text
   std::string health_text = std::to_string(health);

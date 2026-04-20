@@ -45,8 +45,7 @@
 - **Card Naming Convention**: Standardized card XML filenames as `XXX_name_with_underscores.xml` (e.g., `001_lowly_squire.xml`) for better organization and easier replacement.
 - **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Goblin`, `Minotaur`, and `Dragon` in the core engine.
 - **Red Base Creature Set**: Implemented 10 new red creature cards (IDs 61-70), replacing placeholders.
-- **Engine Z-Sorting Support**: Updated the `GameEngine` submodule to support `z_index` in `Renderer` and `PrimitiveRenderer` methods, enabling proper 2D layer sorting via depth buffer. Refactored `Renderer` to use `RenderQueue` for all draw calls to ensure consistent sorting.
-- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Druid`, `Archer`, `Treefolk`, and `Beast` in the core engine.
+- **Engine Z-Sorting Support**: Refactored `BattleUI`, `CardRenderer`, `HealthIcon`, and `UIButton` to use the `RenderQueue` utility from the `GameEngine` submodule. This resolves build errors related to missing `z_index` parameters in `Renderer` methods while ensuring proper 2D layer sorting through the engine's built-in render command queue.
 
 ## Recommendations & Next Steps
 
