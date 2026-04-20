@@ -2,6 +2,7 @@
 
 #include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
+#include "engine/graphics/utils/render_queue.h"
 
 namespace core::graphics {
 
@@ -23,8 +24,12 @@ void UIButton::Render() const {
   // Use a high Z-index for UI to ensure it's on top of game elements.
   const float ui_z = 1000.0f;
 
-  renderer.DrawRect(position_.x, position_.y, size_.x, size_.y, color.r, color.g,
-                    color.b, ui_z);
+  engine::graphics::utils::RenderCommand cmd;
+  cmd.z_order = ui_z;
+  cmd.position = position_;
+  cmd.size = size_;
+  cmd.color = color;
+  engine::graphics::utils::RenderQueue::Default().Submit(cmd);
 
   // Center text roughly (this engine doesn't seem to have text bounds yet)
   glm::vec2 text_pos = position_ + glm::vec2(10.0f, size_.y * 0.35f);

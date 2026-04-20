@@ -75,7 +75,6 @@ void BattleUI::Render(const GameState& state) const {
 
 void BattleUI::RenderBorder() const {
   auto& config = core::GameConfig::Get();
-  auto& renderer = engine::graphics::Renderer::Get();
   float t = config.window_width * 0.05f;
   glm::vec4 border_color = {0.3f, 0.3f, 0.3f, 1.0f};
 
@@ -83,18 +82,39 @@ void BattleUI::RenderBorder() const {
   // they fly out. Let's put it at a high Z but lower than buttons/health.
   const float border_z = 900.0f;
 
+  auto& queue = engine::graphics::utils::RenderQueue::Default();
+
   // Top
-  renderer.DrawRect(0, config.window_height - t, config.window_width, t,
-                    border_color.r, border_color.g, border_color.b, border_z);
+  engine::graphics::utils::RenderCommand top;
+  top.z_order = border_z;
+  top.position = {0, config.window_height - t};
+  top.size = {config.window_width, t};
+  top.color = border_color;
+  queue.Submit(top);
+
   // Bottom
-  renderer.DrawRect(0, 0, config.window_width, t, border_color.r, border_color.g,
-                    border_color.b, border_z);
+  engine::graphics::utils::RenderCommand bottom;
+  bottom.z_order = border_z;
+  bottom.position = {0, 0};
+  bottom.size = {config.window_width, t};
+  bottom.color = border_color;
+  queue.Submit(bottom);
+
   // Left
-  renderer.DrawRect(0, 0, t, config.window_height, border_color.r,
-                    border_color.g, border_color.b, border_z);
+  engine::graphics::utils::RenderCommand left;
+  left.z_order = border_z;
+  left.position = {0, 0};
+  left.size = {t, config.window_height};
+  left.color = border_color;
+  queue.Submit(left);
+
   // Right
-  renderer.DrawRect(config.window_width - t, 0, t, config.window_height,
-                    border_color.r, border_color.g, border_color.b, border_z);
+  engine::graphics::utils::RenderCommand right;
+  right.z_order = border_z;
+  right.position = {config.window_width - t, 0};
+  right.size = {t, config.window_height};
+  right.color = border_color;
+  queue.Submit(right);
 }
 
 void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) const {
