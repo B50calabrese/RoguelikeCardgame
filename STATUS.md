@@ -46,6 +46,7 @@
 - **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Goblin`, `Minotaur`, and `Dragon` in the core engine.
 - **Red Base Creature Set**: Implemented 10 new red creature cards (IDs 61-70), replacing placeholders.
 - **Engine Z-Sorting Support**: Refactored `BattleUI`, `CardRenderer`, `HealthIcon`, and `UIButton` to use the `RenderQueue` utility from the `GameEngine` submodule. This resolves build errors related to missing `z_index` parameters in `Renderer` methods while ensuring proper 2D layer sorting through the engine's built-in render command queue.
+- **Input Coordinate Fix**: Resolved a critical bug where mouse input coordinates were vertically offset. The fix involved ensuring the `InputManager` is correctly initialized with the window's actual height during the `Window` construction phase. This restored correct hover detection in the `CardViewerScene` and fixed non-functional buttons in the `MainMenuScene`.
 
 ## Recommendations & Next Steps
 
