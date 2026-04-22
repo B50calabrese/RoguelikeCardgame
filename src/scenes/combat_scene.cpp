@@ -1,11 +1,10 @@
 #include "scenes/combat_scene.h"
 
 #include <algorithm>
-#include <vector>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/vec2.hpp>
+#include <vector>
 
 #include "core/ai/simple_ai.h"
 #include "core/card_instance.h"
@@ -61,7 +60,8 @@ void CombatScene::OnAttach() {
 
   // Trigger first turn
   core::effects::EffectResolver::Get().QueueAction(
-      std::make_shared<core::effects::actions::StartTurnAction>(game_state_.player->id));
+      std::make_shared<core::effects::actions::StartTurnAction>(
+          game_state_.player->id));
 
   auto& config = core::GameConfig::Get();
 
@@ -69,11 +69,13 @@ void CombatScene::OnAttach() {
   int starting_hand_size = config.starting_hand_size;
   auto it = all_cards.begin();
   for (int i = 0; i < starting_hand_size && it != all_cards.end(); ++i, ++it) {
-    auto p_inst = std::make_unique<core::CardInstance>(&it->second, game_state_.next_instance_id++, game_state_.player->id);
+    auto p_inst = std::make_unique<core::CardInstance>(
+        &it->second, game_state_.next_instance_id++, game_state_.player->id);
     p_inst->location = core::CardLocation::Hand;
     game_state_.player->hand.push_back(std::move(p_inst));
 
-    auto e_inst = std::make_unique<core::CardInstance>(&it->second, game_state_.next_instance_id++, game_state_.enemy->id);
+    auto e_inst = std::make_unique<core::CardInstance>(
+        &it->second, game_state_.next_instance_id++, game_state_.enemy->id);
     e_inst->location = core::CardLocation::Hand;
     game_state_.enemy->hand.push_back(std::move(e_inst));
   }
@@ -84,18 +86,20 @@ void CombatScene::OnAttach() {
   kIconTop = kBorderThickness + kIconSize;
   kEnemyIconBottom = config.window_height - kBorderThickness - kIconSize;
 
-  kHandBoundsSize = {static_cast<float>(config.window_width) * 0.8f,
-                     static_cast<float>(config.window_height) * 0.4f};
+  kHandBoundsSize = {
+      static_cast<float>(config.window_width) * kHandWidthPercent,
+      static_cast<float>(config.window_height) * kHandHeightPercent};
   kPlayerHandPos = {
       (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
-      kIconTop + 20.0f};
+      20.0f};
   kEnemyHandPos = {
       (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
-      kEnemyIconBottom - kHandBoundsSize.y - 20.0f};
+      static_cast<float>(config.window_height) - 20.0f};
 
   // Configure boards
-  kBoardBoundsSize = {static_cast<float>(config.window_width) * kBoardWidthPercent,
-                      static_cast<float>(config.window_height) * kBoardHeightPercent};
+  kBoardBoundsSize = {
+      static_cast<float>(config.window_width) * kBoardWidthPercent,
+      static_cast<float>(config.window_height) * kBoardHeightPercent};
   kPlayerBoardPos = {
       (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
       static_cast<float>(config.window_height) * kPlayerBoardYPercent};
@@ -103,13 +107,15 @@ void CombatScene::OnAttach() {
       (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
       static_cast<float>(config.window_height) * kEnemyBoardYPercent};
 
-  player_hand_ = std::make_unique<controllers::HandController>(game_state_.player->id);
+  player_hand_ =
+      std::make_unique<controllers::HandController>(game_state_.player->id);
   player_hand_->SetBounds(kPlayerHandPos, kHandBoundsSize);
   player_hand_->SetArcAngle(core::graphics::kDefaultArcAngle);
   player_hand_->SetInteractive(true);
   player_hand_->SetFaceDown(false);
 
-  enemy_hand_ = std::make_unique<controllers::HandController>(game_state_.enemy->id);
+  enemy_hand_ =
+      std::make_unique<controllers::HandController>(game_state_.enemy->id);
   enemy_hand_->SetBounds(kEnemyHandPos, kHandBoundsSize);
   enemy_hand_->SetArcAngle(-core::graphics::kDefaultArcAngle);
   enemy_hand_->SetInteractive(false);
@@ -118,9 +124,11 @@ void CombatScene::OnAttach() {
   combat_controller_ = std::make_unique<controllers::CombatController>();
 
   core::effects::EventBus::Get().Subscribe(
-      [this](core::state::GameState& state, const core::effects::GameEvent& event) {
+      [this](core::state::GameState& state,
+             const core::effects::GameEvent& event) {
         if (event.type == core::effects::GameEventType::CreatureAttacked) {
-          this->combat_controller_->OnCreatureAttacked(state, event, this->kIconTop, this->kIconSize);
+          this->combat_controller_->OnCreatureAttacked(
+              state, event, this->kIconTop, this->kIconSize);
         }
       });
 }
@@ -141,7 +149,8 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
   player_hand_->Update(delta_time_seconds, game_state_);
   enemy_hand_->Update(delta_time_seconds, game_state_);
 
-  combat_controller_->Update(delta_time_seconds, game_state_, kIconTop, kIconSize);
+  combat_controller_->Update(delta_time_seconds, game_state_, kIconTop,
+                             kIconSize);
   combat_controller_->HandleInput(game_state_, kIconTop, kIconSize);
 }
 
@@ -159,26 +168,33 @@ void CombatScene::OnRender() {
       0.2f);
   for (size_t i = 0; i < game_state_.player->board.size(); ++i) {
     int inst_id = game_state_.player->board[i]->instance_id;
-    glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(inst_id, player_board_layouts[i].position);
+    glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
+        inst_id, player_board_layouts[i].position);
     float scale = player_board_layouts[i].scale.x;
-    glm::vec2 size = glm::vec2(card_base_width * scale, card_base_height * scale);
+    glm::vec2 size =
+        glm::vec2(card_base_width * scale, card_base_height * scale);
 
     combat_controller_->hitboxes().AddHitbox({inst_id, pos, size, false});
 
     // Render highlight if it can attack
     if (game_state_.current_turn_player_id == game_state_.player->id &&
-        game_state_.player->board[i]->can_attack && !game_state_.player->board[i]->has_attacked) {
-        engine::graphics::PrimitiveRenderer::SubmitQuad(pos, size * 1.1f, glm::vec4(1.0f, 1.0f, 0.0f, 0.5f), 0.0f, {0.5f, 0.5f});
+        game_state_.player->board[i]->can_attack &&
+        !game_state_.player->board[i]->has_attacked) {
+      engine::graphics::PrimitiveRenderer::SubmitQuad(
+          pos, size * 1.1f, glm::vec4(1.0f, 1.0f, 0.0f, 0.5f), 0.0f,
+          {0.5f, 0.5f});
     }
 
     // Render selection highlight
     if (combat_controller_->selected_attacker_id() == inst_id) {
-        engine::graphics::PrimitiveRenderer::SubmitQuad(pos, size * 1.15f, glm::vec4(0.0f, 1.0f, 0.0f, 0.7f), 0.0f, {0.5f, 0.5f});
+      engine::graphics::PrimitiveRenderer::SubmitQuad(
+          pos, size * 1.15f, glm::vec4(0.0f, 1.0f, 0.0f, 0.7f), 0.0f,
+          {0.5f, 0.5f});
     }
 
     core::graphics::CardRenderer::RenderCard(
-        *game_state_.player->board[i]->data, pos,
-        scale, 1.0f, player_board_layouts[i].rotation);
+        *game_state_.player->board[i]->data, pos, scale, 1.0f,
+        player_board_layouts[i].rotation);
   }
 
   auto enemy_board_layouts = core::graphics::HandRenderer::CalculateHandLayout(
@@ -186,15 +202,17 @@ void CombatScene::OnRender() {
       0.2f);
   for (size_t i = 0; i < game_state_.enemy->board.size(); ++i) {
     int inst_id = game_state_.enemy->board[i]->instance_id;
-    glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(inst_id, enemy_board_layouts[i].position);
+    glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
+        inst_id, enemy_board_layouts[i].position);
     float scale = enemy_board_layouts[i].scale.x;
-    glm::vec2 size = glm::vec2(card_base_width * scale, card_base_height * scale);
+    glm::vec2 size =
+        glm::vec2(card_base_width * scale, card_base_height * scale);
 
     combat_controller_->hitboxes().AddHitbox({inst_id, pos, size, true});
 
-    core::graphics::CardRenderer::RenderCard(
-        *game_state_.enemy->board[i]->data, pos,
-        scale, 1.0f, enemy_board_layouts[i].rotation);
+    core::graphics::CardRenderer::RenderCard(*game_state_.enemy->board[i]->data,
+                                             pos, scale, 1.0f,
+                                             enemy_board_layouts[i].rotation);
   }
 
   DrawTargetingLine();
@@ -205,16 +223,19 @@ void CombatScene::OnRender() {
 }
 
 void CombatScene::DrawTargetingLine() {
-    if (combat_controller_->current_state() == CombatState::PickingTarget && combat_controller_->selected_attacker_id()) {
-        glm::vec2 start_pos;
-        if (auto hitbox = combat_controller_->hitboxes().GetHitboxFor(*combat_controller_->selected_attacker_id())) {
-            start_pos = hitbox->position;
-        } else {
-            return;
-        }
-        glm::vec2 end_pos = engine::InputManager::Get().mouse_screen_pos();
-        engine::graphics::PrimitiveRenderer::SubmitLine(start_pos, end_pos, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
+  if (combat_controller_->current_state() == CombatState::PickingTarget &&
+      combat_controller_->selected_attacker_id()) {
+    glm::vec2 start_pos;
+    if (auto hitbox = combat_controller_->hitboxes().GetHitboxFor(
+            *combat_controller_->selected_attacker_id())) {
+      start_pos = hitbox->position;
+    } else {
+      return;
     }
+    glm::vec2 end_pos = engine::InputManager::Get().mouse_screen_pos();
+    engine::graphics::PrimitiveRenderer::SubmitLine(
+        start_pos, end_pos, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
+  }
 }
 
 }  // namespace scenes

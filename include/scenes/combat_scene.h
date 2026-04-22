@@ -1,23 +1,22 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_SCENE_H_
 #define DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_SCENE_H_
 
+#include <glm/vec2.hpp>
 #include <optional>
 #include <vector>
 
-#include <glm/vec2.hpp>
-
-#include "core/card_data.h"
-#include "core/state/game_state.h"
-#include "core/graphics/battle_ui.h"
 #include "core/ai/battle_ai.h"
-#include "scenes/controllers/hand_controller.h"
-#include "scenes/controllers/combat_controller.h"
-#include "scenes/combat/combat_state.h"
-#include "scenes/combat/attack_animation.h"
-#include "scenes/combat/board_hitbox.h"
+#include "core/card_data.h"
+#include "core/effects/game_event.h"
+#include "core/graphics/battle_ui.h"
+#include "core/state/game_state.h"
 #include "engine/ecs/components/transform.h"
 #include "engine/scene/scene.h"
-#include "core/effects/game_event.h"
+#include "scenes/combat/attack_animation.h"
+#include "scenes/combat/board_hitbox.h"
+#include "scenes/combat/combat_state.h"
+#include "scenes/controllers/combat_controller.h"
+#include "scenes/controllers/hand_controller.h"
 
 namespace scenes {
 
@@ -52,6 +51,8 @@ class CombatScene : public engine::Scene {
   static constexpr float kBoardHeightPercent = 0.25f;
   static constexpr float kPlayerBoardYPercent = 0.25f;
   static constexpr float kEnemyBoardYPercent = 0.5f;
+  static constexpr float kHandWidthPercent = 0.6f;
+  static constexpr float kHandHeightPercent = 0.2f;
 
   glm::vec2 kBoardBoundsSize = {0.0f, 0.0f};
   glm::vec2 kPlayerBoardPos = {0.0f, 0.0f};
