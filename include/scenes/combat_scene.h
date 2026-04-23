@@ -15,6 +15,7 @@
 #include "scenes/combat/attack_animation.h"
 #include "scenes/combat/board_hitbox.h"
 #include "scenes/combat/combat_state.h"
+#include "scenes/combat/combat_ui_constants.h"
 #include "scenes/controllers/combat_controller.h"
 #include "scenes/controllers/hand_controller.h"
 
@@ -45,14 +46,6 @@ class CombatScene : public engine::Scene {
   glm::vec2 kHandBoundsSize = {0.0f, 0.0f};
   glm::vec2 kPlayerHandPos = {0.0f, 0.0f};
   glm::vec2 kEnemyHandPos = {0.0f, 0.0f};
-
-  // Board Layout Constants
-  static constexpr float kBoardWidthPercent = 0.8f;
-  static constexpr float kBoardHeightPercent = 0.25f;
-  static constexpr float kPlayerBoardYPercent = 0.25f;
-  static constexpr float kEnemyBoardYPercent = 0.5f;
-  static constexpr float kHandWidthPercent = 0.6f;
-  static constexpr float kHandHeightPercent = 0.2f;
 
   glm::vec2 kBoardBoundsSize = {0.0f, 0.0f};
   glm::vec2 kPlayerBoardPos = {0.0f, 0.0f};

@@ -16,14 +16,9 @@
 #include "core/util/math_util.h"
 #include "engine/input/input_manager.h"
 #include "engine/util/logger.h"
+#include "scenes/combat/combat_ui_constants.h"
 
 namespace scenes::controllers {
-
-namespace {
-constexpr float kCardHoverScale = 1.2f;
-constexpr float kCardHeldScale = 1.3f;
-constexpr float kLerpSpeed = 10.0f;
-}  // namespace
 
 HandController::HandController(int player_id)
     : player_id_(player_id),
@@ -103,7 +98,7 @@ void HandController::HandleInteraction(core::state::GameState& state) {
     }
     VisualCard& held_card = hand_visuals_[*held_card_index_];
     held_card.target_transform.position = mouse_pos;
-    held_card.target_transform.scale = glm::vec2(kCardHeldScale);
+    held_card.target_transform.scale = glm::vec2(combat::kCardHeldScale);
     held_card.target_transform.rotation = 0.0f;
 
     if (clicked) {
@@ -182,7 +177,7 @@ void HandController::UpdateLayout() {
     // Apply hover zoom
     if (is_interactive_ && hovered_card_index_ &&
         *hovered_card_index_ == vc_idx) {
-      vc.target_transform.scale *= kCardHoverScale;
+      vc.target_transform.scale *= combat::kCardHoverScale;
       vc.target_transform.rotation = 0.0f;
       // Slightly lift the hovered card
       // If arc_angle is negative (top hand), we should probably "lift" it
@@ -195,10 +190,13 @@ void HandController::UpdateLayout() {
 }
 
 void HandController::AnimateCards(float delta_time_seconds) {
-  float t = glm::clamp(delta_time_seconds * kLerpSpeed, 0.0f, 1.0f);
   bool any_moving = false;
 
   for (auto& vc : hand_visuals_) {
+    float lerp_speed =
+        vc.is_held ? combat::kHeldCardLerpSpeed : combat::kDefaultLerpSpeed;
+    float t = glm::clamp(delta_time_seconds * lerp_speed, 0.0f, 1.0f);
+
     vc.current_transform.position =
         glm::mix(vc.current_transform.position, vc.target_transform.position, t);
     vc.current_transform.scale =
@@ -233,7 +231,7 @@ void HandController::Render() {
   for (size_t i = 0; i < hand_visuals_.size(); ++i) {
     if (last_to_render && i == *last_to_render) continue;
     const auto& vc = hand_visuals_[i];
-    float z_index = 100.0f + static_cast<float>(i);
+    float z_index = combat::kHandZ + static_cast<float>(i);
     if (is_face_down_) {
       core::graphics::CardRenderer::RenderCardBack(
           vc.current_transform.position, vc.current_transform.scale.x, 1.0f,
@@ -248,7 +246,7 @@ void HandController::Render() {
   if (last_to_render && *last_to_render < hand_visuals_.size()) {
     const auto& vc = hand_visuals_[*last_to_render];
     // Render last_to_render on top of everything else in the hand.
-    float z_index = 200.0f;
+    float z_index = combat::kHandZ + 100.0f;
     if (is_face_down_) {
       core::graphics::CardRenderer::RenderCardBack(
           vc.current_transform.position, vc.current_transform.scale.x, 1.0f,

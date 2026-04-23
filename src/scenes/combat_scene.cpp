@@ -87,25 +87,25 @@ void CombatScene::OnAttach() {
   kEnemyIconBottom = config.window_height - kBorderThickness - kIconSize;
 
   kHandBoundsSize = {
-      static_cast<float>(config.window_width) * kHandWidthPercent,
-      static_cast<float>(config.window_height) * kHandHeightPercent};
+      static_cast<float>(config.window_width) * combat::kHandWidthPercent,
+      static_cast<float>(config.window_height) * combat::kHandHeightPercent};
   kPlayerHandPos = {
       (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
-      20.0f};
+      combat::kHandEdgeOffset};
   kEnemyHandPos = {
       (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) - 20.0f};
+      static_cast<float>(config.window_height) - combat::kHandEdgeOffset};
 
   // Configure boards
   kBoardBoundsSize = {
-      static_cast<float>(config.window_width) * kBoardWidthPercent,
-      static_cast<float>(config.window_height) * kBoardHeightPercent};
+      static_cast<float>(config.window_width) * combat::kBoardWidthPercent,
+      static_cast<float>(config.window_height) * combat::kBoardHeightPercent};
   kPlayerBoardPos = {
       (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) * kPlayerBoardYPercent};
+      static_cast<float>(config.window_height) * combat::kPlayerBoardYPercent};
   kEnemyBoardPos = {
       (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) * kEnemyBoardYPercent};
+      static_cast<float>(config.window_height) * combat::kEnemyBoardYPercent};
 
   player_hand_ =
       std::make_unique<controllers::HandController>(game_state_.player->id);
@@ -170,7 +170,8 @@ void CombatScene::OnRender() {
     int inst_id = game_state_.player->board[i]->instance_id;
     glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
         inst_id, player_board_layouts[i].position);
-    float scale = player_board_layouts[i].scale.x;
+    float scale =
+        player_board_layouts[i].scale.x * combat::kBoardCardScaleMultiplier;
     glm::vec2 size =
         glm::vec2(card_base_width * scale, card_base_height * scale);
 
@@ -204,7 +205,8 @@ void CombatScene::OnRender() {
     int inst_id = game_state_.enemy->board[i]->instance_id;
     glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
         inst_id, enemy_board_layouts[i].position);
-    float scale = enemy_board_layouts[i].scale.x;
+    float scale =
+        enemy_board_layouts[i].scale.x * combat::kBoardCardScaleMultiplier;
     glm::vec2 size =
         glm::vec2(card_base_width * scale, card_base_height * scale);
 

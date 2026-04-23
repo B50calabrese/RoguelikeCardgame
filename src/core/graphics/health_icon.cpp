@@ -1,6 +1,7 @@
 #include "core/graphics/health_icon.h"
 #include "engine/graphics/renderer.h"
 #include "engine/graphics/utils/render_queue.h"
+#include "scenes/combat/combat_ui_constants.h"
 #include <string>
 
 namespace core::graphics {
@@ -12,7 +13,7 @@ void HealthIcon::Render(int health) const {
   auto& renderer = engine::graphics::Renderer::Get();
 
   // Use a high Z-index for UI to ensure it's on top of game elements.
-  const float ui_z = 1000.0f;
+  const float ui_z = scenes::combat::kUIZ;
 
   // Render the colored square centered at position_
   engine::graphics::utils::RenderCommand cmd;

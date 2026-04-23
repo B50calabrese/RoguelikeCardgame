@@ -8,6 +8,7 @@
 #include "engine/graphics/primitive_renderer.h"
 #include "engine/graphics/utils/render_queue.h"
 #include "engine/input/input_manager.h"
+#include "scenes/combat/combat_ui_constants.h"
 
 namespace core::graphics {
 
@@ -60,6 +61,44 @@ void BattleUI::Update(float delta_time, const GameState& state) {
 }
 
 void BattleUI::Render(const GameState& state) const {
+  auto& config = core::GameConfig::Get();
+  auto& queue = engine::graphics::utils::RenderQueue::Default();
+
+  // Render Background
+  engine::graphics::utils::RenderCommand bg;
+  bg.z_order = scenes::combat::kBackgroundZ;
+  bg.position = {0, 0};
+  bg.size = {config.window_width, config.window_height};
+  bg.color = scenes::combat::kBoardBackgroundColor;
+  queue.Submit(bg);
+
+  // Render Zone Outlines
+  float board_width = config.window_width * scenes::combat::kBoardWidthPercent;
+  float board_height = config.window_height * scenes::combat::kBoardHeightPercent;
+  float board_x = (config.window_width - board_width) * 0.5f;
+
+  // Player Zone
+  engine::graphics::utils::RenderCommand p_zone;
+  p_zone.z_order = scenes::combat::kBoardOutlineZ;
+  p_zone.shape_type = engine::graphics::utils::ShapeType::kQuad;
+  p_zone.position = {board_x, config.window_height * scenes::combat::kPlayerBoardYPercent};
+  p_zone.size = {board_width, board_height};
+  p_zone.color = scenes::combat::kBoardOutlineColor;
+  p_zone.origin = {0.0f, 0.5f};
+  p_zone.thickness = 2.0f;
+  queue.Submit(p_zone);
+
+  // Enemy Zone
+  engine::graphics::utils::RenderCommand e_zone;
+  e_zone.z_order = scenes::combat::kBoardOutlineZ;
+  e_zone.shape_type = engine::graphics::utils::ShapeType::kQuad;
+  e_zone.position = {board_x, config.window_height * scenes::combat::kEnemyBoardYPercent};
+  e_zone.size = {board_width, board_height};
+  e_zone.color = scenes::combat::kBoardOutlineColor;
+  e_zone.origin = {0.0f, 0.5f};
+  e_zone.thickness = 2.0f;
+  queue.Submit(e_zone);
+
   RenderBorder();
   RenderManaPool(*state.player, true);
   RenderManaPool(*state.enemy, false);
@@ -80,7 +119,7 @@ void BattleUI::RenderBorder() const {
 
   // Border should be below other UI elements but potentially above cards if
   // they fly out. Let's put it at a high Z but lower than buttons/health.
-  const float border_z = 900.0f;
+  const float border_z = scenes::combat::kBorderZ;
 
   auto& queue = engine::graphics::utils::RenderQueue::Default();
 
@@ -137,7 +176,7 @@ void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) 
     color2 = (player.colors.size() > 1) ? util::GetColorVector(player.colors[1]) : color1;
   }
 
-  const float ui_z = 1000.0f;
+  const float ui_z = scenes::combat::kUIZ;
 
   for (int i = 0; i < player.max_mana; ++i) {
     glm::vec2 offset = is_player ? glm::vec2(- (i + 1) * radius * 2.5f, 0.0f) : glm::vec2((i + 1) * radius * 2.5f, 0.0f);
@@ -161,11 +200,6 @@ void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) 
     cmd.gradient_type = 1; // Linear
     engine::graphics::utils::RenderQueue::Default().Submit(cmd);
   }
-
-  // Draw mana text
-  std::string mana_text = std::to_string(player.mana) + "/" + std::to_string(player.max_mana);
-  glm::vec2 text_pos = base_pos + (is_player ? glm::vec2(-radius, radius * 1.5f) : glm::vec2(-radius, -radius * 2.5f));
-  engine::graphics::Renderer::Get().DrawText("default", mana_text, text_pos, 0.0f, 0.5f, {1.0f, 1.0f, 1.0f, 1.0f}, ui_z + 0.1f);
 }
 
 }  // namespace core::graphics
