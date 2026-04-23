@@ -11,8 +11,17 @@ void ModifyStatsAction::Apply(GameState& state) const {
     if (inst && inst->location == CardLocation::Board) {
         inst->current_power += power_change_;
         inst->current_health += health_change_;
-        inst->max_health += health_change_;
-        LOG_INFO("[EffectResolver] Modified %s stats: P=%d, H=%d", inst->data->name.c_str(), inst->current_power, inst->current_health);
+        if (is_permanent_) {
+            inst->max_health += health_change_;
+        } else {
+            inst->temp_power_modifier += power_change_;
+            inst->temp_health_modifier += health_change_;
+        }
+
+        LOG_INFO("[EffectResolver] Modified %s stats (%s): P=%d, H=%d",
+                 inst->data->name.c_str(),
+                 is_permanent_ ? "permanent" : "temporary",
+                 inst->current_power, inst->current_health);
 
         if (inst->current_health <= 0) {
             EffectResolver::Get().QueueAction(std::make_shared<KillCreatureAction>(inst->instance_id));

@@ -6,7 +6,8 @@ namespace scenes {
 enum class CombatState {
     Idle,
     PickingTarget,
-    AnimatingAttack
+    AnimatingAttack,
+    PickingEffectTarget
 };
 
 } // namespace scenes

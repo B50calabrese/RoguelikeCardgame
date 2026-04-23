@@ -11,8 +11,8 @@ namespace core::effects::actions {
 
 class ModifyStatsAction : public ActionBase {
  public:
-  ModifyStatsAction(int card_instance_id, int power_change, int health_change)
-      : card_instance_id_(card_instance_id), power_change_(power_change), health_change_(health_change) {}
+  ModifyStatsAction(int card_instance_id, int power_change, int health_change, bool is_permanent = true)
+      : card_instance_id_(card_instance_id), power_change_(power_change), health_change_(health_change), is_permanent_(is_permanent) {}
 
   RuleResult Validate(const GameState& state) const override {
     return {true, "Modify allowed", false};
@@ -26,6 +26,7 @@ class ModifyStatsAction : public ActionBase {
   int card_instance_id_;
   int power_change_;
   int health_change_;
+  bool is_permanent_;
 };
 
 }  // namespace core::effects::actions

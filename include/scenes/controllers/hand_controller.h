@@ -44,6 +44,18 @@ class HandController {
   std::optional<size_t> hovered_card_index() const { return hovered_card_index_; }
   std::optional<size_t> held_card_index() const { return held_card_index_; }
 
+  struct PendingPlay {
+      int instance_id;
+      const core::CardEffectDefinition* effect_def;
+  };
+  std::optional<PendingPlay> TakePendingPlay() {
+      auto tmp = pending_play_;
+      pending_play_.reset();
+      return tmp;
+  }
+
+  void CancelHold();
+
  private:
   void SyncHandWithState(const std::vector<std::unique_ptr<core::CardInstance>>& hand_state);
   void HandleInteraction(core::state::GameState& state);
@@ -60,6 +72,7 @@ class HandController {
   std::vector<VisualCard> hand_visuals_;
   std::optional<size_t> hovered_card_index_;
   std::optional<size_t> held_card_index_;
+  std::optional<PendingPlay> pending_play_;
 };
 
 }  // namespace scenes::controllers

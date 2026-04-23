@@ -19,6 +19,7 @@ set(SOURCE_FILES
         src/core/effects/actions/creature_attack_action.cpp
     "src/core/effects/actions/deal_damage_action.cpp"
     "src/core/effects/actions/end_turn_action.cpp"
+    "src/core/effects/actions/heal_action.cpp"
     "src/core/effects/actions/modify_stats_action.cpp"
     "src/core/effects/actions/start_turn_action.cpp"
     "src/core/effects/effect_registry.cpp"

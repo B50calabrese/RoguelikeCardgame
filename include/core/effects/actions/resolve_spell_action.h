@@ -40,7 +40,7 @@ class ResolveSpellAction : public ActionBase {
       if (effect) {
           // Generate actions for this effect.
           // TODO: Improve targeting logic. For now, we pass the targets_ provided to PlayCardAction.
-          auto actions = effect->GenerateActions(card_instance_id_, targets_, effect_def.params);
+          auto actions = effect->GenerateActions(card_instance_id_, player_id_, targets_, effect_def.params);
           for (auto& action : actions) {
               EffectResolver::Get().QueueAction(action);
           }

@@ -107,35 +107,53 @@ void HandController::HandleInteraction(core::state::GameState& state) {
     held_card.target_transform.rotation = 0.0f;
 
     if (clicked) {
-      // AUTO-PICKER: Pick first legal target for effects that require one.
-      // This is a placeholder for a full UI target selection system.
-      std::vector<core::effects::Target> targets;
-
-      // Look for first OnPlay effect that needs targets
       core::CardInstance* inst = state.FindCardInstance(held_card.instance_id);
-      if (inst) {
-        for (const auto& effect_def : inst->data->effects) {
-          if (effect_def.trigger == core::Trigger::OnPlay &&
-              effect_def.filter.is_required) {
-            // Check enemy first, then player
-            if (effect_def.filter.IsValid(
-                    state, 0, {core::effects::Target::Type::Enemy, 1})) {
-              targets.push_back({core::effects::Target::Type::Enemy, 1});
-            } else if (effect_def.filter.IsValid(
-                           state, 0, {core::effects::Target::Type::Player, 0})) {
-              targets.push_back({core::effects::Target::Type::Player, 0});
-            }
-            break;
-          }
-        }
+      if (!inst) {
+          CancelHold();
+          return;
       }
 
-      core::effects::EffectResolver::Get().QueueAction(
-          std::make_shared<core::effects::actions::PlayCardAction>(
-              player_id_, held_card.instance_id, targets));
+      const core::CardEffectDefinition* first_required_effect = nullptr;
+      bool any_legal_target_exists = false;
 
-      held_card.is_held = false;
-      held_card_index_ = std::nullopt;
+      for (const auto& effect_def : inst->data->effects) {
+          bool is_on_play = (inst->data->type == core::CardType::Creature && effect_def.trigger == core::Trigger::OnPlay) ||
+                            (inst->data->type == core::CardType::Spell && effect_def.trigger == core::Trigger::OnPlay);
+
+          if (is_on_play && effect_def.filter.is_required) {
+              first_required_effect = &effect_def;
+              if (effect_def.filter.IsValid(state, player_id_, {core::effects::Target::Type::Player, state.player->id})) any_legal_target_exists = true;
+              if (!any_legal_target_exists && effect_def.filter.IsValid(state, player_id_, {core::effects::Target::Type::Enemy, state.enemy->id})) any_legal_target_exists = true;
+              if (!any_legal_target_exists) {
+                  for (auto& target_inst : state.player->board) {
+                      if (effect_def.filter.IsValid(state, player_id_, {core::effects::Target::Type::Creature, target_inst->instance_id})) {
+                          any_legal_target_exists = true;
+                          break;
+                      }
+                  }
+              }
+              if (!any_legal_target_exists) {
+                  for (auto& target_inst : state.enemy->board) {
+                      if (effect_def.filter.IsValid(state, player_id_, {core::effects::Target::Type::Creature, target_inst->instance_id})) {
+                          any_legal_target_exists = true;
+                          break;
+                      }
+                  }
+              }
+              break;
+          }
+      }
+
+      if (first_required_effect && any_legal_target_exists) {
+          pending_play_ = {held_card.instance_id, first_required_effect};
+      } else {
+          core::effects::EffectResolver::Get().QueueAction(
+              std::make_shared<core::effects::actions::PlayCardAction>(
+                  player_id_, held_card.instance_id, std::vector<core::effects::Target>{}));
+
+          held_card.is_held = false;
+          held_card_index_ = std::nullopt;
+      }
     }
     return;
   }
@@ -192,6 +210,13 @@ void HandController::UpdateLayout() {
       vc.target_transform.position.y += lift;
     }
   }
+}
+
+void HandController::CancelHold() {
+    if (held_card_index_) {
+        hand_visuals_[*held_card_index_].is_held = false;
+        held_card_index_ = std::nullopt;
+    }
 }
 
 void HandController::AnimateCards(float delta_time_seconds) {

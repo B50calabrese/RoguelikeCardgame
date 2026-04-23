@@ -1,6 +1,9 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_GAME_EVENT_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_GAME_EVENT_H_
 
+#include <vector>
+#include "core/effects/target.h"
+
 namespace core::effects {
 
 /**
@@ -27,6 +30,8 @@ struct GameEvent {
   int source_id;        // Instance ID of the card/creature that triggered the event
   int target_id = -1;   // Instance ID of the target (if any)
   int value = 0;        // Amount (damage, mana, etc.)
+
+  std::vector<Target> targets; // All targets for this event
 };
 
 }  // namespace core::effects

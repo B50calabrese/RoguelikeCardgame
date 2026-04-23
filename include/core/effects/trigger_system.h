@@ -45,11 +45,11 @@ class TriggerSystem {
         if (effect_def.trigger == trigger_to_check) {
           // If the effect requires targets, this simple system might need human input or AI
           // For now, we only automatically trigger non-targeted effects or effects where targets are provided.
-          if (effect_def.filter.is_required) continue;
+          if (effect_def.filter.is_required && event.targets.empty()) continue;
 
           auto effect = EffectRegistry::Get().CreateEffect(effect_def.effect_type);
           if (effect) {
-              auto actions = effect->GenerateActions(source_inst->instance_id, {}, effect_def.params);
+              auto actions = effect->GenerateActions(source_inst->instance_id, event.actor_id, event.targets, effect_def.params);
             QueueActions(actions);
           }
         }
@@ -64,7 +64,7 @@ class TriggerSystem {
           if (effect_def.trigger == trigger_to_check && !effect_def.filter.is_required) {
             auto effect = EffectRegistry::Get().CreateEffect(effect_def.effect_type);
             if (effect) {
-              auto actions = effect->GenerateActions(inst->instance_id, {}, effect_def.params);
+              auto actions = effect->GenerateActions(inst->instance_id, event.actor_id, {}, effect_def.params);
               QueueActions(actions);
             }
           }

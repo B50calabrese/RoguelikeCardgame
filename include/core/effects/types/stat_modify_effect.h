@@ -14,7 +14,7 @@ namespace core::effects::types {
  */
 class StatModifyEffect : public Effect {
  public:
-  std::vector<Action> GenerateActions(int source_id, const std::vector<Target>& targets, const EffectParams& params) const override {
+  std::vector<Action> GenerateActions(int source_id, int actor_id, const std::vector<Target>& targets, const EffectParams& params) const override {
     std::vector<Action> actions;
     if (targets.empty()) return actions;
 
@@ -26,6 +26,12 @@ class StatModifyEffect : public Effect {
 
     auto it_h = params.find("health");
     if (it_h != params.end()) health = std::stoi(it_h->second);
+
+    bool permanent = true;
+    auto it_perm = params.find("duration");
+    if (it_perm != params.end() && it_perm->second == "UntilEndOfTurn") {
+      permanent = false;
+    }
 
     actions.push_back(std::make_shared<actions::ModifyStatsAction>(targets[0].id, power, health));
     return actions;

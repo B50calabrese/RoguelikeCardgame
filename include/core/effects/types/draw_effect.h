@@ -14,7 +14,7 @@ namespace core::effects::types {
  */
 class DrawEffect : public Effect {
  public:
-  std::vector<Action> GenerateActions(int source_id, const std::vector<Target>& targets, const EffectParams& params) const override {
+  std::vector<Action> GenerateActions(int source_id, int actor_id, const std::vector<Target>& targets, const EffectParams& params) const override {
     std::vector<Action> actions;
     int amount = 0;
     auto it = params.find("amount");
@@ -22,8 +22,7 @@ class DrawEffect : public Effect {
       amount = std::stoi(it->second);
     }
 
-    // Default to player 0 for now
-    actions.push_back(std::make_shared<actions::DrawCardAction>(0, amount));
+    actions.push_back(std::make_shared<actions::DrawCardAction>(actor_id, amount));
     return actions;
   }
 

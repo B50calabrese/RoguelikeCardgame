@@ -1,6 +1,12 @@
 # Project Status
 
 ## Most Recent Changes
+- **Targeted 'OnPlay' Effects (Battlecries)**:
+    - Implemented a new targeting system for playing cards (Creatures and Spells).
+    - Added HealAction and HealEffect to support healing mechanics.
+    - Updated ModifyStatsAction and EndTurnAction to support temporary "Until End of Turn" stat changes.
+    - Enhanced TriggerSystem and GameEvent to pass user-selected targets to resolved effects.
+    - Updated the base cycle of Mage Apprentice cards with their unique OnPlay effects.
 - **Standardized Base Card Set**: Implemented a new color-coded ID system and naming convention for cards.
     - White: IDs 1-20 (1-10 are new creatures: Lowly Squire, White Knight, etc.; 11-20 are placeholder spells).
     - Blue: IDs 21-40 (21-30 are new creatures: Merfolk Fledgling, Blue Knight, etc.; 31-40 are placeholder spells).

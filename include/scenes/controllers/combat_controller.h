@@ -22,6 +22,11 @@ class CombatController {
 
   CombatState current_state() const { return current_state_; }
   std::optional<int> selected_attacker_id() const { return selected_attacker_id_; }
+  std::optional<int> card_being_played_id() const { return card_being_played_id_; }
+  const core::effects::TargetFilter* current_target_filter() const { return current_target_filter_; }
+
+  void StartEffectTargeting(int card_instance_id, const core::effects::TargetFilter& filter);
+  void CancelEffectTargeting();
 
   combat::CombatAnimator& animator() { return animator_; }
   combat::HitboxManager& hitboxes() { return hitbox_manager_; }
@@ -29,6 +34,9 @@ class CombatController {
  private:
   CombatState current_state_ = CombatState::Idle;
   std::optional<int> selected_attacker_id_;
+  std::optional<int> card_being_played_id_;
+  const core::effects::TargetFilter* current_target_filter_ = nullptr;
+  std::vector<core::effects::Target> selected_targets_;
 
   combat::CombatAnimator animator_;
   combat::HitboxManager hitbox_manager_;

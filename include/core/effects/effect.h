@@ -24,7 +24,7 @@ class Effect {
   virtual ~Effect() = default;
 
   /** @brief Produces actions when triggered. */
-  virtual std::vector<Action> GenerateActions(int source_id, const std::vector<Target>& targets, const EffectParams& params) const = 0;
+  virtual std::vector<Action> GenerateActions(int source_id, int actor_id, const std::vector<Target>& targets, const EffectParams& params) const = 0;
 
   /** @brief Returns a description of the effect based on parameters. */
   virtual std::string GetDescription(const EffectParams& params) const = 0;

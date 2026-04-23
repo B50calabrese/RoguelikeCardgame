@@ -33,6 +33,10 @@ struct CardInstance {
   int current_health;
   int max_health;
 
+  // Temporary stat modifiers (reset at end of turn)
+  int temp_power_modifier = 0;
+  int temp_health_modifier = 0;
+
   bool has_attacked;
   bool can_attack; // Used for summoning sickness and other "can't attack" effects
 

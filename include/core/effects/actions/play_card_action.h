@@ -50,7 +50,7 @@ class PlayCardAction : public ActionBase {
         p.hand.erase(it);
 
         // Broadcast card played event
-        EventBus::Get().Publish(state, {GameEventType::CardPlayed, player_id_, card_id});
+        EventBus::Get().Publish(state, {GameEventType::CardPlayed, player_id_, card_id, -1, 0, targets_});
     }
   }
 

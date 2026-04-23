@@ -14,6 +14,16 @@ RuleResult EndTurnAction::Validate(const state::GameState& state) const {
 }
 
 void EndTurnAction::Apply(state::GameState& state) const {
+    // Reset temporary modifiers for the player whose turn is ending
+    PlayerState& p = (player_id_ == state.player->id) ? *state.player : *state.enemy;
+    for (auto& inst : p.board) {
+        if (inst->temp_power_modifier != 0 || inst->temp_health_modifier != 0) {
+            inst->current_power -= inst->temp_power_modifier;
+            inst->current_health -= inst->temp_health_modifier;
+            inst->temp_power_modifier = 0;
+            inst->temp_health_modifier = 0;
+        }
+    }
     // Switch active player
     state.current_turn_player_id = (state.current_turn_player_id == state.player->id)
                                    ? state.enemy->id

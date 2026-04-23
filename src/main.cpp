@@ -13,6 +13,7 @@
 #include "core/effects/types/damage_effect.h"
 #include "core/effects/types/draw_effect.h"
 #include "core/effects/types/stat_modify_effect.h"
+#include "core/effects/types/heal_effect.h"
 
 class DeckBuilderApp : public engine::Application {
  public:
@@ -28,6 +29,7 @@ class DeckBuilderApp : public engine::Application {
     core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::types::DamageEffect>(); });
     core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::effects::types::DrawEffect>(); });
     core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::types::StatModifyEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Heal", []() { return std::make_unique<core::effects::types::HealEffect>(); });
 
     // Load Cards
     core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);

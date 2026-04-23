@@ -9,4 +9,9 @@
     <Health>6</Health>
     <Frame>green_creature_frame.png</Frame>
     <Art>card_back.png</Art>
+    <Effect trigger="OnPlay" type="Buff">
+        <Param name="power" value="2"/>
+        <Param name="health" value="2"/>
+        <TargetFilter required="true" allow_creature="true" allow_player="false" allow_enemy="false" allow_self="true"/>
+    </Effect>
 </Card>

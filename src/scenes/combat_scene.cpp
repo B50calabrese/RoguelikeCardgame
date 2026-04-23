@@ -141,8 +141,19 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
   player_hand_->Update(delta_time_seconds, game_state_);
   enemy_hand_->Update(delta_time_seconds, game_state_);
 
+  if (auto pending = player_hand_->TakePendingPlay()) {
+      combat_controller_->StartEffectTargeting(pending->instance_id, pending->effect_def->filter);
+  }
+
+  auto prev_state = combat_controller_->current_state();
   combat_controller_->Update(delta_time_seconds, game_state_, kIconTop, kIconSize);
   combat_controller_->HandleInput(game_state_, kIconTop, kIconSize);
+
+  if (prev_state == CombatState::PickingEffectTarget && combat_controller_->current_state() == CombatState::Idle) {
+      if (!core::effects::EffectResolver::Get().IsBusy()) {
+          player_hand_->CancelHold();
+      }
+  }
 }
 
 void CombatScene::OnRender() {
@@ -176,6 +187,13 @@ void CombatScene::OnRender() {
         engine::graphics::PrimitiveRenderer::SubmitQuad(pos, size * 1.15f, glm::vec4(0.0f, 1.0f, 0.0f, 0.7f), 0.0f, {0.5f, 0.5f});
     }
 
+    if (combat_controller_->current_state() == CombatState::PickingEffectTarget) {
+        core::effects::Target target = {core::effects::Target::Type::Creature, inst_id};
+        if (combat_controller_->current_target_filter()->IsValid(game_state_, game_state_.player->id, target)) {
+             engine::graphics::PrimitiveRenderer::SubmitQuad(pos, size * 1.1f, glm::vec4(0.0f, 0.7f, 1.0f, 0.5f), 0.0f, {0.5f, 0.5f});
+        }
+    }
+
     core::graphics::CardRenderer::RenderCard(
         *game_state_.player->board[i]->data, pos,
         scale, 1.0f, player_board_layouts[i].rotation);
@@ -199,6 +217,20 @@ void CombatScene::OnRender() {
 
   DrawTargetingLine();
 
+  if (combat_controller_->current_state() == CombatState::PickingEffectTarget) {
+      auto& config = core::GameConfig::Get();
+      glm::vec2 player_health_pos = {config.window_width * 0.5f, kIconTop - kIconSize * 0.5f};
+      glm::vec2 enemy_health_pos = {config.window_width * 0.5f, config.window_height - kIconTop + kIconSize * 0.5f};
+      glm::vec2 icon_size_vec = {kIconSize, kIconSize};
+
+      if (combat_controller_->current_target_filter()->IsValid(game_state_, game_state_.player->id, {core::effects::Target::Type::Player, game_state_.player->id})) {
+           engine::graphics::PrimitiveRenderer::SubmitQuad(player_health_pos, icon_size_vec * 1.2f, glm::vec4(0.0f, 0.7f, 1.0f, 0.5f), 0.0f, {0.5f, 0.5f});
+      }
+      if (combat_controller_->current_target_filter()->IsValid(game_state_, game_state_.player->id, {core::effects::Target::Type::Enemy, game_state_.enemy->id})) {
+           engine::graphics::PrimitiveRenderer::SubmitQuad(enemy_health_pos, icon_size_vec * 1.2f, glm::vec4(0.0f, 0.7f, 1.0f, 0.5f), 0.0f, {0.5f, 0.5f});
+      }
+  }
+
   player_hand_->Render();
   enemy_hand_->Render();
   engine::util::Console::Get().Render();
@@ -214,6 +246,11 @@ void CombatScene::DrawTargetingLine() {
         }
         glm::vec2 end_pos = engine::InputManager::Get().mouse_screen_pos();
         engine::graphics::PrimitiveRenderer::SubmitLine(start_pos, end_pos, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
+    } else if (combat_controller_->current_state() == CombatState::PickingEffectTarget && combat_controller_->card_being_played_id()) {
+        auto& config = core::GameConfig::Get();
+        glm::vec2 start_pos = {config.window_width * 0.5f, 100.0f}; // Default to bottom center
+        glm::vec2 end_pos = engine::InputManager::Get().mouse_screen_pos();
+        engine::graphics::PrimitiveRenderer::SubmitLine(start_pos, end_pos, glm::vec4(0.0f, 0.5f, 1.0f, 1.0f), 3.0f);
     }
 }
 

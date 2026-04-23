@@ -9,4 +9,8 @@
     <Health>7</Health>
     <Frame>blue_creature_frame.png</Frame>
     <Art>card_back.png</Art>
+    <Effect trigger="OnPlay" type="Draw">
+        <Param name="amount" value="1"/>
+        <TargetFilter required="false"/>
+    </Effect>
 </Card>

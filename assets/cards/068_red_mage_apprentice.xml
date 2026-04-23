@@ -9,4 +9,8 @@
     <Health>5</Health>
     <Frame>red_creature_frame.png</Frame>
     <Art>card_back.png</Art>
+    <Effect trigger="OnPlay" type="Damage">
+        <Param name="amount" value="2"/>
+        <TargetFilter required="true" allow_creature="true" allow_player="true" allow_enemy="true" allow_self="true"/>
+    </Effect>
 </Card>

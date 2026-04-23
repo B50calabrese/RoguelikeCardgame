@@ -2,6 +2,7 @@
 #include "core/effects/visual_blocker.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/actions/creature_attack_action.h"
+#include "core/effects/actions/play_card_action.h"
 #include "core/game_config.h"
 #include "core/util/math_util.h"
 #include "engine/input/input_manager.h"
@@ -14,6 +15,20 @@ void CombatController::Update(float delta_time, core::state::GameState& state, f
     if (current_state_ == CombatState::AnimatingAttack && !animator_.active_animation()) {
         current_state_ = CombatState::Idle;
     }
+}
+
+void CombatController::StartEffectTargeting(int card_instance_id, const core::effects::TargetFilter& filter) {
+    card_being_played_id_ = card_instance_id;
+    current_target_filter_ = &filter;
+    current_state_ = CombatState::PickingEffectTarget;
+    selected_targets_.clear();
+}
+
+void CombatController::CancelEffectTargeting() {
+    card_being_played_id_.reset();
+    current_target_filter_ = nullptr;
+    current_state_ = CombatState::Idle;
+    selected_targets_.clear();
 }
 
 void CombatController::HandleInput(core::state::GameState& state, float icon_top, float icon_size) {
@@ -68,6 +83,42 @@ void CombatController::HandleInput(core::state::GameState& state, float icon_top
 
             current_state_ = CombatState::Idle;
             selected_attacker_id_.reset();
+        } else if (current_state_ == CombatState::PickingEffectTarget) {
+            bool target_found = false;
+            core::effects::Target target;
+            target.id = -1;
+
+            if (auto hitbox = hitbox_manager_.GetHitboxAt(mouse_pos)) {
+                target.type = core::effects::Target::Type::Creature;
+                target.id = hitbox->instance_id;
+            } else {
+                auto& config = core::GameConfig::Get();
+                glm::vec2 player_health_pos = {config.window_width * 0.5f, icon_top - icon_size * 0.5f};
+                glm::vec2 enemy_health_pos = {config.window_width * 0.5f, config.window_height - icon_top + icon_size * 0.5f};
+                glm::vec2 icon_size_vec = {icon_size, icon_size};
+
+                if (core::util::PointInRect(mouse_pos, player_health_pos, icon_size_vec, true)) {
+                    target.type = core::effects::Target::Type::Player;
+                    target.id = state.player->id;
+                } else if (core::util::PointInRect(mouse_pos, enemy_health_pos, icon_size_vec, true)) {
+                    target.type = core::effects::Target::Type::Enemy;
+                    target.id = state.enemy->id;
+                }
+            }
+
+            if (target.id != -1 && current_target_filter_->IsValid(state, state.player->id, target)) {
+                selected_targets_.push_back(target);
+                core::effects::EffectResolver::Get().QueueAction(
+                    std::make_shared<core::effects::actions::PlayCardAction>(
+                        state.player->id, *card_being_played_id_, selected_targets_));
+                target_found = true;
+            }
+
+            if (target_found || !current_target_filter_->is_required) {
+                CancelEffectTargeting();
+            } else {
+                CancelEffectTargeting();
+            }
         }
     }
 }
