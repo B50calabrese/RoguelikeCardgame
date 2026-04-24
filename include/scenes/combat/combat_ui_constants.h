@@ -6,15 +6,14 @@
 namespace scenes::combat {
 
 // Layout Percentages
-constexpr float kBoardWidthPercent = 0.8f;
-constexpr float kBoardHeightPercent = 0.25f;
-constexpr float kPlayerBoardYPercent = 0.35f;
-constexpr float kEnemyBoardYPercent = 0.4f;
-constexpr float kHandWidthPercent = 0.6f;
-constexpr float kHandHeightPercent = 0.2f;
+constexpr float kBoardWidthPercent = 0.9f;
+constexpr float kHandWidthPercent = 0.8f;
+constexpr float kHandHeightPercent = 0.25f;
 
 // Positioning Offsets
 constexpr float kHandEdgeOffset = 20.0f;
+constexpr float kZonePadding = 64.0f;
+constexpr float kZoneBorder = 64.0f;
 
 // Scaling
 constexpr float kBoardCardScaleMultiplier = 0.5f;
@@ -31,6 +30,7 @@ constexpr float kBoardOutlineZ = -50.0f;
 constexpr float kBorderZ = 900.0f;
 constexpr float kUIZ = 1000.0f;
 constexpr float kHandZ = 1100.0f;
+constexpr float kTargetingLineZ = 1300.0f;
 
 // Colors
 const glm::vec4 kBoardBackgroundColor = {0.54f, 0.47f, 0.36f,

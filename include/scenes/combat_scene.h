@@ -51,6 +51,10 @@ class CombatScene : public engine::Scene {
   glm::vec2 kPlayerBoardPos = {0.0f, 0.0f};
   glm::vec2 kEnemyBoardPos = {0.0f, 0.0f};
 
+  // Clickable/Visual zones: x, y, w, h
+  glm::vec4 player_zone_rect_ = {0.0f, 0.0f, 0.0f, 0.0f};
+  glm::vec4 enemy_zone_rect_ = {0.0f, 0.0f, 0.0f, 0.0f};
+
   core::GameState game_state_;
   core::graphics::BattleUI battle_ui_;
   std::unique_ptr<core::ai::IBattleAI> enemy_ai_;

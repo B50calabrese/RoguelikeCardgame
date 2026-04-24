@@ -40,6 +40,7 @@ class HandController {
   void SetArcAngle(float angle) { arc_angle_ = angle; }
   void SetInteractive(bool interactive) { is_interactive_ = interactive; }
   void SetFaceDown(bool face_down) { is_face_down_ = face_down; }
+  void SetPlayZone(glm::vec4 zone) { play_zone_ = zone; }
 
   std::optional<size_t> hovered_card_index() const { return hovered_card_index_; }
   std::optional<size_t> held_card_index() const { return held_card_index_; }
@@ -56,6 +57,7 @@ class HandController {
   float arc_angle_;
   bool is_interactive_ = true;
   bool is_face_down_ = false;
+  std::optional<glm::vec4> play_zone_;
 
   std::vector<VisualCard> hand_visuals_;
   std::optional<size_t> hovered_card_index_;

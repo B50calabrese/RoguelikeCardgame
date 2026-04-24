@@ -1,6 +1,7 @@
 #include "scenes/combat_scene.h"
 
 #include <algorithm>
+#include "engine/graphics/utils/render_queue.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/vec2.hpp>
@@ -89,23 +90,48 @@ void CombatScene::OnAttach() {
   kHandBoundsSize = {
       static_cast<float>(config.window_width) * combat::kHandWidthPercent,
       static_cast<float>(config.window_height) * combat::kHandHeightPercent};
+
+  // Hand position for player: bottom of card is 20px from bottom.
+  // Pivot of hand is center of the bounds.
+  // HandRenderer::CalculateHandLayout puts the hand around the center of the
+  // bounds.
   kPlayerHandPos = {
       (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
       combat::kHandEdgeOffset};
+
+  // For mirror, enemy hand top of card is 20px from top.
   kEnemyHandPos = {
       (static_cast<float>(config.window_width) - kHandBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) - combat::kHandEdgeOffset};
+      static_cast<float>(config.window_height) - kHandBoundsSize.y -
+          combat::kHandEdgeOffset};
 
   // Configure boards
-  kBoardBoundsSize = {
-      static_cast<float>(config.window_width) * combat::kBoardWidthPercent,
-      static_cast<float>(config.window_height) * combat::kBoardHeightPercent};
-  kPlayerBoardPos = {
-      (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) * combat::kPlayerBoardYPercent};
-  kEnemyBoardPos = {
-      (static_cast<float>(config.window_width) - kBoardBoundsSize.x) * 0.5f,
-      static_cast<float>(config.window_height) * combat::kEnemyBoardYPercent};
+  float board_top = kEnemyHandPos.y;
+  float board_bottom = kPlayerHandPos.y + kHandBoundsSize.y;
+  float board_height = board_top - board_bottom;
+  float board_width =
+      static_cast<float>(config.window_width) * combat::kBoardWidthPercent;
+
+  kBoardBoundsSize = {board_width, board_height};
+  float board_x = (static_cast<float>(config.window_width) - board_width) * 0.5f;
+
+  // Zones within the board
+  float zone_width = board_width - 2.0f * combat::kZoneBorder;
+  float zone_height = (board_height - 2.0f * combat::kZoneBorder -
+                       combat::kZonePadding) * 0.5f;
+
+  enemy_zone_rect_ = {board_x + combat::kZoneBorder,
+                      board_top - combat::kZoneBorder - zone_height, zone_width,
+                      zone_height};
+
+  player_zone_rect_ = {board_x + combat::kZoneBorder,
+                       board_bottom + combat::kZoneBorder, zone_width,
+                       zone_height};
+
+  // Card layout positions (center of zones)
+  kEnemyBoardPos = {enemy_zone_rect_.x, enemy_zone_rect_.y};
+  kPlayerBoardPos = {player_zone_rect_.x, player_zone_rect_.y};
+  kBoardBoundsSize = {zone_width, zone_height};
 
   player_hand_ =
       std::make_unique<controllers::HandController>(game_state_.player->id);
@@ -113,6 +139,7 @@ void CombatScene::OnAttach() {
   player_hand_->SetArcAngle(core::graphics::kDefaultArcAngle);
   player_hand_->SetInteractive(true);
   player_hand_->SetFaceDown(false);
+  player_hand_->SetPlayZone(player_zone_rect_);
 
   enemy_hand_ =
       std::make_unique<controllers::HandController>(game_state_.enemy->id);
@@ -155,7 +182,7 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
 }
 
 void CombatScene::OnRender() {
-  battle_ui_.Render(game_state_);
+  battle_ui_.Render(game_state_, player_zone_rect_, enemy_zone_rect_);
 
   // Update board hitboxes and render creatures
   combat_controller_->hitboxes().Clear();
@@ -195,12 +222,13 @@ void CombatScene::OnRender() {
 
     core::graphics::CardRenderer::RenderCard(
         *game_state_.player->board[i]->data, pos, scale, 1.0f,
-        player_board_layouts[i].rotation);
+        player_board_layouts[i].rotation, 0.0f);
   }
 
   auto enemy_board_layouts = core::graphics::HandRenderer::CalculateHandLayout(
-      game_state_.enemy->board.size(), kEnemyBoardPos, kBoardBoundsSize, 0.0f,
-      0.2f);
+      game_state_.enemy->board.size(),
+      {enemy_zone_rect_.x, enemy_zone_rect_.y},
+      {enemy_zone_rect_.z, enemy_zone_rect_.w}, 0.0f, 0.2f);
   for (size_t i = 0; i < game_state_.enemy->board.size(); ++i) {
     int inst_id = game_state_.enemy->board[i]->instance_id;
     glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
@@ -214,13 +242,16 @@ void CombatScene::OnRender() {
 
     core::graphics::CardRenderer::RenderCard(*game_state_.enemy->board[i]->data,
                                              pos, scale, 1.0f,
-                                             enemy_board_layouts[i].rotation);
+                                             enemy_board_layouts[i].rotation,
+                                             0.0f);
   }
-
-  DrawTargetingLine();
 
   player_hand_->Render();
   enemy_hand_->Render();
+
+  DrawTargetingLine();
+
+  engine::graphics::utils::RenderQueue::Default().Flush();
   engine::util::Console::Get().Render();
 }
 
@@ -235,8 +266,17 @@ void CombatScene::DrawTargetingLine() {
       return;
     }
     glm::vec2 end_pos = engine::InputManager::Get().mouse_screen_pos();
-    engine::graphics::PrimitiveRenderer::SubmitLine(
-        start_pos, end_pos, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 3.0f);
+
+    auto& queue = engine::graphics::utils::RenderQueue::Default();
+    engine::graphics::utils::RenderCommand cmd;
+    cmd.shape_type = engine::graphics::utils::ShapeType::kLine;
+    cmd.position = start_pos;
+    cmd.size = end_pos;  // For lines, size is used as end point in some systems
+    cmd.color = {1.0f, 1.0f, 1.0f, 1.0f};
+    cmd.thickness = 5.0f;
+    cmd.z_order = combat::kTargetingLineZ;
+
+    queue.Submit(cmd);
   }
 }
 

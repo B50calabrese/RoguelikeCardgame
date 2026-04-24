@@ -70,33 +70,32 @@ void BattleUI::Update(float delta_time, const GameState& state) {
   }
 }
 
-void BattleUI::Render(const GameState& state) const {
+void BattleUI::Render(const GameState& state, const glm::vec4& player_zone,
+                      const glm::vec4& enemy_zone) const {
   auto& config = core::GameConfig::Get();
   auto& queue = engine::graphics::utils::RenderQueue::Default();
 
-  // Render Background
+  // Render Background between hands
+  float board_bottom = player_zone.y - scenes::combat::kZoneBorder;
+  float board_top =
+      enemy_zone.y + enemy_zone.w + scenes::combat::kZoneBorder;
+
   engine::graphics::utils::RenderCommand bg;
   bg.z_order = scenes::combat::kBackgroundZ;
-  bg.position = {0, 0};
-  bg.size = {config.window_width, config.window_height};
+  bg.position = {0, board_bottom};
+  bg.size = {config.window_width, board_top - board_bottom};
   bg.color = scenes::combat::kBoardBackgroundColor;
   queue.Submit(bg);
 
   // Render Zone Outlines
-  float board_width = config.window_width * scenes::combat::kBoardWidthPercent;
-  float board_height =
-      config.window_height * scenes::combat::kBoardHeightPercent;
-  float board_x = (config.window_width - board_width) * 0.5f;
-
   // Player Zone
   engine::graphics::utils::RenderCommand p_zone;
   p_zone.z_order = scenes::combat::kBoardOutlineZ;
   p_zone.shape_type = engine::graphics::utils::ShapeType::kQuad;
-  p_zone.position = {
-      board_x, config.window_height * scenes::combat::kPlayerBoardYPercent};
-  p_zone.size = {board_width, board_height};
+  p_zone.position = {player_zone.x, player_zone.y};
+  p_zone.size = {player_zone.z, player_zone.w};
   p_zone.color = scenes::combat::kBoardOutlineColor;
-  p_zone.origin = {0.0f, 0.5f};
+  p_zone.origin = {0.0f, 0.0f};
   p_zone.thickness = 2.0f;
   queue.Submit(p_zone);
 
@@ -104,12 +103,10 @@ void BattleUI::Render(const GameState& state) const {
   engine::graphics::utils::RenderCommand e_zone;
   e_zone.z_order = scenes::combat::kBoardOutlineZ;
   e_zone.shape_type = engine::graphics::utils::ShapeType::kQuad;
-  e_zone.position = {
-      board_x, config.window_height * (scenes::combat::kEnemyBoardYPercent +
-                                       scenes::combat::kBoardHeightPercent)};
-  e_zone.size = {board_width, board_height};
+  e_zone.position = {enemy_zone.x, enemy_zone.y};
+  e_zone.size = {enemy_zone.z, enemy_zone.w};
   e_zone.color = scenes::combat::kBoardOutlineColor;
-  e_zone.origin = {0.0f, 0.5f};
+  e_zone.origin = {0.0f, 0.0f};
   e_zone.thickness = 2.0f;
   queue.Submit(e_zone);
 
