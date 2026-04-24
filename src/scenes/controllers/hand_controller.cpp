@@ -102,32 +102,40 @@ void HandController::HandleInteraction(core::state::GameState& state) {
     held_card.target_transform.rotation = 0.0f;
 
     if (clicked) {
-      // AUTO-PICKER: Pick first legal target for effects that require one.
-      // This is a placeholder for a full UI target selection system.
-      std::vector<core::effects::Target> targets;
-
-      // Look for first OnPlay effect that needs targets
-      core::CardInstance* inst = state.FindCardInstance(held_card.instance_id);
-      if (inst) {
-        for (const auto& effect_def : inst->data->effects) {
-          if (effect_def.trigger == core::Trigger::OnPlay &&
-              effect_def.filter.is_required) {
-            // Check enemy first, then player
-            if (effect_def.filter.IsValid(
-                    state, 0, {core::effects::Target::Type::Enemy, 1})) {
-              targets.push_back({core::effects::Target::Type::Enemy, 1});
-            } else if (effect_def.filter.IsValid(
-                           state, 0, {core::effects::Target::Type::Player, 0})) {
-              targets.push_back({core::effects::Target::Type::Player, 0});
-            }
-            break;
-          }
-        }
+      bool can_play = true;
+      if (play_zone_) {
+        can_play = core::util::PointInRect(mouse_pos, {play_zone_->x, play_zone_->y}, {play_zone_->z, play_zone_->w}, false);
       }
 
-      core::effects::EffectResolver::Get().QueueAction(
-          std::make_shared<core::effects::actions::PlayCardAction>(
-              player_id_, held_card.instance_id, targets));
+      if (can_play) {
+        // AUTO-PICKER: Pick first legal target for effects that require one.
+        // This is a placeholder for a full UI target selection system.
+        std::vector<core::effects::Target> targets;
+
+        // Look for first OnPlay effect that needs targets
+        core::CardInstance* inst = state.FindCardInstance(held_card.instance_id);
+        if (inst) {
+          for (const auto& effect_def : inst->data->effects) {
+            if (effect_def.trigger == core::Trigger::OnPlay &&
+                effect_def.filter.is_required) {
+              // Check enemy first, then player
+              if (effect_def.filter.IsValid(
+                      state, 0, {core::effects::Target::Type::Enemy, 1})) {
+                targets.push_back({core::effects::Target::Type::Enemy, 1});
+              } else if (effect_def.filter.IsValid(
+                             state, 0,
+                             {core::effects::Target::Type::Player, 0})) {
+                targets.push_back({core::effects::Target::Type::Player, 0});
+              }
+              break;
+            }
+          }
+        }
+
+        core::effects::EffectResolver::Get().QueueAction(
+            std::make_shared<core::effects::actions::PlayCardAction>(
+                player_id_, held_card.instance_id, targets));
+      }
 
       held_card.is_held = false;
       held_card_index_ = std::nullopt;

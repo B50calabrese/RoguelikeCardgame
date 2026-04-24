@@ -1,68 +1,48 @@
 # Project Status
 
 ## Most Recent Changes
+- **Combat Scene UI Refinement**: Overhauled the combat scene layout and interaction.
+    - **Targeting Line Fix**: Resolved the targeting line visibility issue by assigning it a high Z-index (1300) and ensuring it is submitted to the sorted `RenderQueue`.
+    - **Mirrored Hand Layout**: Repositioned the enemy hand to be 20px from the top edge, mirroring the player's hand position.
+    - **Dynamic Board Stretching**: The board background now automatically stretches to fill the entire vertical space between the player and enemy hands.
+    - **Player Zones & Constraints**: Implemented visual quads for player and enemy board zones with 64px borders and 64px padding between them.
+    - **Play Zone Enforcement**: Restricted the clickable area for playing cards to the player's visual board zone; cards released outside this area will now return to the hand instead of being played.
 - **Standardized Base Card Set**: Implemented a new color-coded ID system and naming convention for cards.
-    - White: IDs 1-20 (1-10 are new creatures: Lowly Squire, White Knight, etc.; 11-20 are placeholder spells).
-    - Blue: IDs 21-40 (21-30 are new creatures: Merfolk Fledgling, Blue Knight, etc.; 31-40 are placeholder spells).
-    - Black: IDs 41-60 (41-50 are new creatures: Brittle Husk, Black Knight, etc.; 51-60 are placeholder spells).
-    - Red: IDs 61-80 (61-70 are placeholders).
-    - Green: IDs 81-100 (81-90 are new creatures: Elvish Recruit, Green Knight, etc.; 91-100 are placeholders).
-- **Submodule Fixes**: Added `z_index` support to the `GameEngine` submodule's `Renderer` class and converted drawing methods to use the sorted `RenderQueue` to resolve pre-existing build errors and ensure correct UI layering.
-- **Established Project Tracking System**: Created `STATUS.md` and updated `AGENTS.md` with maintenance directives to ensure continuous documentation of project progress.
-- **Battle Scene Board Support**: Implemented support for rendering and managing creatures on the board within `CombatScene`.
-- **Card Rendering Refinement**: Creatures on the board are now centered and spread out using `HandRenderer::CalculateHandLayout` with a 0-degree arc.
-- **Rules Enforcement**: Integrated `BoardSpaceRule` into the `RulesEngine` to cap the number of creatures per player at seven.
-- **Creature Combat Implementation**:
-    - Implemented `AttackRule` and `CreatureAttackAction` to handle combat logic.
-    - Added UI support for initiating attacks (targeting line, highlights).
-    - Integrated combat animations (lunge) synchronized with resolution via `VisualBlocker`.
-    - Added new events (`CreatureAttacked`, `CreatureDealtDamage`, etc.) for ability triggers.
-- **Combat UI Overhaul**: Implemented significant UI improvements to the combat scene:
-    - Centralized all layout, scaling, and Z-index constants in `include/scenes/combat/combat_ui_constants.h`.
-    - Reduced card scale on the board by 50% for better clarity.
-    - Improved layering: Hand cards now render above health icons and UI borders.
-    - Enhanced responsiveness: Increased lerp speed for held cards for faster mouse following.
-    - Cleaned up mana display: Removed numeric text from mana pools to reduce clutter.
-    - Updated board aesthetics: Changed background to light brown and added rectangular zone outlines for both players.
+    - White (1-20), Blue (21-40), Black (41-60), Red (61-80), Green (81-100).
+- **Submodule Fixes**: Added `z_index` support to the `GameEngine` submodule's `Renderer` class and converted drawing methods to use the sorted `RenderQueue`.
+- **Established Project Tracking System**: Created `STATUS.md` and updated `AGENTS.md` with maintenance directives.
 
 ## Technical Status Report
 
 ### Scenes
 - **MainMenuScene**: Functional entry point for the application.
 - **NewRunScene**: Allows players to select starting colors. Features visual emphasis (3px white outline) on selections.
-- **CombatScene**: The primary gameplay loop. Orchestrates `HandController`, `BattleUI`, and board state. Supports debug console commands via `CombatCommandSystem`.
-- **CardViewerScene**: Provides a grid view of all registered cards. Includes hover effects and a dark overlay for selected cards. (Note: Gaussian blur effect is currently disabled).
+- **CombatScene**: The primary gameplay loop. Orchestrates `HandController`, `BattleUI`, and board state. Supports debug console commands via `CombatCommandSystem`. Now features restricted play zones and refined layout.
+- **CardViewerScene**: Provides a grid view of all registered cards.
 
 ### Core Systems
-- **RulesEngine**: Singleton managing gameplay validation via pluggable `IRule` objects (e.g., `ManaRule`, `TurnRule`, `BoardSpaceRule`).
-- **EventBus**: Facilitates decoupled communication between systems. Used for triggering effects like Battlecries and Deathrattles.
-- **EffectResolver**: Manages the execution of game actions. Uses a `VisualBlocker` system to ensure animations complete before state changes proceed.
-- **CardRegistry & EffectRegistry**: Handle the loading of XML card data and registration of dynamic effects (Damage, Draw, Buff).
+- **RulesEngine**: Singleton managing gameplay validation via pluggable `IRule` objects.
+- **EventBus**: Facilitates decoupled communication between systems.
+- **EffectResolver**: Manages the execution of game actions. Uses a `VisualBlocker` system for animation synchronization.
 
 ### UI & Visuals
-- **HandController & HandRenderer**: Manage fluid card animations (lerping) and hand layout math.
-- **BattleUI**: Renders the combat interface, including mana pools (visual only), the 'Pass Turn' button, borders, board background, and zone outlines.
-- **HealthIcon**: Component-based health tracking for player and enemy, positioned dynamically.
+- **HandController & HandRenderer**: Manage fluid card animations and hand layout math. `HandController` now supports play-zone hit detection.
+- **BattleUI**: Renders the combat interface, including mana pools, 'Pass Turn' button, and the new dynamic board/zone quads.
+- **HealthIcon**: Component-based health tracking for player and enemy.
 - **TextRenderer**: Singleton for font management and UI text rendering.
 
 ### Infrastructure
-- **InputManager**: Handles mouse and keyboard input. Includes synchronization with window height to prevent vertical offsets.
-- **SceneManager**: Manages scene transitions using a deferred mechanism to prevent crashes during input callbacks.
-- **CombatCommandSystem**: Decouples debug and cheat commands from the main scene logic.
-- **Card Naming Convention**: Standardized card XML filenames as `XXX_name_with_underscores.xml` (e.g., `001_lowly_squire.xml`) for better organization and easier replacement.
-- **Creature Type Expansion**: Added support for new creature types: `Merfolk`, `Rogue`, `Sphinx`, `Zombie`, `Vampire`, `Demon`, `Goblin`, `Minotaur`, and `Dragon` in the core engine.
-- **Red Base Creature Set**: Implemented 10 new red creature cards (IDs 61-70), replacing placeholders.
-- **Engine Z-Sorting Support**: Refactored `BattleUI`, `CardRenderer`, `HealthIcon`, and `UIButton` to use the `RenderQueue` utility from the `GameEngine` submodule. This resolves build errors related to missing `z_index` parameters in `Renderer` methods while ensuring proper 2D layer sorting through the engine's built-in render command queue.
+- **InputManager**: Handles mouse and keyboard input. Synchronized with window height.
+- **SceneManager**: Manages scene transitions using a deferred mechanism.
+- **Engine Z-Sorting Support**: The layering hierarchy is now strictly enforced: Targeting Line (1300) > Hand Cards (1100+) > UI/Health Icons (1000) > Border (900) > Zone Outlines > Background (-100).
 
 ## Recommendations & Next Steps
 
 ### Technical Improvements
-- **Engine Restoration**: Restore or implement the `GaussianBlurEffect` in the `GameEngine` submodule to enable intended UI effects in `CardViewerScene`.
-- **Trigger Timing**: Fine-tune the `TriggerSystem` to ensure complex sequences (like multiple simultaneous Deathrattles) resolve in an intuitive order.
-- **Memory Safety**: Continue audit of `EventBus` subscriptions to ensure no capturing of transient state that could lead to dangling pointers.
+- **Engine Restoration**: Restore or implement the `GaussianBlurEffect` in the `GameEngine` submodule.
+- **Trigger Timing**: Fine-tune the `TriggerSystem` for complex effect sequences.
 
 ### Feature Development
-- **AI Enhancement**: Upgrade `SimpleAI` from a basic timer-based pass to a system that can evaluate and play cards from its hand.
-- **Keyword Expansion**: Implement more advanced card keywords (e.g., Taunt, Haste, Lifesteal).
-- **Audio Integration**: Bootstrap an audio system for sound effects (card plays, attacks) and background music.
-- **Persistence**: Implement a save/load system for run progress.
+- **AI Enhancement**: Upgrade `SimpleAI` to evaluate and play cards.
+- **Keyword Expansion**: Implement keywords like Taunt, Haste, and Lifesteal.
+- **Audio Integration**: Bootstrap an audio system for sound effects and music.

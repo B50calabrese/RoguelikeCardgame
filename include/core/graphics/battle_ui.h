@@ -14,7 +14,8 @@ class BattleUI {
  public:
   BattleUI();
   void Update(float delta_time, const GameState& state);
-  void Render(const GameState& state) const;
+  void Render(const GameState& state, const glm::vec4& player_zone,
+              const glm::vec4& enemy_zone) const;
 
  private:
   void RenderBorder() const;
