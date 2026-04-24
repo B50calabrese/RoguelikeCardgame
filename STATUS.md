@@ -16,7 +16,14 @@
     - Implemented `AttackRule` and `CreatureAttackAction` to handle combat logic.
     - Added UI support for initiating attacks (targeting line, highlights).
     - Integrated combat animations (lunge) synchronized with resolution via `VisualBlocker`.
-    - Added new events (`CreatureAttacked`, `CreatureTookDamage`, etc.) for ability triggers.
+    - Added new events (`CreatureAttacked`, `CreatureDealtDamage`, etc.) for ability triggers.
+- **Combat UI Overhaul**: Implemented significant UI improvements to the combat scene:
+    - Centralized all layout, scaling, and Z-index constants in `include/scenes/combat/combat_ui_constants.h`.
+    - Reduced card scale on the board by 50% for better clarity.
+    - Improved layering: Hand cards now render above health icons and UI borders.
+    - Enhanced responsiveness: Increased lerp speed for held cards for faster mouse following.
+    - Cleaned up mana display: Removed numeric text from mana pools to reduce clutter.
+    - Updated board aesthetics: Changed background to light brown and added rectangular zone outlines for both players.
 
 ## Technical Status Report
 
@@ -34,7 +41,7 @@
 
 ### UI & Visuals
 - **HandController & HandRenderer**: Manage fluid card animations (lerping) and hand layout math.
-- **BattleUI**: Renders the combat interface, including mana pools, the 'Pass Turn' button, and borders.
+- **BattleUI**: Renders the combat interface, including mana pools (visual only), the 'Pass Turn' button, borders, board background, and zone outlines.
 - **HealthIcon**: Component-based health tracking for player and enemy, positioned dynamically.
 - **TextRenderer**: Singleton for font management and UI text rendering.
 
