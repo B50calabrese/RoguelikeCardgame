@@ -1,11 +1,12 @@
 #include "core/graphics/battle_ui.h"
-#include "core/game_config.h"
-#include "core/effects/effect_resolver.h"
+
 #include "core/effects/actions/end_turn_action.h"
+#include "core/effects/effect_resolver.h"
+#include "core/game_config.h"
 #include "core/util/graphics_util.h"
 #include "core/util/math_util.h"
-#include "engine/graphics/renderer.h"
 #include "engine/graphics/primitive_renderer.h"
+#include "engine/graphics/renderer.h"
 #include "engine/graphics/utils/render_queue.h"
 #include "engine/input/input_manager.h"
 #include "scenes/combat/combat_ui_constants.h"
@@ -16,18 +17,25 @@ BattleUI::BattleUI() {
   auto& config = core::GameConfig::Get();
   float border_thickness = config.window_width * 0.05f;
   glm::vec2 button_size = {border_thickness * 0.8f, 100.0f};
-  glm::vec2 button_pos = {border_thickness * 0.1f, (config.window_height - button_size.y) * 0.5f};
+  glm::vec2 button_pos = {border_thickness * 0.1f,
+                          (config.window_height - button_size.y) * 0.5f};
 
-  pass_turn_button_ = std::make_unique<UIButton>("Pass Turn", button_pos, button_size, []() {
-    // This will be updated in the scene to use the actual player ID
-  });
+  pass_turn_button_ =
+      std::make_unique<UIButton>("Pass Turn", button_pos, button_size, []() {
+        // This will be updated in the scene to use the actual player ID
+      });
 
   float icon_size = config.window_width * 0.1f;
-  glm::vec2 player_pos = {config.window_width * 0.5f, border_thickness + icon_size * 0.5f};
-  glm::vec2 enemy_pos = {config.window_width * 0.5f, config.window_height - border_thickness - icon_size * 0.5f};
+  glm::vec2 player_pos = {config.window_width * 0.5f,
+                          border_thickness + icon_size * 0.5f};
+  glm::vec2 enemy_pos = {
+      config.window_width * 0.5f,
+      config.window_height - border_thickness - icon_size * 0.5f};
 
-  player_health_icon_ = std::make_unique<HealthIcon>(player_pos, icon_size, glm::vec4(0.0f, 0.8f, 0.0f, 1.0f));
-  enemy_health_icon_ = std::make_unique<HealthIcon>(enemy_pos, icon_size, glm::vec4(0.8f, 0.0f, 0.0f, 1.0f));
+  player_health_icon_ = std::make_unique<HealthIcon>(
+      player_pos, icon_size, glm::vec4(0.0f, 0.8f, 0.0f, 1.0f));
+  enemy_health_icon_ = std::make_unique<HealthIcon>(
+      enemy_pos, icon_size, glm::vec4(0.8f, 0.0f, 0.0f, 1.0f));
 }
 
 void BattleUI::Update(float delta_time, const GameState& state) {
@@ -38,7 +46,7 @@ void BattleUI::Update(float delta_time, const GameState& state) {
   bool is_player_turn = (state.current_turn_player_id == state.player->id);
 
   if (is_player_turn) {
-    pass_turn_button_->set_base_color({0.1f, 0.6f, 0.1f, 1.0f}); // Green
+    pass_turn_button_->set_base_color({0.1f, 0.6f, 0.1f, 1.0f});  // Green
     pass_turn_button_->set_hover_color({0.2f, 0.8f, 0.2f, 1.0f});
 
     // We need to re-bind the callback to use the current player ID
@@ -49,14 +57,16 @@ void BattleUI::Update(float delta_time, const GameState& state) {
     // For now, let's just use the callback we set in constructor if we could,
     // but the UIButton doesn't let us change it easily.
     // Let's modify UIButton slightly or just handle it here.
-    if (core::util::PointInRect(mouse_pos, pass_turn_button_->position(), pass_turn_button_->size(), false) && clicked) {
-        effects::EffectResolver::Get().QueueAction(
-            std::make_shared<effects::actions::EndTurnAction>(state.player->id));
+    if (core::util::PointInRect(mouse_pos, pass_turn_button_->position(),
+                                pass_turn_button_->size(), false) &&
+        clicked) {
+      effects::EffectResolver::Get().QueueAction(
+          std::make_shared<effects::actions::EndTurnAction>(state.player->id));
     }
   } else {
-    pass_turn_button_->set_base_color({0.6f, 0.1f, 0.1f, 1.0f}); // Red
+    pass_turn_button_->set_base_color({0.6f, 0.1f, 0.1f, 1.0f});  // Red
     pass_turn_button_->set_hover_color({0.6f, 0.1f, 0.1f, 1.0f});
-    pass_turn_button_->Update(mouse_pos, false); // Don't allow clicking
+    pass_turn_button_->Update(mouse_pos, false);  // Don't allow clicking
   }
 }
 
@@ -74,14 +84,16 @@ void BattleUI::Render(const GameState& state) const {
 
   // Render Zone Outlines
   float board_width = config.window_width * scenes::combat::kBoardWidthPercent;
-  float board_height = config.window_height * scenes::combat::kBoardHeightPercent;
+  float board_height =
+      config.window_height * scenes::combat::kBoardHeightPercent;
   float board_x = (config.window_width - board_width) * 0.5f;
 
   // Player Zone
   engine::graphics::utils::RenderCommand p_zone;
   p_zone.z_order = scenes::combat::kBoardOutlineZ;
   p_zone.shape_type = engine::graphics::utils::ShapeType::kQuad;
-  p_zone.position = {board_x, config.window_height * scenes::combat::kPlayerBoardYPercent};
+  p_zone.position = {
+      board_x, config.window_height * scenes::combat::kPlayerBoardYPercent};
   p_zone.size = {board_width, board_height};
   p_zone.color = scenes::combat::kBoardOutlineColor;
   p_zone.origin = {0.0f, 0.5f};
@@ -92,7 +104,9 @@ void BattleUI::Render(const GameState& state) const {
   engine::graphics::utils::RenderCommand e_zone;
   e_zone.z_order = scenes::combat::kBoardOutlineZ;
   e_zone.shape_type = engine::graphics::utils::ShapeType::kQuad;
-  e_zone.position = {board_x, config.window_height * scenes::combat::kEnemyBoardYPercent};
+  e_zone.position = {
+      board_x, config.window_height * (scenes::combat::kEnemyBoardYPercent +
+                                       scenes::combat::kBoardHeightPercent)};
   e_zone.size = {board_width, board_height};
   e_zone.color = scenes::combat::kBoardOutlineColor;
   e_zone.origin = {0.0f, 0.5f};
@@ -156,16 +170,19 @@ void BattleUI::RenderBorder() const {
   queue.Submit(right);
 }
 
-void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) const {
+void BattleUI::RenderManaPool(const state::PlayerState& player,
+                              bool is_player) const {
   auto& config = core::GameConfig::Get();
   float border_thickness = config.window_width * 0.05f;
   float radius = border_thickness * 0.3f;
 
   glm::vec2 base_pos;
   if (is_player) {
-    base_pos = {config.window_width - border_thickness * 0.5f, border_thickness * 0.5f};
+    base_pos = {config.window_width - border_thickness * 0.5f,
+                border_thickness * 0.5f};
   } else {
-    base_pos = {border_thickness * 0.5f, config.window_height - border_thickness * 0.5f};
+    base_pos = {border_thickness * 0.5f,
+                config.window_height - border_thickness * 0.5f};
   }
 
   glm::vec4 color1 = {0.5f, 0.5f, 0.5f, 1.0f};
@@ -173,13 +190,15 @@ void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) 
 
   if (!player.colors.empty()) {
     color1 = util::GetColorVector(player.colors[0]);
-    color2 = (player.colors.size() > 1) ? util::GetColorVector(player.colors[1]) : color1;
+    color2 = (player.colors.size() > 1) ? util::GetColorVector(player.colors[1])
+                                        : color1;
   }
 
   const float ui_z = scenes::combat::kUIZ;
 
   for (int i = 0; i < player.max_mana; ++i) {
-    glm::vec2 offset = is_player ? glm::vec2(- (i + 1) * radius * 2.5f, 0.0f) : glm::vec2((i + 1) * radius * 2.5f, 0.0f);
+    glm::vec2 offset = is_player ? glm::vec2(-(i + 1) * radius * 2.5f, 0.0f)
+                                 : glm::vec2((i + 1) * radius * 2.5f, 0.0f);
     glm::vec2 pos = base_pos + offset;
 
     glm::vec4 c1 = color1;
@@ -194,10 +213,10 @@ void BattleUI::RenderManaPool(const state::PlayerState& player, bool is_player) 
     cmd.z_order = ui_z;
     cmd.shape_type = engine::graphics::utils::ShapeType::kCircle;
     cmd.position = pos;
-    cmd.size = glm::vec2(radius); // For circles, size.x is radius
+    cmd.size = glm::vec2(radius);  // For circles, size.x is radius
     cmd.color = c1;
     cmd.color2 = c2;
-    cmd.gradient_type = 1; // Linear
+    cmd.gradient_type = 1;  // Linear
     engine::graphics::utils::RenderQueue::Default().Submit(cmd);
   }
 }

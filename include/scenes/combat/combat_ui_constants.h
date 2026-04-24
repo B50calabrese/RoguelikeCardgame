@@ -8,8 +8,8 @@ namespace scenes::combat {
 // Layout Percentages
 constexpr float kBoardWidthPercent = 0.8f;
 constexpr float kBoardHeightPercent = 0.25f;
-constexpr float kPlayerBoardYPercent = 0.25f;
-constexpr float kEnemyBoardYPercent = 0.5f;
+constexpr float kPlayerBoardYPercent = 0.35f;
+constexpr float kEnemyBoardYPercent = 0.4f;
 constexpr float kHandWidthPercent = 0.6f;
 constexpr float kHandHeightPercent = 0.2f;
 
@@ -33,8 +33,10 @@ constexpr float kUIZ = 1000.0f;
 constexpr float kHandZ = 1100.0f;
 
 // Colors
-const glm::vec4 kBoardBackgroundColor = {0.54f, 0.47f, 0.36f, 1.0f}; // Light table-like brown
-const glm::vec4 kBoardOutlineColor = {0.45f, 0.35f, 0.25f, 0.5f};   // Slightly darker brown for outlines
+const glm::vec4 kBoardBackgroundColor = {0.54f, 0.47f, 0.36f,
+                                         1.0f};  // Light table-like brown
+const glm::vec4 kBoardOutlineColor = {
+    0.45f, 0.35f, 0.25f, 0.5f};  // Slightly darker brown for outlines
 
 }  // namespace scenes::combat
 
