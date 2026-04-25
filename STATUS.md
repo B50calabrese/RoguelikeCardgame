@@ -11,6 +11,10 @@
     - White (1-20), Blue (21-40), Black (41-60), Red (61-80), Green (81-100).
 - **Submodule Fixes**: Added `z_index` support to the `GameEngine` submodule's `Renderer` class and converted drawing methods to use the sorted `RenderQueue`.
 - **Established Project Tracking System**: Created `STATUS.md` and updated `AGENTS.md` with maintenance directives.
+- **Dedicated Card Art System**: Centralized card art assets and simplified their management.
+    - **Art Directory**: Created `assets/cards/art/` for all card illustrations.
+    - **Smart Art Resolution**: Updated `CardRegistry` to automatically resolve simple filenames (e.g., `<Art>knight</Art>`) to `assets/cards/art/knight.png`, while maintaining backward compatibility for full paths.
+    - **Placeholder Standard**: Standardized all current cards to use `<Art>placeholder</Art>`, which maps to `assets/cards/art/placeholder.png`.
 
 ## Technical Status Report
 
