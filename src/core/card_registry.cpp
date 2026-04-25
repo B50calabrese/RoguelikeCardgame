@@ -244,6 +244,15 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
 
       std::string art_path = card_node.child("Art").text().as_string();
 
+      // Art path resolution:
+      // If art_path does not contain a '.' (no extension) and no '/' (no subdirectory),
+      // we assume it's a new-style reference to assets/cards/art/ and append .png
+      if (art_path.find('.') == std::string::npos &&
+          art_path.find('/') == std::string::npos &&
+          art_path.find('\\') == std::string::npos) {
+        art_path = "cards/art/" + art_path + ".png";
+      }
+
       auto frame_tex =
           engine::util::AssetManager<engine::graphics::Texture>::Get(
               frame_path);
