@@ -15,6 +15,11 @@
     - **Art Directory**: Created `assets/cards/art/` for all card illustrations.
     - **Smart Art Resolution**: Updated `CardRegistry` to automatically resolve simple filenames (e.g., `<Art>knight</Art>`) to `assets/cards/art/knight.png`, while maintaining backward compatibility for full paths.
     - **Placeholder Standard**: Standardized all current cards to use `<Art>placeholder</Art>`, which maps to `assets/cards/art/placeholder.png`.
+- **Mage Apprentice Card Art**: Implemented unique art for the five Mage Apprentice cards.
+    - **Image Slicing**: Sliced the composite `mage_apprentices.png` asset into five individual portrait files using Python/Pillow.
+    - **Standardized Naming**: Individual art files are named to match their XML definition files (e.g., `008_white_mage_apprentice.png`).
+    - **XML Updates**: Updated the `<Art>` tags in `008_white`, `028_blue`, `048_black`, `068_red`, and `088_green` mage apprentice XML files.
+    - **Asset Cleanup**: Removed the original `mage_apprentices.png` composite file after successful slicing.
 
 ## Technical Status Report
 
