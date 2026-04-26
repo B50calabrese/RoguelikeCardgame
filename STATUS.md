@@ -19,6 +19,7 @@
     - **Image Slicing**: Sliced the composite `mage_apprentices.png` asset into five individual portrait files using Python/Pillow.
     - **Standardized Naming**: Individual art files are named to match their XML definition files (e.g., `008_white_mage_apprentice.png`).
     - **XML Updates**: Updated the `<Art>` tags in `008_white`, `028_blue`, `048_black`, `068_red`, and `088_green` mage apprentice XML files.
+    - **Asset Cleanup**: Removed the original `mage_apprentices.png` composite file after successful slicing.
 
 ## Technical Status Report
 
