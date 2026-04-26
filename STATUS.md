@@ -20,6 +20,9 @@
     - **Standardized Naming**: Individual art files are named to match their XML definition files (e.g., `008_white_mage_apprentice.png`).
     - **XML Updates**: Updated the `<Art>` tags in `008_white`, `028_blue`, `048_black`, `068_red`, and `088_green` mage apprentice XML files.
     - **Asset Cleanup**: Removed the original `mage_apprentices.png` composite file after successful slicing.
+- **Iconic Creature Card Art**: Implemented unique art for the five high-level iconic creatures.
+    - **New Assets**: Added art for `009_angel_of_justice.png`, `029_sphinx_of_intellect.png`, `049_demon_of_the_damned.png`, `069_dragon_of_the_north.png`, and `089_beast_of_ole.png`.
+    - **XML Updates**: Updated the `<Art>` tags in the corresponding card XML files to transition from placeholders to specific iconic art.
 
 ## Technical Status Report
 
