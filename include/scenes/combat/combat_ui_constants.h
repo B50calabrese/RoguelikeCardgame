@@ -11,14 +11,14 @@ constexpr float kHandWidthPercent = 0.8f;
 constexpr float kHandHeightPercent = 0.25f;
 
 // Positioning Offsets
-constexpr float kHandEdgeOffset = 20.0f;
+constexpr float kHandEdgeOffset = 50.0f;
 constexpr float kZonePadding = 64.0f;
 constexpr float kZoneBorder = 64.0f;
 
 // Scaling
-constexpr float kBoardCardScaleMultiplier = 0.5f;
+constexpr float kBoardCardScaleMultiplier = 1.0f;
 constexpr float kCardHoverScale = 1.2f;
-constexpr float kCardHeldScale = 1.3f;
+constexpr float kCardHeldScale = 0.75f;
 
 // Animation
 constexpr float kDefaultLerpSpeed = 10.0f;
