@@ -2,6 +2,7 @@
 
 ## Most Recent Changes
 - **Combat Scene UI Refinement**: Overhauled the combat scene layout and interaction.
+    - **Health Icon Repositioning**: Moved health icons to be centered within the battle UI's top and bottom borders, improving visibility and board space.
     - **Targeting Line Fix**: Resolved the targeting line visibility issue by assigning it a high Z-index (1300) and ensuring it is submitted to the sorted `RenderQueue`.
     - **Mirrored Hand Layout**: Repositioned the enemy hand to be 20px from the top edge, mirroring the player's hand position.
     - **Dynamic Board Stretching**: The board background now automatically stretches to fill the entire vertical space between the player and enemy hands.

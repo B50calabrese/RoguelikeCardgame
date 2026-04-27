@@ -83,9 +83,9 @@ void CombatScene::OnAttach() {
 
   // Configure hands
   kBorderThickness = config.window_width * 0.05f;
-  kIconSize = config.window_width * 0.1f;
-  kIconTop = kBorderThickness + kIconSize;
-  kEnemyIconBottom = config.window_height - kBorderThickness - kIconSize;
+  kIconSize = kBorderThickness;
+  kIconTop = kBorderThickness;
+  kEnemyIconBottom = config.window_height - kBorderThickness;
 
   kHandBoundsSize = {
       static_cast<float>(config.window_width) * combat::kHandWidthPercent,

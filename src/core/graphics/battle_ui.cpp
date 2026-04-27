@@ -25,12 +25,10 @@ BattleUI::BattleUI() {
         // This will be updated in the scene to use the actual player ID
       });
 
-  float icon_size = config.window_width * 0.1f;
-  glm::vec2 player_pos = {config.window_width * 0.5f,
-                          border_thickness + icon_size * 0.5f};
-  glm::vec2 enemy_pos = {
-      config.window_width * 0.5f,
-      config.window_height - border_thickness - icon_size * 0.5f};
+  float icon_size = border_thickness;
+  glm::vec2 player_pos = {config.window_width * 0.5f, border_thickness * 0.5f};
+  glm::vec2 enemy_pos = {config.window_width * 0.5f,
+                         config.window_height - border_thickness * 0.5f};
 
   player_health_icon_ = std::make_unique<HealthIcon>(
       player_pos, icon_size, glm::vec4(0.0f, 0.8f, 0.0f, 1.0f));
