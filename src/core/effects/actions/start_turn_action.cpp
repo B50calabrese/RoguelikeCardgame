@@ -1,26 +1,29 @@
 #include "core/effects/actions/start_turn_action.h"
-#include "core/state/game_state.h"
-#include "core/effects/rule_result.h"
+
 #include <algorithm>
+
+#include "core/effects/rule_result.h"
+#include "core/state/game_state.h"
 
 namespace core::effects::actions {
 
 RuleResult StartTurnAction::Validate(const state::GameState& state) const {
-    return {true, "OK", false};
+  return {true, "OK", false};
 }
 
 void StartTurnAction::Apply(state::GameState& state) const {
-    state::PlayerState* p = (state.player->id == player_id_) ? state.player.get() : state.enemy.get();
+  state::PlayerState* p =
+      (state.player->id == player_id_) ? state.player.get() : state.enemy.get();
 
-    // Refresh mana and add one more up to ten
-    p->max_mana = std::min(10, p->max_mana + 1);
-    p->mana = p->max_mana;
+  // Refresh mana and add one more up to ten
+  p->max_mana = std::min(10, p->max_mana + 1);
+  p->mana = p->max_mana;
 
-    // Reset attack flags for creatures on board
-    for (auto& creature : p->board) {
-        creature->has_attacked = false;
-        creature->can_attack = true;
-    }
+  // Reset attack flags for creatures on board
+  for (auto& creature : p->board) {
+    creature->has_attacked = false;
+    creature->can_attack = true;
+  }
 }
 
 }  // namespace core::effects::actions

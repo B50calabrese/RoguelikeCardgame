@@ -1,15 +1,15 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_RULES_ENGINE_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_RULES_ENGINE_H_
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "core/effects/action.h"
-#include "core/state/game_state.h"
-#include "core/effects/target_filter.h"
-#include "core/effects/rule_result.h"
 #include "core/effects/rule.h"
+#include "core/effects/rule_result.h"
+#include "core/effects/target_filter.h"
+#include "core/state/game_state.h"
 
 namespace core::effects {
 
@@ -26,7 +26,8 @@ class RulesEngine {
   /**
    * @brief Validates an action against all registered rules.
    */
-  RuleResult ValidateAction(const state::GameState& state, const Action& action) const {
+  RuleResult ValidateAction(const state::GameState& state,
+                            const Action& action) const {
     // 1. Core action validation (basic structure)
     RuleResult result = action->Validate(state);
     if (!result.success) return result;
@@ -50,15 +51,17 @@ class RulesEngine {
   /**
    * @brief Checks if a set of targets meets the requirements of a filter.
    */
-  static RuleResult CheckTargeting(const state::GameState& state, int actor_id, const std::vector<Target>& targets, const TargetFilter& filter) {
+  static RuleResult CheckTargeting(const state::GameState& state, int actor_id,
+                                   const std::vector<Target>& targets,
+                                   const TargetFilter& filter) {
     if (filter.is_required && targets.empty()) {
-        return {false, "Targets required", false};
+      return {false, "Targets required", false};
     }
 
     for (const auto& t : targets) {
-        if (!filter.IsValid(state, actor_id, t)) {
-            return {false, "Invalid target for filter", false};
-        }
+      if (!filter.IsValid(state, actor_id, t)) {
+        return {false, "Invalid target for filter", false};
+      }
     }
 
     return {true, "Targets valid", false};

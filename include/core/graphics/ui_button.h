@@ -1,10 +1,10 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_GRAPHICS_UI_BUTTON_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_GRAPHICS_UI_BUTTON_H_
 
-#include <string>
 #include <functional>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <string>
 
 namespace core::graphics {
 

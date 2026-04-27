@@ -1,8 +1,9 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_ACTIONS_END_TURN_ACTION_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_ACTIONS_END_TURN_ACTION_H_
 
-#include "core/effects/actions/action_base.h"
 #include <string>
+
+#include "core/effects/actions/action_base.h"
 
 namespace core::effects::actions {
 

@@ -1,12 +1,13 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_GRAPHICS_BATTLE_UI_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_GRAPHICS_BATTLE_UI_H_
 
+#include <glm/vec2.hpp>
 #include <memory>
 #include <vector>
-#include <glm/vec2.hpp>
-#include "core/state/game_state.h"
-#include "core/graphics/ui_button.h"
+
 #include "core/graphics/health_icon.h"
+#include "core/graphics/ui_button.h"
+#include "core/state/game_state.h"
 
 namespace core::graphics {
 

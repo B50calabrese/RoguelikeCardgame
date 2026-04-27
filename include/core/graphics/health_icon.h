@@ -1,9 +1,9 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_GRAPHICS_HEALTH_ICON_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_GRAPHICS_HEALTH_ICON_H_
 
-#include <string>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
+#include <string>
 
 namespace core::graphics {
 
@@ -33,7 +33,7 @@ class HealthIcon {
   glm::vec2 position_;
   float size_;
   glm::vec4 color_;
-  std::string texture_path_; // Future use
+  std::string texture_path_;  // Future use
 };
 
 }  // namespace core::graphics

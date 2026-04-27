@@ -19,7 +19,8 @@ struct RuleResult {
   }
 
   /** @brief Static helper to create a failed result. */
-  static RuleResult Failure(const std::string& msg, bool can_fail_open = false) {
+  static RuleResult Failure(const std::string& msg,
+                            bool can_fail_open = false) {
     return {false, msg, can_fail_open};
   }
 };

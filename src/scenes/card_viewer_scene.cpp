@@ -19,7 +19,7 @@
 namespace scenes {
 
 void CardViewerScene::OnAttach() {
-  const auto& all_cards = core::CardRegistry::Get().GetAllCards();
+  const auto& all_cards = core::CardRegistry::Get().all_cards();
   for (const auto& [id, card] : all_cards) {
     cards_.push_back(card);
   }
@@ -127,7 +127,8 @@ void CardViewerScene::HandleInput(float delta_time_seconds) {
   hovered_card_index_ = -1;
   float card_w = core::graphics::kBaseCardWidth;
   float start_x =
-      (config.window_width - (cols * card_w + (cols - 1) * kCardPadding)) * 0.5f;
+      (config.window_width - (cols * card_w + (cols - 1) * kCardPadding)) *
+      0.5f;
   float start_y = config.window_height - 150.0f + scroll_offset_;
 
   int hovered_i = -1;
@@ -189,7 +190,8 @@ void CardViewerScene::RenderGrid() {
   float card_w = core::graphics::kBaseCardWidth;
   float card_h = core::graphics::kBaseCardHeight;
   float start_x =
-      (config.window_width - (cols * card_w + (cols - 1) * kCardPadding)) * 0.5f;
+      (config.window_width - (cols * card_w + (cols - 1) * kCardPadding)) *
+      0.5f;
   float start_y = config.window_height - 150.0f + scroll_offset_;
 
   int hovered_i = -1;

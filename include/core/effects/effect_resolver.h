@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "core/effects/action.h"
-#include "core/state/game_state.h"
 #include "core/effects/rule_result.h"
+#include "core/state/game_state.h"
 #include "engine/util/logger.h"
 
 namespace core::effects {
@@ -23,9 +23,7 @@ class EffectResolver {
   }
 
   /** @brief Adds an action to the queue. */
-  void QueueAction(const Action& action) {
-    action_queue_.push_back(action);
-  }
+  void QueueAction(const Action& action) { action_queue_.push_back(action); }
 
   /** @brief Processes all pending actions in the queue. */
   void ProcessQueue(GameState& state) {
@@ -50,12 +48,13 @@ class EffectResolver {
 
       RuleResult rule = current_action_->Validate(state);
       if (!rule.success) {
-          LOG_INFO("[EffectResolver] %s failed: %s (fail_open: %d)",
-                   current_action_->name().c_str(), rule.message.c_str(), rule.fail_open);
-          if (!rule.fail_open) {
-            current_action_ = nullptr;
-            continue;
-          }
+        LOG_INFO("[EffectResolver] %s failed: %s (fail_open: %d)",
+                 current_action_->name().c_str(), rule.message.c_str(),
+                 rule.fail_open);
+        if (!rule.fail_open) {
+          current_action_ = nullptr;
+          continue;
+        }
       }
 
       current_action_->Apply(state);
@@ -71,7 +70,9 @@ class EffectResolver {
   }
 
   /** @brief Returns true if there are pending or active actions. */
-  bool IsBusy() const { return !action_queue_.empty() || current_action_ != nullptr; }
+  bool is_busy() const {
+    return !action_queue_.empty() || current_action_ != nullptr;
+  }
 
   /** @brief Clears the action queue. Useful for tests. */
   void ClearQueue() {
@@ -80,7 +81,7 @@ class EffectResolver {
   }
 
   /** @brief Returns the number of actions in the queue. */
-  size_t QueueSize() const { return action_queue_.size(); }
+  size_t queue_size() const { return action_queue_.size(); }
 
  private:
   EffectResolver() = default;

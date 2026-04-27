@@ -1,10 +1,9 @@
 #include "scenes/controllers/hand_controller.h"
 
 #include <algorithm>
-#include <vector>
-
 #include <glm/glm.hpp>
 #include <glm/vec2.hpp>
+#include <vector>
 
 #include "core/constants.h"
 #include "core/effects/actions/play_card_action.h"
@@ -33,7 +32,7 @@ void HandController::Update(float delta_time_seconds,
   const auto& hand_state =
       (player_id_ == state.player->id) ? state.player->hand : state.enemy->hand;
 
-  if (core::effects::VisualBlocker::Get().IsBlocking()) {
+  if (core::effects::VisualBlocker::Get().is_blocking()) {
     AnimateCards(delta_time_seconds);
     return;
   }
@@ -51,24 +50,23 @@ void HandController::SyncHandWithState(
   auto& config = core::GameConfig::Get();
 
   // 1. Remove cards that are no longer in hand state
-  hand_visuals_.erase(
-      std::remove_if(hand_visuals_.begin(), hand_visuals_.end(),
-                     [&](const VisualCard& vc) {
-                       return std::none_of(
-                           hand_state.begin(), hand_state.end(),
-                           [&](const auto& inst) {
-                             return inst->instance_id == vc.instance_id;
-                           });
-                     }),
-      hand_visuals_.end());
+  hand_visuals_.erase(std::remove_if(hand_visuals_.begin(), hand_visuals_.end(),
+                                     [&](const VisualCard& vc) {
+                                       return std::none_of(
+                                           hand_state.begin(), hand_state.end(),
+                                           [&](const auto& inst) {
+                                             return inst->instance_id ==
+                                                    vc.instance_id;
+                                           });
+                                     }),
+                      hand_visuals_.end());
 
   // 2. Add cards that are in hand state but not in visuals
   for (const auto& inst : hand_state) {
-    bool found =
-        std::any_of(hand_visuals_.begin(), hand_visuals_.end(),
-                    [&](const VisualCard& vc) {
-                      return vc.instance_id == inst->instance_id;
-                    });
+    bool found = std::any_of(hand_visuals_.begin(), hand_visuals_.end(),
+                             [&](const VisualCard& vc) {
+                               return vc.instance_id == inst->instance_id;
+                             });
     if (!found) {
       VisualCard vc;
       vc.data = *inst->data;
@@ -104,7 +102,9 @@ void HandController::HandleInteraction(core::state::GameState& state) {
     if (clicked) {
       bool can_play = true;
       if (play_zone_) {
-        can_play = core::util::PointInRect(mouse_pos, {play_zone_->x, play_zone_->y}, {play_zone_->z, play_zone_->w}, false);
+        can_play =
+            core::util::PointInRect(mouse_pos, {play_zone_->x, play_zone_->y},
+                                    {play_zone_->z, play_zone_->w}, false);
       }
 
       if (can_play) {
@@ -113,19 +113,20 @@ void HandController::HandleInteraction(core::state::GameState& state) {
         std::vector<core::effects::Target> targets;
 
         // Look for first OnPlay effect that needs targets
-        core::CardInstance* inst = state.FindCardInstance(held_card.instance_id);
+        core::CardInstance* inst =
+            state.FindCardInstance(held_card.instance_id);
         if (inst) {
           for (const auto& effect_def : inst->data->effects) {
             if (effect_def.trigger == core::Trigger::OnPlay &&
                 effect_def.filter.is_required) {
               // Check enemy first, then player
               if (effect_def.filter.IsValid(
-                      state, 0, {core::effects::Target::Type::Enemy, 1})) {
-                targets.push_back({core::effects::Target::Type::Enemy, 1});
+                      state, 0, {core::effects::Target::Type::kEnemy, 1})) {
+                targets.push_back({core::effects::Target::Type::kEnemy, 1});
               } else if (effect_def.filter.IsValid(
                              state, 0,
-                             {core::effects::Target::Type::Player, 0})) {
-                targets.push_back({core::effects::Target::Type::Player, 0});
+                             {core::effects::Target::Type::kPlayer, 0})) {
+                targets.push_back({core::effects::Target::Type::kPlayer, 0});
               }
               break;
             }
@@ -205,12 +206,12 @@ void HandController::AnimateCards(float delta_time_seconds) {
         vc.is_held ? combat::kHeldCardLerpSpeed : combat::kDefaultLerpSpeed;
     float t = glm::clamp(delta_time_seconds * lerp_speed, 0.0f, 1.0f);
 
-    vc.current_transform.position =
-        glm::mix(vc.current_transform.position, vc.target_transform.position, t);
+    vc.current_transform.position = glm::mix(vc.current_transform.position,
+                                             vc.target_transform.position, t);
     vc.current_transform.scale =
         glm::mix(vc.current_transform.scale, vc.target_transform.scale, t);
-    vc.current_transform.rotation = glm::mix(
-        vc.current_transform.rotation, vc.target_transform.rotation, t);
+    vc.current_transform.rotation = glm::mix(vc.current_transform.rotation,
+                                             vc.target_transform.rotation, t);
 
     if (glm::distance(vc.current_transform.position,
                       vc.target_transform.position) > 1.0f) {
@@ -219,8 +220,8 @@ void HandController::AnimateCards(float delta_time_seconds) {
   }
 
   if (any_moving) {
-    core::effects::VisualBlocker::Get().AddBlocker(
-        "HandAnimation_" + std::to_string(player_id_));
+    core::effects::VisualBlocker::Get().AddBlocker("HandAnimation_" +
+                                                   std::to_string(player_id_));
   } else {
     core::effects::VisualBlocker::Get().RemoveBlocker(
         "HandAnimation_" + std::to_string(player_id_));

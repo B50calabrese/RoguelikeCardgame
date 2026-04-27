@@ -1,11 +1,11 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_RULES_BOARD_SPACE_RULE_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_RULES_BOARD_SPACE_RULE_H_
 
-#include "core/effects/rule.h"
-#include "core/effects/actions/play_card_action.h"
-#include "core/state/player_state.h"
-#include "core/card_instance.h"
 #include "core/card_data.h"
+#include "core/card_instance.h"
+#include "core/effects/actions/play_card_action.h"
+#include "core/effects/rule.h"
+#include "core/state/player_state.h"
 
 namespace core::effects::rules {
 
@@ -14,15 +14,18 @@ namespace core::effects::rules {
  */
 class BoardSpaceRule : public IRule {
  public:
-  RuleResult Validate(const state::GameState& state, const Action& action) const override {
+  RuleResult Validate(const state::GameState& state,
+                      const Action& action) const override {
     // Only check board space for PlayCardAction
-    auto play_action = std::dynamic_pointer_cast<actions::PlayCardAction>(action);
+    auto play_action =
+        std::dynamic_pointer_cast<actions::PlayCardAction>(action);
     if (!play_action) return RuleResult::Success();
 
-    int player_id = play_action->GetActorId();
+    int player_id = play_action->actor_id();
     int card_id = play_action->card_instance_id();
 
-    const PlayerState& p = (player_id == state.player->id) ? *state.player : *state.enemy;
+    const PlayerState& p =
+        (player_id == state.player->id) ? *state.player : *state.enemy;
 
     // Find the card in hand to check its type
     const CardInstance* inst = nullptr;

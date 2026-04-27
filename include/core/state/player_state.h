@@ -1,12 +1,12 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_STATE_PLAYER_STATE_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_STATE_PLAYER_STATE_H_
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include "core/enums.h"
 #include "core/card_data.h"
 #include "core/card_instance.h"
+#include "core/enums.h"
 
 namespace core::state {
 

@@ -1,6 +1,14 @@
 # Project Status
 
 ## Most Recent Changes
+- **Google C++ Style Compliance**: Performed a comprehensive refactor of the `include/` and `src/` directories to adhere to the Google C++ Style Guide.
+    - **Uniform Formatting**: Applied `clang-format` to all header and source files.
+    - **Naming Convention Alignment**:
+        - Updated all **Enums** to use `kPascalCase` for values (e.g., `CardType::kCreature`).
+        - Standardized **Accessors** to use `snake_case` matching the underlying variable (e.g., `position()`, `set_position()`).
+        - Renamed **Singleton** accessors to `Get()` for consistency with the engine's existing pattern while maintaining Google Style.
+        - Ensured **private class members** use `snake_case_` with a trailing underscore.
+    - **Modern C++ Practices**: Correctly utilized `override` for virtual functions and ensured no `using namespace` declarations exist in headers.
 - **Combat Scene UI Refinement**: Overhauled the combat scene layout and interaction.
     - **Targeting Line Fix**: Resolved the targeting line visibility issue by assigning it a high Z-index (1300) and ensuring it is submitted to the sorted `RenderQueue`.
     - **Mirrored Hand Layout**: Repositioned the enemy hand to be 20px from the top edge, mirroring the player's hand position.
@@ -43,6 +51,7 @@
 ## Recommendations & Next Steps
 
 ### Technical Improvements
+- **Code Maintenance**: Maintain strict adherence to the new Google C++ Style conventions in all future PRs.
 - **Engine Restoration**: Restore or implement the `GaussianBlurEffect` in the `GameEngine` submodule.
 - **Trigger Timing**: Fine-tune the `TriggerSystem` for complex effect sequences.
 

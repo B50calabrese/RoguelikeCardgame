@@ -3,27 +3,21 @@
 
 namespace core {
 
-struct CardData; // Forward declaration
+struct CardData;  // Forward declaration
 
 /**
  * @brief Represents where a card is currently located.
  */
-enum class CardLocation {
-  Deck,
-  Hand,
-  Board,
-  Graveyard,
-  Exile,
-  Stack
-};
+enum class CardLocation { Deck, Hand, Board, Graveyard, Exile, Stack };
 
 /**
- * @brief The runtime instance of a card, which may have modified stats or additional effects.
+ * @brief The runtime instance of a card, which may have modified stats or
+ * additional effects.
  */
 struct CardInstance {
   const CardData* data;
   int instance_id;
-  int owner_id; // 0 for player, 1 for enemy
+  int owner_id;  // 0 for player, 1 for enemy
 
   CardLocation location;
 
@@ -34,7 +28,8 @@ struct CardInstance {
   int max_health;
 
   bool has_attacked;
-  bool can_attack; // Used for summoning sickness and other "can't attack" effects
+  bool can_attack;  // Used for summoning sickness and other "can't attack"
+                    // effects
 
   CardInstance(const CardData* card_data, int inst_id, int owner);
 };

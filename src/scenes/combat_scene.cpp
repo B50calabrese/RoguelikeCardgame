@@ -1,7 +1,6 @@
 #include "scenes/combat_scene.h"
 
 #include <algorithm>
-#include "engine/graphics/utils/render_queue.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/vec2.hpp>
@@ -24,6 +23,7 @@
 #include "core/util/math_util.h"
 #include "engine/graphics/primitive_renderer.h"
 #include "engine/graphics/renderer.h"
+#include "engine/graphics/utils/render_queue.h"
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
 #include "engine/util/console.h"
@@ -46,7 +46,7 @@ void CombatScene::OnAttach() {
 
   CombatCommandSystem::Register(game_state_);
 
-  const auto& all_cards = core::CardRegistry::Get().GetAllCards();
+  const auto& all_cards = core::CardRegistry::Get().all_cards();
   if (all_cards.empty()) {
     LOG_ERR("[CombatScene] No cards loaded!");
     return;
@@ -113,12 +113,13 @@ void CombatScene::OnAttach() {
       static_cast<float>(config.window_width) * combat::kBoardWidthPercent;
 
   kBoardBoundsSize = {board_width, board_height};
-  float board_x = (static_cast<float>(config.window_width) - board_width) * 0.5f;
+  float board_x =
+      (static_cast<float>(config.window_width) - board_width) * 0.5f;
 
   // Zones within the board
   float zone_width = board_width - 2.0f * combat::kZoneBorder;
-  float zone_height = (board_height - 2.0f * combat::kZoneBorder -
-                       combat::kZonePadding) * 0.5f;
+  float zone_height =
+      (board_height - 2.0f * combat::kZoneBorder - combat::kZonePadding) * 0.5f;
 
   enemy_zone_rect_ = {board_x + combat::kZoneBorder,
                       board_top - combat::kZoneBorder - zone_height, zone_width,
@@ -185,7 +186,7 @@ void CombatScene::OnRender() {
   battle_ui_.Render(game_state_, player_zone_rect_, enemy_zone_rect_);
 
   // Update board hitboxes and render creatures
-  combat_controller_->hitboxes().Clear();
+  combat_controller_->hitbox_manager().Clear();
   auto& config = core::GameConfig::Get();
   float card_base_width = core::graphics::kBaseCardWidth;
   float card_base_height = core::graphics::kBaseCardHeight;
@@ -202,7 +203,7 @@ void CombatScene::OnRender() {
     glm::vec2 size =
         glm::vec2(card_base_width * scale, card_base_height * scale);
 
-    combat_controller_->hitboxes().AddHitbox({inst_id, pos, size, false});
+    combat_controller_->hitbox_manager().AddHitbox({inst_id, pos, size, false});
 
     // Render highlight if it can attack
     if (game_state_.current_turn_player_id == game_state_.player->id &&
@@ -226,8 +227,7 @@ void CombatScene::OnRender() {
   }
 
   auto enemy_board_layouts = core::graphics::HandRenderer::CalculateHandLayout(
-      game_state_.enemy->board.size(),
-      {enemy_zone_rect_.x, enemy_zone_rect_.y},
+      game_state_.enemy->board.size(), {enemy_zone_rect_.x, enemy_zone_rect_.y},
       {enemy_zone_rect_.z, enemy_zone_rect_.w}, 0.0f, 0.2f);
   for (size_t i = 0; i < game_state_.enemy->board.size(); ++i) {
     int inst_id = game_state_.enemy->board[i]->instance_id;
@@ -238,12 +238,11 @@ void CombatScene::OnRender() {
     glm::vec2 size =
         glm::vec2(card_base_width * scale, card_base_height * scale);
 
-    combat_controller_->hitboxes().AddHitbox({inst_id, pos, size, true});
+    combat_controller_->hitbox_manager().AddHitbox({inst_id, pos, size, true});
 
-    core::graphics::CardRenderer::RenderCard(*game_state_.enemy->board[i]->data,
-                                             pos, scale, 1.0f,
-                                             enemy_board_layouts[i].rotation,
-                                             0.0f);
+    core::graphics::CardRenderer::RenderCard(
+        *game_state_.enemy->board[i]->data, pos, scale, 1.0f,
+        enemy_board_layouts[i].rotation, 0.0f);
   }
 
   player_hand_->Render();
@@ -259,7 +258,7 @@ void CombatScene::DrawTargetingLine() {
   if (combat_controller_->current_state() == CombatState::PickingTarget &&
       combat_controller_->selected_attacker_id()) {
     glm::vec2 start_pos;
-    if (auto hitbox = combat_controller_->hitboxes().GetHitboxFor(
+    if (auto hitbox = combat_controller_->hitbox_manager().GetHitboxFor(
             *combat_controller_->selected_attacker_id())) {
       start_pos = hitbox->position;
     } else {

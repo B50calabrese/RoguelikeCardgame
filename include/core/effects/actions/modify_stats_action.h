@@ -12,7 +12,9 @@ namespace core::effects::actions {
 class ModifyStatsAction : public ActionBase {
  public:
   ModifyStatsAction(int card_instance_id, int power_change, int health_change)
-      : card_instance_id_(card_instance_id), power_change_(power_change), health_change_(health_change) {}
+      : card_instance_id_(card_instance_id),
+        power_change_(power_change),
+        health_change_(health_change) {}
 
   RuleResult Validate(const GameState& state) const override {
     return {true, "Modify allowed", false};

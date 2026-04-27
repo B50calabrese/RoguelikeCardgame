@@ -5,43 +5,51 @@
 #include <string>
 #include <vector>
 
-#include "core/card_registry.h"
 #include "core/card_instance.h"
-#include "core/effects/effect_resolver.h"
+#include "core/card_registry.h"
 #include "core/effects/actions/play_card_action.h"
+#include "core/effects/effect_resolver.h"
 #include "engine/util/console.h"
 
 namespace scenes {
 
 void CombatCommandSystem::Register(core::GameState& state) {
   auto& console = engine::util::Console::Get();
-  console.RegisterCommand("add_card", [&state](const std::vector<std::string>& args) {
-    AddCardCommand(state, args);
-  });
-  console.RegisterCommand("remove_card", [&state](const std::vector<std::string>& args) {
-    RemoveCardCommand(state, args);
-  });
-  console.RegisterCommand("list_cards", [](const std::vector<std::string>& args) {
-    ListCardsCommand(args);
-  });
-  console.RegisterCommand("set_health", [&state](const std::vector<std::string>& args) {
-    SetHealthCommand(state, args);
-  });
-  console.RegisterCommand("draw", [&state](const std::vector<std::string>& args) {
-    DrawCardCommand(state, args);
-  });
-  console.RegisterCommand("set_mana", [&state](const std::vector<std::string>& args) {
-    SetManaCommand(state, args);
-  });
-  console.RegisterCommand("set_turn", [&state](const std::vector<std::string>& args) {
-    SetTurnCommand(state, args);
-  });
-  console.RegisterCommand("play_card", [&state](const std::vector<std::string>& args) {
-    PlayCardCommand(state, args);
-  });
+  console.RegisterCommand("add_card",
+                          [&state](const std::vector<std::string>& args) {
+                            AddCardCommand(state, args);
+                          });
+  console.RegisterCommand("remove_card",
+                          [&state](const std::vector<std::string>& args) {
+                            RemoveCardCommand(state, args);
+                          });
+  console.RegisterCommand(
+      "list_cards",
+      [](const std::vector<std::string>& args) { ListCardsCommand(args); });
+  console.RegisterCommand("set_health",
+                          [&state](const std::vector<std::string>& args) {
+                            SetHealthCommand(state, args);
+                          });
+  console.RegisterCommand("draw",
+                          [&state](const std::vector<std::string>& args) {
+                            DrawCardCommand(state, args);
+                          });
+  console.RegisterCommand("set_mana",
+                          [&state](const std::vector<std::string>& args) {
+                            SetManaCommand(state, args);
+                          });
+  console.RegisterCommand("set_turn",
+                          [&state](const std::vector<std::string>& args) {
+                            SetTurnCommand(state, args);
+                          });
+  console.RegisterCommand("play_card",
+                          [&state](const std::vector<std::string>& args) {
+                            PlayCardCommand(state, args);
+                          });
 }
 
-void CombatCommandSystem::AddCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::AddCardCommand(core::GameState& state,
+                                         const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 3) {
     console.Log("Usage: add_card <player|enemy> <card_id> <hand|deck>");
@@ -58,10 +66,12 @@ void CombatCommandSystem::AddCardCommand(core::GameState& state, const std::vect
     return;
   }
 
-  core::PlayerState* player = (target_player == "player") ? state.player.get() : state.enemy.get();
+  core::PlayerState* player =
+      (target_player == "player") ? state.player.get() : state.enemy.get();
   int owner_id = (target_player == "player") ? 0 : 1;
 
-  auto instance = std::make_unique<core::CardInstance>(data, state.next_instance_id++, owner_id);
+  auto instance = std::make_unique<core::CardInstance>(
+      data, state.next_instance_id++, owner_id);
 
   if (target_zone == "hand") {
     instance->location = core::CardLocation::Hand;
@@ -74,7 +84,8 @@ void CombatCommandSystem::AddCardCommand(core::GameState& state, const std::vect
   }
 }
 
-void CombatCommandSystem::RemoveCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::RemoveCardCommand(
+    core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: remove_card <instance_id>");
@@ -84,14 +95,16 @@ void CombatCommandSystem::RemoveCardCommand(core::GameState& state, const std::v
   int instance_id = std::stoi(args[0]);
 
   auto remove_from_player = [&](core::PlayerState& p) {
-    auto it = std::find_if(p.hand.begin(), p.hand.end(),
-                           [instance_id](const auto& c) { return c->instance_id == instance_id; });
+    auto it = std::find_if(
+        p.hand.begin(), p.hand.end(),
+        [instance_id](const auto& c) { return c->instance_id == instance_id; });
     if (it != p.hand.end()) {
       p.hand.erase(it);
       return true;
     }
-    it = std::find_if(p.deck.begin(), p.deck.end(),
-                      [instance_id](const auto& c) { return c->instance_id == instance_id; });
+    it = std::find_if(
+        p.deck.begin(), p.deck.end(),
+        [instance_id](const auto& c) { return c->instance_id == instance_id; });
     if (it != p.deck.end()) {
       p.deck.erase(it);
       return true;
@@ -102,20 +115,23 @@ void CombatCommandSystem::RemoveCardCommand(core::GameState& state, const std::v
   if (remove_from_player(*state.player) || remove_from_player(*state.enemy)) {
     console.Log("Removed card instance " + std::to_string(instance_id));
   } else {
-    console.Log("Error: Card instance " + std::to_string(instance_id) + " not found.");
+    console.Log("Error: Card instance " + std::to_string(instance_id) +
+                " not found.");
   }
 }
 
-void CombatCommandSystem::ListCardsCommand(const std::vector<std::string>& args) {
+void CombatCommandSystem::ListCardsCommand(
+    const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
-  const auto& all_cards = core::CardRegistry::Get().GetAllCards();
+  const auto& all_cards = core::CardRegistry::Get().all_cards();
   console.Log("Available Cards:");
   for (const auto& [id, data] : all_cards) {
     console.Log("  ID: " + std::to_string(id) + " - " + data.name);
   }
 }
 
-void CombatCommandSystem::SetHealthCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::SetHealthCommand(
+    core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: set_health <player|enemy> <amount>");
@@ -132,14 +148,16 @@ void CombatCommandSystem::SetHealthCommand(core::GameState& state, const std::ve
   }
 }
 
-void CombatCommandSystem::DrawCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::DrawCardCommand(
+    core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: draw <player|enemy>");
     return;
   }
   std::string target = args[0];
-  core::PlayerState* player = (target == "player") ? state.player.get() : state.enemy.get();
+  core::PlayerState* player =
+      (target == "player") ? state.player.get() : state.enemy.get();
   if (player->deck.empty()) {
     console.Log("Error: " + target + "'s deck is empty.");
     return;
@@ -151,7 +169,8 @@ void CombatCommandSystem::DrawCardCommand(core::GameState& state, const std::vec
   console.Log(target + " drew a card.");
 }
 
-void CombatCommandSystem::SetManaCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::SetManaCommand(core::GameState& state,
+                                         const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: set_mana <player|enemy> <amount>");
@@ -168,7 +187,8 @@ void CombatCommandSystem::SetManaCommand(core::GameState& state, const std::vect
   }
 }
 
-void CombatCommandSystem::SetTurnCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::SetTurnCommand(core::GameState& state,
+                                         const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: set_turn <player|enemy>");
@@ -179,7 +199,8 @@ void CombatCommandSystem::SetTurnCommand(core::GameState& state, const std::vect
   console.Log("Current turn set to " + target);
 }
 
-void CombatCommandSystem::PlayCardCommand(core::GameState& state, const std::vector<std::string>& args) {
+void CombatCommandSystem::PlayCardCommand(
+    core::GameState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: play_card <player|enemy> <instance_id>");
@@ -188,7 +209,8 @@ void CombatCommandSystem::PlayCardCommand(core::GameState& state, const std::vec
   int player_id = (args[0] == "player") ? 0 : 1;
   int instance_id = std::stoi(args[1]);
 
-  auto action = std::make_shared<core::effects::actions::PlayCardAction>(player_id, instance_id, std::vector<core::effects::Target>());
+  auto action = std::make_shared<core::effects::actions::PlayCardAction>(
+      player_id, instance_id, std::vector<core::effects::Target>());
   core::effects::EffectResolver::Get().QueueAction(action);
   core::effects::EffectResolver::Get().ProcessQueue(state);
 }

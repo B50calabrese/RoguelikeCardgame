@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "core/effects/effect.h"
 #include "core/effects/actions/deal_damage_action.h"
+#include "core/effects/effect.h"
 
 namespace core::effects::types {
 
@@ -14,7 +14,9 @@ namespace core::effects::types {
  */
 class DamageEffect : public Effect {
  public:
-  std::vector<Action> GenerateActions(int source_id, const std::vector<Target>& targets, const EffectParams& params) const override {
+  std::vector<Action> GenerateActions(
+      int source_id, const std::vector<Target>& targets,
+      const EffectParams& params) const override {
     std::vector<Action> actions;
     if (targets.empty()) return actions;
 
@@ -24,7 +26,8 @@ class DamageEffect : public Effect {
       amount = std::stoi(it->second);
     }
 
-    actions.push_back(std::make_shared<actions::DealDamageAction>(source_id, targets[0], amount));
+    actions.push_back(std::make_shared<actions::DealDamageAction>(
+        source_id, targets[0], amount));
     return actions;
   }
 

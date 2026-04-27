@@ -1,14 +1,13 @@
 #include "core/graphics/card_renderer.h"
 
 #include <cmath>
-
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 #include "core/constants.h"
-#include "engine/graphics/utils/render_queue.h"
 #include "engine/graphics/renderer.h"
 #include "engine/graphics/texture.h"
+#include "engine/graphics/utils/render_queue.h"
 #include "engine/util/asset_manager.h"
 
 namespace core::graphics {
@@ -76,8 +75,7 @@ void CardRenderer::RenderCard(const core::CardData& data, glm::vec2 position,
 
   // 4. Card Cost (Top Right)
   glm::vec2 cost_transformed_offset =
-      position +
-      CalculateTransformedOffset(kCostOffset, scale, rotation_vec);
+      position + CalculateTransformedOffset(kCostOffset, scale, rotation_vec);
   engine::graphics::Renderer::Get().DrawText(
       "arial", std::to_string(data.cost), cost_transformed_offset, rotation,
       0.8f * scale, kDefaultTextColor, z_index + text_z_offset);
@@ -122,8 +120,8 @@ void CardRenderer::RenderCardBack(glm::vec2 position, float scale, float alpha,
   const float card_height = kBaseCardHeight * scale;
   const glm::vec4 tint = glm::vec4(1.0f, 1.0f, 1.0f, alpha);
 
-  auto back_tex =
-      engine::util::AssetManager<engine::graphics::Texture>::Get("card_back.png");
+  auto back_tex = engine::util::AssetManager<engine::graphics::Texture>::Get(
+      "card_back.png");
 
   if (back_tex) {
     engine::graphics::utils::RenderCommand cmd;

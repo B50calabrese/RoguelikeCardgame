@@ -1,12 +1,12 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_MAIN_MENU_SCENE_H_
 #define DECK_BUILDER_GAME_INCLUDE_SCENES_MAIN_MENU_SCENE_H_
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
-#include "engine/scene/scene.h"
 #include "core/graphics/ui_button.h"
+#include "engine/scene/scene.h"
 
 namespace scenes {
 

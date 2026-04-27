@@ -1,10 +1,10 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_EFFECT_REGISTRY_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_EFFECT_REGISTRY_H_
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <functional>
 
 #include "core/effects/effect.h"
 
@@ -37,7 +37,7 @@ class EffectRegistry {
 }  // namespace core::effects
 
 namespace core {
-  using effects::EffectRegistry;
+using effects::EffectRegistry;
 }
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_EFFECT_REGISTRY_H_

@@ -3,12 +3,8 @@
 
 namespace scenes {
 
-enum class CombatState {
-    Idle,
-    PickingTarget,
-    AnimatingAttack
-};
+enum class CombatState { Idle, PickingTarget, AnimatingAttack };
 
-} // namespace scenes
+}  // namespace scenes
 
-#endif // DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMBAT_STATE_H_
+#endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_COMBAT_STATE_H_

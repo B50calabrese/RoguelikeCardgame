@@ -1,14 +1,18 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_TARGET_FILTER_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_TARGET_FILTER_H_
 
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
 
 #include "core/effects/target.h"
 
-namespace core::state { struct GameState; }
-namespace core { struct CardInstance; }
+namespace core::state {
+struct GameState;
+}
+namespace core {
+struct CardInstance;
+}
 
 namespace core::effects {
 
@@ -38,7 +42,8 @@ struct TargetFilter {
   /**
    * @brief Checks if a given target is valid according to this filter.
    */
-  bool IsValid(const state::GameState& state, int actor_player_id, const Target& target) const;
+  bool IsValid(const state::GameState& state, int actor_player_id,
+               const Target& target) const;
 };
 
 }  // namespace core::effects
