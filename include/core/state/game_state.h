@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "core/state/player_state.h"
 #include "core/card_instance.h"
+#include "core/state/player_state.h"
 
 namespace core::state {
 
@@ -29,11 +29,16 @@ struct GameState {
    */
   CardInstance* FindCardInstance(int instance_id) const {
     auto search_zones = [](const PlayerState& p, int id) -> CardInstance* {
-      for (const auto& c : p.hand) if (c->instance_id == id) return c.get();
-      for (const auto& c : p.board) if (c->instance_id == id) return c.get();
-      for (const auto& c : p.deck) if (c->instance_id == id) return c.get();
-      for (const auto& c : p.graveyard) if (c->instance_id == id) return c.get();
-      for (const auto& c : p.stack) if (c->instance_id == id) return c.get();
+      for (const auto& c : p.hand)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.board)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.deck)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.graveyard)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.stack)
+        if (c->instance_id == id) return c.get();
       return nullptr;
     };
 
@@ -46,8 +51,8 @@ struct GameState {
 }  // namespace core::state
 
 namespace core {
-  using GameState = state::GameState;
-  using PlayerState = state::PlayerState;
-}
+using GameState = state::GameState;
+using PlayerState = state::PlayerState;
+}  // namespace core
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_STATE_GAME_STATE_H_

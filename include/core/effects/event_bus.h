@@ -1,8 +1,9 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_EVENT_BUS_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_EVENT_BUS_H_
 
-#include <vector>
 #include <functional>
+#include <vector>
+
 #include "core/effects/game_event.h"
 #include "core/state/game_state.h"
 
@@ -28,7 +29,7 @@ class EventBus {
   /** @brief Broadcasts an event to all subscribers. */
   void Publish(state::GameState& state, const GameEvent& event) {
     for (const auto& listener : listeners_) {
-        listener(state, event);
+      listener(state, event);
     }
   }
 

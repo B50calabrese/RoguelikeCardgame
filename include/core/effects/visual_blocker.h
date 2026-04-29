@@ -1,8 +1,8 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_VISUAL_BLOCKER_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_VISUAL_BLOCKER_H_
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace core::effects {
 
@@ -18,14 +18,12 @@ class VisualBlocker {
   }
 
   /** @brief Returns true if any visual effects are currently blocking. */
-  bool IsBlocking() const {
-    return !blockers_.empty();
-  }
+  bool is_blocking() const { return !blockers_.empty(); }
 
   /** @brief Adds a named blocker. */
   void AddBlocker(const std::string& name) {
     for (const auto& b : blockers_) {
-        if (b == name) return;
+      if (b == name) return;
     }
     blockers_.push_back(name);
   }
@@ -41,9 +39,7 @@ class VisualBlocker {
   }
 
   /** @brief Clears all blockers. */
-  void Clear() {
-    blockers_.clear();
-  }
+  void Clear() { blockers_.clear(); }
 
  private:
   VisualBlocker() = default;

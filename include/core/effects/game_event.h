@@ -23,10 +23,10 @@ enum class GameEventType {
  */
 struct GameEvent {
   GameEventType type;
-  int actor_id;         // Player who caused the event (if any)
-  int source_id;        // Instance ID of the card/creature that triggered the event
-  int target_id = -1;   // Instance ID of the target (if any)
-  int value = 0;        // Amount (damage, mana, etc.)
+  int actor_id;   // Player who caused the event (if any)
+  int source_id;  // Instance ID of the card/creature that triggered the event
+  int target_id = -1;  // Instance ID of the target (if any)
+  int value = 0;       // Amount (damage, mana, etc.)
 };
 
 }  // namespace core::effects

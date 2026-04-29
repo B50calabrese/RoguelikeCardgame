@@ -6,31 +6,17 @@ namespace core {
 /**
  * @brief Defines the type of card.
  */
-enum class CardType {
-  Creature,
-  Spell
-};
+enum class CardType { Creature, Spell };
 
 /**
  * @brief Defines the color of the card.
  */
-enum class CardColor {
-  White,
-  Blue,
-  Black,
-  Red,
-  Green,
-  Colorless
-};
+enum class CardColor { White, Blue, Black, Red, Green, Colorless };
 
 /**
  * @brief Identifies a player or game-driven actor.
  */
-enum class ActorId : int {
-  Player = 0,
-  Enemy = 1,
-  None = -1
-};
+enum class ActorId : int { Player = 0, Enemy = 1, None = -1 };
 
 /**
  * @brief Defines the subtypes (creature types) of a card.

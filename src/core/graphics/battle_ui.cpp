@@ -75,8 +75,7 @@ void BattleUI::Render(const GameState& state, const glm::vec4& player_zone,
 
   // Render Background between hands
   float board_bottom = player_zone.y - scenes::combat::kZoneBorder;
-  float board_top =
-      enemy_zone.y + enemy_zone.w + scenes::combat::kZoneBorder;
+  float board_top = enemy_zone.y + enemy_zone.w + scenes::combat::kZoneBorder;
 
   engine::graphics::utils::RenderCommand bg;
   bg.z_order = scenes::combat::kBackgroundZ;

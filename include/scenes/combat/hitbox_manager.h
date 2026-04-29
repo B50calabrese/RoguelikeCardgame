@@ -1,9 +1,10 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_HITBOX_MANAGER_H_
 #define DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_HITBOX_MANAGER_H_
 
-#include <vector>
-#include <optional>
 #include <glm/vec2.hpp>
+#include <optional>
+#include <vector>
+
 #include "scenes/combat/board_hitbox.h"
 
 namespace scenes::combat {
@@ -22,6 +23,6 @@ class HitboxManager {
   std::vector<BoardHitbox> hitboxes_;
 };
 
-} // namespace scenes::combat
+}  // namespace scenes::combat
 
-#endif // DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_HITBOX_MANAGER_H_
+#endif  // DECK_BUILDER_GAME_INCLUDE_SCENES_COMBAT_HITBOX_MANAGER_H_

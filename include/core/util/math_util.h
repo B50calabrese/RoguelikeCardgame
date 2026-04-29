@@ -14,8 +14,8 @@ namespace core::util {
  *                 If false, rect_pos is treated as the bottom-left corner.
  * @return True if the point is inside the rectangle, false otherwise.
  */
-inline bool PointInRect(glm::vec2 point, glm::vec2 rect_pos, glm::vec2 rect_size,
-                        bool centered = false) {
+inline bool PointInRect(glm::vec2 point, glm::vec2 rect_pos,
+                        glm::vec2 rect_size, bool centered = false) {
   if (centered) {
     return point.x >= rect_pos.x - rect_size.x * 0.5f &&
            point.x <= rect_pos.x + rect_size.x * 0.5f &&

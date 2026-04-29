@@ -7,9 +7,9 @@
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
 #include "engine/util/logger.h"
-#include "scenes/new_run_scene.h"
 #include "scenes/card_viewer_scene.h"
 #include "scenes/combat_scene.h"
+#include "scenes/new_run_scene.h"
 
 namespace scenes {
 
@@ -25,7 +25,8 @@ void MainMenuScene::OnAttach() {
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
-      "Combat Scene", glm::vec2{center_x - kBtnWidth * 0.5f, start_y - kBtnSpacing},
+      "Combat Scene",
+      glm::vec2{center_x - kBtnWidth * 0.5f, start_y - kBtnSpacing},
       glm::vec2{kBtnWidth, kBtnHeight}, []() {
         engine::SceneManager::Get().SetScene(std::make_unique<CombatScene>());
       }));
@@ -34,20 +35,17 @@ void MainMenuScene::OnAttach() {
       "Card Viewer",
       glm::vec2{center_x - kBtnWidth * 0.5f, start_y - 2.0f * kBtnSpacing},
       glm::vec2{kBtnWidth, kBtnHeight}, []() {
-        engine::SceneManager::Get().SetScene(std::make_unique<CardViewerScene>());
+        engine::SceneManager::Get().SetScene(
+            std::make_unique<CardViewerScene>());
       }));
 
   buttons_.push_back(std::make_unique<core::graphics::UIButton>(
       "Exit",
       glm::vec2{center_x - kBtnWidth * 0.5f, start_y - 3.0f * kBtnSpacing},
-      glm::vec2{kBtnWidth, kBtnHeight}, []() {
-        LOG_INFO("Exit requested");
-      }));
+      glm::vec2{kBtnWidth, kBtnHeight}, []() { LOG_INFO("Exit requested"); }));
 }
 
-void MainMenuScene::OnUpdate(float delta_time_seconds) {
-  HandleInput();
-}
+void MainMenuScene::OnUpdate(float delta_time_seconds) { HandleInput(); }
 
 void MainMenuScene::HandleInput() {
   auto& input = engine::InputManager::Get();
@@ -63,10 +61,10 @@ void MainMenuScene::OnRender() {
   auto& renderer = engine::graphics::Renderer::Get();
   auto& config = core::GameConfig::Get();
 
-  renderer.DrawText("default", "DECK BUILDER GAME",
-                    {config.window_width * 0.5f - 200.0f,
-                     config.window_height * 0.8f},
-                    0.0f, 1.0f, {1, 1, 1, 1});
+  renderer.DrawText(
+      "default", "DECK BUILDER GAME",
+      {config.window_width * 0.5f - 200.0f, config.window_height * 0.8f}, 0.0f,
+      1.0f, {1, 1, 1, 1});
 
   for (const auto& btn : buttons_) {
     btn->Render();

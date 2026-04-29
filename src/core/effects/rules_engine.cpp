@@ -1,9 +1,10 @@
 #include "core/effects/rules_engine.h"
-#include "core/effects/rules/turn_rule.h"
+
+#include "core/effects/rules/attack_rule.h"
+#include "core/effects/rules/board_space_rule.h"
 #include "core/effects/rules/mana_rule.h"
 #include "core/effects/rules/targeting_rule.h"
-#include "core/effects/rules/board_space_rule.h"
-#include "core/effects/rules/attack_rule.h"
+#include "core/effects/rules/turn_rule.h"
 
 namespace core::effects {
 

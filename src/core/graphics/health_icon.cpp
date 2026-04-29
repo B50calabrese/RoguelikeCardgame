@@ -1,12 +1,15 @@
 #include "core/graphics/health_icon.h"
+
+#include <string>
+
 #include "engine/graphics/renderer.h"
 #include "engine/graphics/utils/render_queue.h"
 #include "scenes/combat/combat_ui_constants.h"
-#include <string>
 
 namespace core::graphics {
 
-HealthIcon::HealthIcon(const glm::vec2& position, float size, const glm::vec4& color)
+HealthIcon::HealthIcon(const glm::vec2& position, float size,
+                       const glm::vec4& color)
     : position_(position), size_(size), color_(color) {}
 
 void HealthIcon::Render(int health) const {

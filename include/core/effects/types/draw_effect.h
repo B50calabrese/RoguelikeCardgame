@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "core/effects/effect.h"
 #include "core/effects/actions/draw_card_action.h"
+#include "core/effects/effect.h"
 
 namespace core::effects::types {
 
@@ -14,7 +14,9 @@ namespace core::effects::types {
  */
 class DrawEffect : public Effect {
  public:
-  std::vector<Action> GenerateActions(int source_id, const std::vector<Target>& targets, const EffectParams& params) const override {
+  std::vector<Action> GenerateActions(
+      int source_id, const std::vector<Target>& targets,
+      const EffectParams& params) const override {
     std::vector<Action> actions;
     int amount = 0;
     auto it = params.find("amount");
@@ -33,7 +35,8 @@ class DrawEffect : public Effect {
     if (it != params.end()) {
       amount = std::stoi(it->second);
     }
-    return "Draw " + std::to_string(amount) + (amount == 1 ? " card." : " cards.");
+    return "Draw " + std::to_string(amount) +
+           (amount == 1 ? " card." : " cards.");
   }
 };
 

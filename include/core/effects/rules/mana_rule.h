@@ -1,10 +1,10 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_RULES_MANA_RULE_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_RULES_MANA_RULE_H_
 
-#include "core/effects/rule.h"
-#include "core/effects/actions/play_card_action.h"
-#include "core/state/player_state.h"
 #include "core/card_instance.h"
+#include "core/effects/actions/play_card_action.h"
+#include "core/effects/rule.h"
+#include "core/state/player_state.h"
 
 namespace core::effects::rules {
 
@@ -13,15 +13,19 @@ namespace core::effects::rules {
  */
 class ManaRule : public IRule {
  public:
-  RuleResult Validate(const state::GameState& state, const Action& action) const override {
+  RuleResult Validate(const state::GameState& state,
+                      const Action& action) const override {
     // Only check mana for PlayCardAction
-    auto play_action = std::dynamic_pointer_cast<actions::PlayCardAction>(action);
+    auto play_action =
+        std::dynamic_pointer_cast<actions::PlayCardAction>(action);
     if (!play_action) return RuleResult::Success();
 
-    int player_id = play_action->GetActorId();
+    int player_id = play_action->actor_id();
     int card_id = play_action->card_instance_id();
 
-    const PlayerState& p = (player_id == static_cast<int>(ActorId::Player)) ? *state.player : *state.enemy;
+    const PlayerState& p = (player_id == static_cast<int>(ActorId::Player))
+                               ? *state.player
+                               : *state.enemy;
 
     // We need a way to find the card in hand to check its cost
     const CardInstance* inst = nullptr;
@@ -33,7 +37,8 @@ class ManaRule : public IRule {
     }
 
     if (!inst) return RuleResult::Failure("Card not in hand");
-    if (p.mana < inst->current_cost) return RuleResult::Failure("Insufficient mana");
+    if (p.mana < inst->current_cost)
+      return RuleResult::Failure("Insufficient mana");
 
     return RuleResult::Success("Enough mana");
   }

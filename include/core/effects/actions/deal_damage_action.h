@@ -4,8 +4,8 @@
 #include <iostream>
 
 #include "core/effects/actions/action_base.h"
-#include "core/effects/target.h"
 #include "core/effects/rule_result.h"
+#include "core/effects/target.h"
 #include "core/state/game_state.h"
 
 namespace core::effects::actions {
@@ -16,13 +16,14 @@ class DealDamageAction : public ActionBase {
       : source_id_(source_id), target_(target), amount_(amount) {}
 
   RuleResult Validate(const GameState& state) const override {
-    if (target_.type == Target::Type::Player || target_.type == Target::Type::Enemy) {
-        return {true, "Valid target player", false};
+    if (target_.type == Target::Type::kPlayer ||
+        target_.type == Target::Type::kEnemy) {
+      return {true, "Valid target player", false};
     }
 
     CardInstance* target_inst = state.FindCardInstance(target_.id);
     if (!target_inst || target_inst->location != CardLocation::Board) {
-        return {false, "Target not on board", true}; // Fail open
+      return {false, "Target not on board", true};  // Fail open
     }
 
     return {true, "Valid damage target", false};

@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "core/enums.h"
 #include "core/effects/effect.h"
+#include "core/enums.h"
 
 namespace core {
 

@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 
+#include "core/effects/effect.h"
+#include "core/effects/effect_registry.h"
 #include "engine/graphics/renderer.h"
 #include "engine/util/asset_manager.h"
 #include "engine/util/logger.h"
 #include "pugixml.hpp"
-#include "core/effects/effect.h"
-#include "core/effects/effect_registry.h"
 
 namespace core {
 
@@ -67,43 +67,73 @@ CreatureType StringToCreatureType(const std::string& str) {
   if (str == "Treefolk") return CreatureType::Treefolk;
   if (str == "Beast") return CreatureType::Beast;
   if (str == "Placeholder") return CreatureType::Placeholder;
-  if (str == "Spell") return CreatureType::Placeholder; // Map Spell subtype to Placeholder for now
+  if (str == "Spell")
+    return CreatureType::Placeholder;  // Map Spell subtype to Placeholder for
+                                       // now
   return CreatureType::None;
 }
 
 std::string CreatureTypeToString(CreatureType type) {
   switch (type) {
-    case CreatureType::Human: return "Human";
-    case CreatureType::Soldier: return "Soldier";
-    case CreatureType::Knight: return "Knight";
-    case CreatureType::Cleric: return "Cleric";
-    case CreatureType::Elf: return "Elf";
-    case CreatureType::Warrior: return "Warrior";
-    case CreatureType::Dwarf: return "Dwarf";
-    case CreatureType::Elemental: return "Elemental";
-    case CreatureType::Cat: return "Cat";
-    case CreatureType::Wizard: return "Wizard";
-    case CreatureType::Angel: return "Angel";
-    case CreatureType::Avatar: return "Avatar";
-    case CreatureType::Merfolk: return "Merfolk";
-    case CreatureType::Rogue: return "Rogue";
-    case CreatureType::Sphinx: return "Sphinx";
-    case CreatureType::Zombie: return "Zombie";
-    case CreatureType::Vampire: return "Vampire";
-    case CreatureType::Demon: return "Demon";
-    case CreatureType::Goblin: return "Goblin";
-    case CreatureType::Minotaur: return "Minotaur";
-    case CreatureType::Dragon: return "Dragon";
-    case CreatureType::Druid: return "Druid";
-    case CreatureType::Archer: return "Archer";
-    case CreatureType::Treefolk: return "Treefolk";
-    case CreatureType::Beast: return "Beast";
-    case CreatureType::Placeholder: return "Placeholder";
-    default: return "";
+    case CreatureType::Human:
+      return "Human";
+    case CreatureType::Soldier:
+      return "Soldier";
+    case CreatureType::Knight:
+      return "Knight";
+    case CreatureType::Cleric:
+      return "Cleric";
+    case CreatureType::Elf:
+      return "Elf";
+    case CreatureType::Warrior:
+      return "Warrior";
+    case CreatureType::Dwarf:
+      return "Dwarf";
+    case CreatureType::Elemental:
+      return "Elemental";
+    case CreatureType::Cat:
+      return "Cat";
+    case CreatureType::Wizard:
+      return "Wizard";
+    case CreatureType::Angel:
+      return "Angel";
+    case CreatureType::Avatar:
+      return "Avatar";
+    case CreatureType::Merfolk:
+      return "Merfolk";
+    case CreatureType::Rogue:
+      return "Rogue";
+    case CreatureType::Sphinx:
+      return "Sphinx";
+    case CreatureType::Zombie:
+      return "Zombie";
+    case CreatureType::Vampire:
+      return "Vampire";
+    case CreatureType::Demon:
+      return "Demon";
+    case CreatureType::Goblin:
+      return "Goblin";
+    case CreatureType::Minotaur:
+      return "Minotaur";
+    case CreatureType::Dragon:
+      return "Dragon";
+    case CreatureType::Druid:
+      return "Druid";
+    case CreatureType::Archer:
+      return "Archer";
+    case CreatureType::Treefolk:
+      return "Treefolk";
+    case CreatureType::Beast:
+      return "Beast";
+    case CreatureType::Placeholder:
+      return "Placeholder";
+    default:
+      return "";
   }
 }
 
-void ParseTargetFilter(pugi::xml_node filter_node, effects::TargetFilter& filter) {
+void ParseTargetFilter(pugi::xml_node filter_node,
+                       effects::TargetFilter& filter) {
   if (filter_node.empty()) return;
   filter.is_required = filter_node.attribute("required").as_bool(true);
   filter.allow_creature = filter_node.attribute("allow_creature").as_bool(true);
@@ -111,12 +141,18 @@ void ParseTargetFilter(pugi::xml_node filter_node, effects::TargetFilter& filter
   filter.allow_enemy = filter_node.attribute("allow_enemy").as_bool(true);
   filter.allow_self = filter_node.attribute("allow_self").as_bool(true);
 
-  if (filter_node.attribute("max_cost")) filter.max_cost = filter_node.attribute("max_cost").as_int();
-  if (filter_node.attribute("min_cost")) filter.min_cost = filter_node.attribute("min_cost").as_int();
-  if (filter_node.attribute("max_power")) filter.max_power = filter_node.attribute("max_power").as_int();
-  if (filter_node.attribute("min_power")) filter.min_power = filter_node.attribute("min_power").as_int();
-  if (filter_node.attribute("max_health")) filter.max_health = filter_node.attribute("max_health").as_int();
-  if (filter_node.attribute("min_health")) filter.min_health = filter_node.attribute("min_health").as_int();
+  if (filter_node.attribute("max_cost"))
+    filter.max_cost = filter_node.attribute("max_cost").as_int();
+  if (filter_node.attribute("min_cost"))
+    filter.min_cost = filter_node.attribute("min_cost").as_int();
+  if (filter_node.attribute("max_power"))
+    filter.max_power = filter_node.attribute("max_power").as_int();
+  if (filter_node.attribute("min_power"))
+    filter.min_power = filter_node.attribute("min_power").as_int();
+  if (filter_node.attribute("max_health"))
+    filter.max_health = filter_node.attribute("max_health").as_int();
+  if (filter_node.attribute("min_health"))
+    filter.min_health = filter_node.attribute("min_health").as_int();
 }
 
 }  // namespace
@@ -166,14 +202,17 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       card.name = card_node.child("Name").text().as_string();
 
       // Parse Subtypes and generate TypeLine
-      for (pugi::xml_node subtype_node = card_node.child("Subtype"); !subtype_node.empty();
+      for (pugi::xml_node subtype_node = card_node.child("Subtype");
+           !subtype_node.empty();
            subtype_node = subtype_node.next_sibling("Subtype")) {
-        card.subtypes.push_back(StringToCreatureType(subtype_node.text().as_string()));
+        card.subtypes.push_back(
+            StringToCreatureType(subtype_node.text().as_string()));
       }
 
       // Backward compatibility for <Subtypes> (comma separated)
       if (card.subtypes.empty()) {
-        std::string subtypes_str = card_node.child("Subtypes").text().as_string();
+        std::string subtypes_str =
+            card_node.child("Subtypes").text().as_string();
         if (!subtypes_str.empty()) {
           std::stringstream ss(subtypes_str);
           std::string subtype;
@@ -181,7 +220,8 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
             size_t first = subtype.find_first_not_of(' ');
             if (std::string::npos != first) {
               size_t last = subtype.find_last_not_of(' ');
-              card.subtypes.push_back(StringToCreatureType(subtype.substr(first, (last - first + 1))));
+              card.subtypes.push_back(StringToCreatureType(
+                  subtype.substr(first, (last - first + 1))));
             }
           }
         }
@@ -199,20 +239,24 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
       }
 
       card.type = StringToCardType(card_node.child("Type").text().as_string());
-      card.color = StringToCardColor(card_node.child("Color").text().as_string());
+      card.color =
+          StringToCardColor(card_node.child("Color").text().as_string());
       card.cost = card_node.child("Cost").text().as_int();
       card.power = card_node.child("Power").text().as_int();
       card.health = card_node.child("Health").text().as_int();
 
       // Parse Effects
-      for (pugi::xml_node effect_node = card_node.child("Effect"); !effect_node.empty();
+      for (pugi::xml_node effect_node = card_node.child("Effect");
+           !effect_node.empty();
            effect_node = effect_node.next_sibling("Effect")) {
         CardEffectDefinition effect_def;
-        effect_def.trigger = StringToTrigger(effect_node.attribute("trigger").as_string());
+        effect_def.trigger =
+            StringToTrigger(effect_node.attribute("trigger").as_string());
         effect_def.effect_type = effect_node.attribute("type").as_string();
 
         // Parse Params
-        for (pugi::xml_node param_node = effect_node.child("Param"); !param_node.empty();
+        for (pugi::xml_node param_node = effect_node.child("Param");
+             !param_node.empty();
              param_node = param_node.next_sibling("Param")) {
           effect_def.params[param_node.attribute("name").as_string()] =
               param_node.attribute("value").as_string();
@@ -231,22 +275,36 @@ bool CardRegistry::LoadCardsFromDirectory(const std::string& directory,
         // Auto-determine frame path based on color and type
         std::string color_str = "colorless";
         switch (card.color) {
-          case CardColor::White: color_str = "white"; break;
-          case CardColor::Blue: color_str = "blue"; break;
-          case CardColor::Black: color_str = "black"; break;
-          case CardColor::Red: color_str = "red"; break;
-          case CardColor::Green: color_str = "green"; break;
-          default: color_str = "gray"; break;
+          case CardColor::White:
+            color_str = "white";
+            break;
+          case CardColor::Blue:
+            color_str = "blue";
+            break;
+          case CardColor::Black:
+            color_str = "black";
+            break;
+          case CardColor::Red:
+            color_str = "red";
+            break;
+          case CardColor::Green:
+            color_str = "green";
+            break;
+          default:
+            color_str = "gray";
+            break;
         }
-        std::string type_suffix = (card.type == CardType::Creature) ? "creature" : "noncreature";
+        std::string type_suffix =
+            (card.type == CardType::Creature) ? "creature" : "noncreature";
         frame_path = color_str + "_" + type_suffix + "_frame.png";
       }
 
       std::string art_path = card_node.child("Art").text().as_string();
 
       // Art path resolution:
-      // If art_path does not contain a '.' (no extension) and no '/' (no subdirectory),
-      // we assume it's a new-style reference to assets/cards/art/ and append .png
+      // If art_path does not contain a '.' (no extension) and no '/' (no
+      // subdirectory), we assume it's a new-style reference to
+      // assets/cards/art/ and append .png
       if (art_path.find('.') == std::string::npos &&
           art_path.find('/') == std::string::npos &&
           art_path.find('\\') == std::string::npos) {
@@ -302,11 +360,20 @@ std::string CardRegistry::GenerateDescription(
 
       if (type == CardType::Creature) {
         switch (effect_def.trigger) {
-          case Trigger::OnPlay: prefix = "Battlecry: "; break;
-          case Trigger::OnDeath: prefix = "Deathrattle: "; break;
-          case Trigger::AtStartOfTurn: prefix = "At the start of your turn, "; break;
-          case Trigger::AtEndOfTurn: prefix = "At the end of your turn, "; break;
-          default: break;
+          case Trigger::OnPlay:
+            prefix = "Battlecry: ";
+            break;
+          case Trigger::OnDeath:
+            prefix = "Deathrattle: ";
+            break;
+          case Trigger::AtStartOfTurn:
+            prefix = "At the start of your turn, ";
+            break;
+          case Trigger::AtEndOfTurn:
+            prefix = "At the end of your turn, ";
+            break;
+          default:
+            break;
         }
       } else if (type == CardType::Spell) {
         // Usually no prefix for spells unless they are end of turn etc

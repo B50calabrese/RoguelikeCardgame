@@ -112,8 +112,8 @@ void NewRunScene::HandleInput() {
 
     // Check colors
     for (int i = 0; i < static_cast<int>(colors_.size()); ++i) {
-      if (core::util::PointInRect(pixel_mouse_pos, colors_[i].pos,
-                                  kColorSize, true)) {
+      if (core::util::PointInRect(pixel_mouse_pos, colors_[i].pos, kColorSize,
+                                  true)) {
         auto it = std::find(selected_color_indices_.begin(),
                             selected_color_indices_.end(), i);
         if (it != selected_color_indices_.end()) {
@@ -163,10 +163,9 @@ void NewRunScene::OnRender() {
 
   // Render Colors
   for (int i = 0; i < static_cast<int>(colors_.size()); ++i) {
-    bool selected =
-        std::find(selected_color_indices_.begin(),
-                  selected_color_indices_.end(),
-                  i) != selected_color_indices_.end();
+    bool selected = std::find(selected_color_indices_.begin(),
+                              selected_color_indices_.end(),
+                              i) != selected_color_indices_.end();
     glm::vec4 color = selected ? colors_[i].highlight_color : colors_[i].color;
 
     if (selected) {

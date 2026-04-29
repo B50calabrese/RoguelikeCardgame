@@ -1,13 +1,14 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_SCENES_NEW_RUN_SCENE_H_
 #define DECK_BUILDER_GAME_INCLUDE_SCENES_NEW_RUN_SCENE_H_
 
-#include <vector>
-#include <memory>
-#include <string>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
-#include "engine/scene/scene.h"
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "core/graphics/ui_button.h"
+#include "engine/scene/scene.h"
 
 namespace scenes {
 

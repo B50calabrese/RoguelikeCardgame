@@ -1,5 +1,10 @@
 #include <memory>
 
+#include "core/card_registry.h"
+#include "core/effects/effect_registry.h"
+#include "core/effects/types/damage_effect.h"
+#include "core/effects/types/draw_effect.h"
+#include "core/effects/types/stat_modify_effect.h"
 #include "core/game_config.h"
 #include "engine/core/application.h"
 #include "engine/core/engine.h"
@@ -7,12 +12,6 @@
 #include "engine/scene/scene_manager.h"
 #include "engine/util/logger.h"
 #include "scenes/main_menu_scene.h"
-
-#include "core/card_registry.h"
-#include "core/effects/effect_registry.h"
-#include "core/effects/types/damage_effect.h"
-#include "core/effects/types/draw_effect.h"
-#include "core/effects/types/stat_modify_effect.h"
 
 class DeckBuilderApp : public engine::Application {
  public:
@@ -25,9 +24,15 @@ class DeckBuilderApp : public engine::Application {
     engine::graphics::TextRenderer::Get().LoadFont("default", "arial.ttf", 18);
 
     // Register Effects
-    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() { return std::make_unique<core::effects::types::DamageEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() { return std::make_unique<core::effects::types::DrawEffect>(); });
-    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() { return std::make_unique<core::effects::types::StatModifyEffect>(); });
+    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() {
+      return std::make_unique<core::effects::types::DamageEffect>();
+    });
+    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() {
+      return std::make_unique<core::effects::types::DrawEffect>();
+    });
+    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() {
+      return std::make_unique<core::effects::types::StatModifyEffect>();
+    });
 
     // Load Cards
     core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);
@@ -39,9 +44,7 @@ class DeckBuilderApp : public engine::Application {
 
   void OnUpdate(double delta_time_seconds) override {}
 
-  void OnShutdown() override {
-    LOG_INFO("Game cleaning up...");
-  }
+  void OnShutdown() override { LOG_INFO("Game cleaning up..."); }
 };
 
 // --- Entry Point ---

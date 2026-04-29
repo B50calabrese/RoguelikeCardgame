@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cmath>
-
 #include <glm/glm.hpp>
 
 #include "core/constants.h"
@@ -40,10 +39,10 @@ HandRenderer::CalculateHandLayout(size_t card_count, glm::vec2 bounds_pos,
 
   float sagitta_factor = 0.0f;
   if (arc_angle_abs > 0.1f) {
-    sagitta_factor = (kBaseCardWidth * (static_cast<float>(card_count) - 1.0f) *
-                      (1.0f - overlap_factor) *
-                      std::tan(arc_radians_abs / 4.0f)) /
-                     2.0f;
+    sagitta_factor =
+        (kBaseCardWidth * (static_cast<float>(card_count) - 1.0f) *
+         (1.0f - overlap_factor) * std::tan(arc_radians_abs / 4.0f)) /
+        2.0f;
   }
 
   float scale_y = bounds_size.y / (kBaseCardHeight + sagitta_factor);
@@ -78,8 +77,7 @@ HandRenderer::CalculateHandLayout(size_t card_count, glm::vec2 bounds_pos,
     arc_center.y += (bounds_size.y - (card_height + sagitta)) * 0.5f;
   } else {
     arc_center = bounds_center - glm::vec2(0.0f, radius);  // radius is negative
-    arc_center.y -=
-        (bounds_size.y - (card_height + std::abs(sagitta))) * 0.5f;
+    arc_center.y -= (bounds_size.y - (card_height + std::abs(sagitta))) * 0.5f;
   }
 
   // 3. Populate Layout
@@ -92,9 +90,8 @@ HandRenderer::CalculateHandLayout(size_t card_count, glm::vec2 bounds_pos,
     float current_angle_rad = glm::radians(current_angle_deg);
 
     glm::vec2 card_pos =
-        arc_center +
-        glm::vec2(std::cos(current_angle_rad) * radius,
-                  std::sin(current_angle_rad) * radius);
+        arc_center + glm::vec2(std::cos(current_angle_rad) * radius,
+                               std::sin(current_angle_rad) * radius);
 
     float card_rotation = current_angle_deg - 90.0f;
     layout[i] = {card_pos, glm::vec2(scale), card_rotation};

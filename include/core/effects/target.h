@@ -7,7 +7,7 @@ namespace core::effects {
  * @brief Represents a target in the game.
  */
 struct Target {
-  enum class Type { Player, Enemy, Creature, CardInHand, CardInGraveyard };
+  enum class Type { kPlayer, kEnemy, kCreature, kCardInHand, kCardInGraveyard };
   Type type;
   int id;  // Player ID or CardInstance ID
 };

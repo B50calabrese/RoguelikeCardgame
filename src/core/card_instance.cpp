@@ -1,4 +1,5 @@
 #include "core/card_instance.h"
+
 #include "core/card_data.h"
 
 namespace core {
