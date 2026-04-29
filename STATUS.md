@@ -32,6 +32,13 @@
 - **Iconic Creature Card Art**: Implemented unique art for the five high-level iconic creatures.
     - **New Assets**: Added art for `009_angel_of_justice.png`, `029_sphinx_of_intellect.png`, `049_demon_of_the_damned.png`, `069_dragon_of_the_north.png`, and `089_beast_of_ole.png`.
     - **XML Updates**: Updated the `<Art>` tags in the corresponding card XML files to transition from placeholders to specific iconic art.
+- **Non-Creature Spell Functionality**: Implemented the foundational systems for playing and resolving spell cards.
+    - **Timed Modifiers**: Enhanced `CardInstance` to support temporary stat modifications (e.g., "until end of turn") alongside permanent ones, using a robust stat recalculation system.
+    - **Spell Resolution Pipeline**: Implemented a multi-stage resolution process: `PlayCardAction` -> `SpellVisualAction` -> `ResolveSpellAction`.
+    - **Visual Spell Animation**: Added a "floating" state in `CombatScene` where played spells move to the center-left and pause game logic for 1.5 seconds.
+    - **Manual Spell Targeting**: Enhanced `HandController` to support manual targeting for spells. Players now drag a cyan line to creatures or players to select targets.
+    - **New Effects & Actions**: Added `HealEffect`, `ModifyMaxManaEffect`, and updated `StatModifyEffect` to support durations.
+    - **Demo Spell Set**: Created five new demo spells: Holy Light (White), Arcane Intellect (Blue), Weakness (Black), Fireblast (Red), and Growth Spurt (Green).
 
 ## Technical Status Report
 

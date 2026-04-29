@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+#include "core/card_instance.h"
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
 #include "core/state/game_state.h"
@@ -11,10 +12,13 @@ namespace core::effects::actions {
 
 class ModifyStatsAction : public ActionBase {
  public:
-  ModifyStatsAction(int card_instance_id, int power_change, int health_change)
+  ModifyStatsAction(int card_instance_id, int power_change, int health_change,
+                    core::ModifierDuration duration =
+                        core::ModifierDuration::Permanent)
       : card_instance_id_(card_instance_id),
         power_change_(power_change),
-        health_change_(health_change) {}
+        health_change_(health_change),
+        duration_(duration) {}
 
   RuleResult Validate(const GameState& state) const override {
     return {true, "Modify allowed", false};
@@ -28,6 +32,7 @@ class ModifyStatsAction : public ActionBase {
   int card_instance_id_;
   int power_change_;
   int health_change_;
+  core::ModifierDuration duration_;
 };
 
 }  // namespace core::effects::actions

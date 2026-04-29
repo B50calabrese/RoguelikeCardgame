@@ -15,6 +15,14 @@ RuleResult EndTurnAction::Validate(const state::GameState& state) const {
 }
 
 void EndTurnAction::Apply(state::GameState& state) const {
+  // Clear "UntilEndOfTurn" modifiers for all creatures on board
+  for (auto& inst : state.player->board) {
+    inst->ClearModifiers(core::ModifierDuration::UntilEndOfTurn);
+  }
+  for (auto& inst : state.enemy->board) {
+    inst->ClearModifiers(core::ModifierDuration::UntilEndOfTurn);
+  }
+
   // Switch active player
   state.current_turn_player_id =
       (state.current_turn_player_id == state.player->id) ? state.enemy->id

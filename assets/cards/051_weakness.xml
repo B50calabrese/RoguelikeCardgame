@@ -1,0 +1,14 @@
+<Card id="51">
+    <Name>Weakness</Name>
+    <Type>Spell</Type>
+    <Subtype>Spell</Subtype>
+    <Color>Black</Color>
+    <Cost>1</Cost>
+    <Effect trigger="OnPlay" type="Buff">
+        <Param name="power" value="-2" />
+        <Param name="health" value="-2" />
+        <Param name="duration" value="UntilEndOfTurn" />
+        <TargetFilter required="true" allow_creature="true" />
+    </Effect>
+    <Art>placeholder</Art>
+</Card>

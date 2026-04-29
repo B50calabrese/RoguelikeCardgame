@@ -1,0 +1,11 @@
+<Card id="91">
+    <Name>Growth Spurt</Name>
+    <Type>Spell</Type>
+    <Subtype>Spell</Subtype>
+    <Color>Green</Color>
+    <Cost>1</Cost>
+    <Effect trigger="OnPlay" type="ModifyMaxMana">
+        <Param name="amount" value="1" />
+    </Effect>
+    <Art>placeholder</Art>
+</Card>

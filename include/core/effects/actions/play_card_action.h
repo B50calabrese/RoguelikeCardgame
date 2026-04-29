@@ -7,6 +7,7 @@
 #include "core/card_data.h"
 #include "core/effects/actions/action_base.h"
 #include "core/effects/actions/resolve_spell_action.h"
+#include "core/effects/actions/spell_visual_action.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/event_bus.h"
 #include "core/effects/game_event.h"
@@ -51,7 +52,9 @@ class PlayCardAction : public ActionBase {
       } else {
         (*it)->location = CardLocation::Stack;
         p.stack.push_back(std::move(*it));
-        // Queue resolution
+        // Queue visual animation then resolution
+        EffectResolver::Get().QueueAction(
+            std::make_shared<SpellVisualAction>(card_id));
         EffectResolver::Get().QueueAction(std::make_shared<ResolveSpellAction>(
             player_id_, card_id, targets_));
       }

@@ -1,0 +1,12 @@
+<Card id="11">
+    <Name>Holy Light</Name>
+    <Type>Spell</Type>
+    <Subtype>Spell</Subtype>
+    <Color>White</Color>
+    <Cost>1</Cost>
+    <Effect trigger="OnPlay" type="Heal">
+        <Param name="amount" value="3" />
+        <TargetFilter required="true" allow_player="true" allow_enemy="true" allow_creature="true" />
+    </Effect>
+    <Art>placeholder</Art>
+</Card>
