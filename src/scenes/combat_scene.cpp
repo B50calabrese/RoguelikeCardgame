@@ -12,6 +12,7 @@
 #include "core/constants.h"
 #include "core/effects/actions/creature_attack_action.h"
 #include "core/effects/actions/play_card_action.h"
+#include "core/effects/actions/spell_visual_action.h"
 #include "core/effects/actions/start_turn_action.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/event_bus.h"
@@ -171,10 +172,12 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
 
   // Process game logic
   core::effects::EffectResolver::Get().ProcessQueue(game_state_);
+  UpdateSpellVisuals(delta_time_seconds);
   enemy_ai_->Update(delta_time_seconds, game_state_);
   battle_ui_.Update(delta_time_seconds, game_state_);
 
-  player_hand_->Update(delta_time_seconds, game_state_);
+  player_hand_->Update(delta_time_seconds, game_state_,
+                       &combat_controller_->hitbox_manager());
   enemy_hand_->Update(delta_time_seconds, game_state_);
 
   combat_controller_->Update(delta_time_seconds, game_state_, kIconTop,
@@ -248,6 +251,8 @@ void CombatScene::OnRender() {
   player_hand_->Render();
   enemy_hand_->Render();
 
+  RenderSpellVisuals();
+
   DrawTargetingLine();
 
   engine::graphics::utils::RenderQueue::Default().Flush();
@@ -276,6 +281,58 @@ void CombatScene::DrawTargetingLine() {
     cmd.z_order = combat::kTargetingLineZ;
 
     queue.Submit(cmd);
+  }
+}
+
+void CombatScene::UpdateSpellVisuals(float delta_time_seconds) {
+  // Check for new SpellVisualAction
+  auto current_action = core::effects::EffectResolver::Get().current_action();
+  if (current_action) {
+    auto spell_action =
+        std::dynamic_pointer_cast<core::effects::actions::SpellVisualAction>(
+            current_action);
+    if (spell_action) {
+      int inst_id = spell_action->card_instance_id();
+      bool already_active = std::any_of(
+          active_spell_visuals_.begin(), active_spell_visuals_.end(),
+          [inst_id](const auto& v) { return v.instance_id == inst_id; });
+
+      if (!already_active) {
+        auto& config = core::GameConfig::Get();
+        ActiveSpellVisual visual;
+        visual.instance_id = inst_id;
+        visual.elapsed_time = 0.0f;
+        // Start from a reasonable middle position or hand?
+        // Let's just pop it in the middle for now.
+        visual.current_pos = {config.window_width * 0.3f, config.window_height * 0.5f};
+        active_spell_visuals_.push_back(visual);
+      }
+    }
+  }
+
+  // Update active visuals
+  for (auto it = active_spell_visuals_.begin();
+       it != active_spell_visuals_.end();) {
+    it->elapsed_time += delta_time_seconds;
+
+    if (it->elapsed_time >= 1.5f) {
+      core::effects::VisualBlocker::Get().RemoveBlocker(
+          "SpellVisual_" + std::to_string(it->instance_id));
+      it = active_spell_visuals_.erase(it);
+    } else {
+      ++it;
+    }
+  }
+}
+
+void CombatScene::RenderSpellVisuals() {
+  for (const auto& visual : active_spell_visuals_) {
+    core::CardInstance* inst = game_state_.FindCardInstance(visual.instance_id);
+    if (inst) {
+      // Float to the left of center
+      core::graphics::CardRenderer::RenderCard(
+          *inst->data, visual.current_pos, 0.8f, 1.0f, 0.0f, combat::kHandZ + 500.0f);
+    }
   }
 }
 

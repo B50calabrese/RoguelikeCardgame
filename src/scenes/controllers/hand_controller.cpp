@@ -13,6 +13,7 @@
 #include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
 #include "core/util/math_util.h"
+#include "engine/graphics/utils/render_queue.h"
 #include "engine/input/input_manager.h"
 #include "engine/util/logger.h"
 #include "scenes/combat/combat_ui_constants.h"
@@ -28,7 +29,8 @@ HandController::HandController(int player_id)
       held_card_index_(std::nullopt) {}
 
 void HandController::Update(float delta_time_seconds,
-                            core::state::GameState& state) {
+                            core::state::GameState& state,
+                            combat::HitboxManager* hitbox_manager) {
   const auto& hand_state =
       (player_id_ == state.player->id) ? state.player->hand : state.enemy->hand;
 
@@ -39,7 +41,111 @@ void HandController::Update(float delta_time_seconds,
 
   SyncHandWithState(hand_state);
   if (is_interactive_) {
-    HandleInteraction(state);
+    auto& input = engine::InputManager::Get();
+    glm::vec2 mouse_pos = input.mouse_screen_pos();
+    bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
+
+    hovered_card_index_ = std::nullopt;
+
+    // 1. Handle Held Card
+    if (held_card_index_) {
+      if (*held_card_index_ >= hand_visuals_.size()) {
+        held_card_index_ = std::nullopt;
+        is_picking_target_ = false;
+        return;
+      }
+      VisualCard& held_card = hand_visuals_[*held_card_index_];
+
+      if (!is_picking_target_) {
+        held_card.target_transform.position = mouse_pos;
+        held_card.target_transform.scale = glm::vec2(combat::kCardHeldScale);
+        held_card.target_transform.rotation = 0.0f;
+      }
+
+      if (clicked) {
+        if (is_picking_target_) {
+          std::optional<core::effects::Target> selected_target =
+              FindTargetAt(state, mouse_pos, hitbox_manager);
+
+          if (selected_target && current_target_filter_.IsValid(
+                                     state, player_id_, *selected_target)) {
+            core::effects::EffectResolver::Get().QueueAction(
+                std::make_shared<core::effects::actions::PlayCardAction>(
+                    player_id_, held_card.instance_id,
+                    std::vector<core::effects::Target>{*selected_target}));
+
+            held_card.is_held = false;
+            held_card_index_ = std::nullopt;
+            is_picking_target_ = false;
+          } else {
+            // Cancel play if click was not on a valid target
+            is_picking_target_ = false;
+            held_card.is_held = false;
+            held_card_index_ = std::nullopt;
+          }
+          return;
+        }
+
+        bool in_play_zone = false;
+        if (play_zone_) {
+          in_play_zone =
+              core::util::PointInRect(mouse_pos, {play_zone_->x, play_zone_->y},
+                                      {play_zone_->z, play_zone_->w}, false);
+        }
+
+        if (in_play_zone) {
+          core::CardInstance* inst =
+              state.FindCardInstance(held_card.instance_id);
+          if (inst) {
+            bool needs_target = false;
+            for (const auto& effect_def : inst->data->effects) {
+              if (effect_def.trigger == core::Trigger::OnPlay &&
+                  effect_def.filter.is_required) {
+                needs_target = true;
+                current_target_filter_ = effect_def.filter;
+                break;
+              }
+            }
+
+            if (needs_target) {
+              is_picking_target_ = true;
+              // Freeze card at a nice "casting" position
+              auto& config = core::GameConfig::Get();
+              held_card.target_transform.position = glm::vec2(
+                  config.window_width * 0.5f, config.window_height * 0.4f);
+              return;
+            } else {
+              core::effects::EffectResolver::Get().QueueAction(
+                  std::make_shared<core::effects::actions::PlayCardAction>(
+                      player_id_, held_card.instance_id,
+                      std::vector<core::effects::Target>{}));
+            }
+          }
+        }
+
+        held_card.is_held = false;
+        held_card_index_ = std::nullopt;
+      }
+      return;
+    }
+
+    // 2. Hover detection (top-to-bottom)
+    for (int i = static_cast<int>(hand_visuals_.size()) - 1; i >= 0; --i) {
+      const auto& vc = hand_visuals_[i];
+      glm::vec2 size =
+          core::graphics::kBaseCardSize * vc.current_transform.scale.x;
+      if (core::util::PointInRect(mouse_pos, vc.current_transform.position, size,
+                                  true)) {
+        hovered_card_index_ = i;
+        break;
+      }
+    }
+
+    // 3. Handle Click to Hold
+    if (clicked && hovered_card_index_) {
+      held_card_index_ = hovered_card_index_;
+      hand_visuals_[*held_card_index_].is_held = true;
+    }
   }
   UpdateLayout();
   AnimateCards(delta_time_seconds);
@@ -81,87 +187,6 @@ void HandController::SyncHandWithState(
   }
 }
 
-void HandController::HandleInteraction(core::state::GameState& state) {
-  auto& input = engine::InputManager::Get();
-  glm::vec2 mouse_pos = input.mouse_screen_pos();
-  bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
-
-  hovered_card_index_ = std::nullopt;
-
-  // 1. Handle Held Card
-  if (held_card_index_) {
-    if (*held_card_index_ >= hand_visuals_.size()) {
-      held_card_index_ = std::nullopt;
-      return;
-    }
-    VisualCard& held_card = hand_visuals_[*held_card_index_];
-    held_card.target_transform.position = mouse_pos;
-    held_card.target_transform.scale = glm::vec2(combat::kCardHeldScale);
-    held_card.target_transform.rotation = 0.0f;
-
-    if (clicked) {
-      bool can_play = true;
-      if (play_zone_) {
-        can_play =
-            core::util::PointInRect(mouse_pos, {play_zone_->x, play_zone_->y},
-                                    {play_zone_->z, play_zone_->w}, false);
-      }
-
-      if (can_play) {
-        // AUTO-PICKER: Pick first legal target for effects that require one.
-        // This is a placeholder for a full UI target selection system.
-        std::vector<core::effects::Target> targets;
-
-        // Look for first OnPlay effect that needs targets
-        core::CardInstance* inst =
-            state.FindCardInstance(held_card.instance_id);
-        if (inst) {
-          for (const auto& effect_def : inst->data->effects) {
-            if (effect_def.trigger == core::Trigger::OnPlay &&
-                effect_def.filter.is_required) {
-              // Check enemy first, then player
-              if (effect_def.filter.IsValid(
-                      state, 0, {core::effects::Target::Type::kEnemy, 1})) {
-                targets.push_back({core::effects::Target::Type::kEnemy, 1});
-              } else if (effect_def.filter.IsValid(
-                             state, 0,
-                             {core::effects::Target::Type::kPlayer, 0})) {
-                targets.push_back({core::effects::Target::Type::kPlayer, 0});
-              }
-              break;
-            }
-          }
-        }
-
-        core::effects::EffectResolver::Get().QueueAction(
-            std::make_shared<core::effects::actions::PlayCardAction>(
-                player_id_, held_card.instance_id, targets));
-      }
-
-      held_card.is_held = false;
-      held_card_index_ = std::nullopt;
-    }
-    return;
-  }
-
-  // 2. Hover detection (top-to-bottom)
-  for (int i = static_cast<int>(hand_visuals_.size()) - 1; i >= 0; --i) {
-    const auto& vc = hand_visuals_[i];
-    glm::vec2 size =
-        core::graphics::kBaseCardSize * vc.current_transform.scale.x;
-    if (core::util::PointInRect(mouse_pos, vc.current_transform.position, size,
-                                true)) {
-      hovered_card_index_ = i;
-      break;
-    }
-  }
-
-  // 3. Handle Click to Hold
-  if (clicked && hovered_card_index_) {
-    held_card_index_ = hovered_card_index_;
-    hand_visuals_[*held_card_index_].is_held = true;
-  }
-}
 
 void HandController::UpdateLayout() {
   std::vector<size_t> in_hand_indices;
@@ -228,7 +253,60 @@ void HandController::AnimateCards(float delta_time_seconds) {
   }
 }
 
+void HandController::DrawTargetingLine() {
+  if (is_picking_target_ && held_card_index_) {
+    const auto& held_card = hand_visuals_[*held_card_index_];
+    glm::vec2 start_pos = held_card.current_transform.position;
+    glm::vec2 end_pos = engine::InputManager::Get().mouse_screen_pos();
+
+    auto& queue = engine::graphics::utils::RenderQueue::Default();
+    engine::graphics::utils::RenderCommand cmd;
+    cmd.shape_type = engine::graphics::utils::ShapeType::kLine;
+    cmd.position = start_pos;
+    cmd.size = end_pos;
+    cmd.color = {0.0f, 1.0f, 1.0f, 1.0f}; // Cyan for spells
+    cmd.thickness = 5.0f;
+    cmd.z_order = combat::kTargetingLineZ;
+
+    queue.Submit(cmd);
+  }
+}
+
+std::optional<core::effects::Target> HandController::FindTargetAt(
+    const core::state::GameState& state, glm::vec2 mouse_pos,
+    combat::HitboxManager* hitbox_manager) {
+  auto& config = core::GameConfig::Get();
+  float icon_size = config.window_width * 0.05f;
+  float icon_top = icon_size;
+
+  glm::vec2 enemy_health_pos = {
+      config.window_width * 0.5f,
+      config.window_height - icon_top + icon_size * 0.5f};
+  glm::vec2 player_health_pos = {config.window_width * 0.5f,
+                                 icon_top - icon_size * 0.5f};
+
+  if (core::util::PointInRect(mouse_pos, enemy_health_pos,
+                              {icon_size, icon_size}, true)) {
+    return core::effects::Target{core::effects::Target::Type::kEnemy, 1};
+  } else if (core::util::PointInRect(mouse_pos, player_health_pos,
+                                    {icon_size, icon_size}, true)) {
+    return core::effects::Target{core::effects::Target::Type::kPlayer, 0};
+  }
+
+  // Check creatures on board using HitboxManager if available
+  if (hitbox_manager) {
+    if (auto hitbox = hitbox_manager->GetHitboxAt(mouse_pos)) {
+      return core::effects::Target{core::effects::Target::Type::kCreature,
+                                   hitbox->instance_id};
+    }
+  }
+
+  return std::nullopt;
+}
+
 void HandController::Render() {
+  DrawTargetingLine();
+
   // Render cards. Hovered and Held cards should be rendered last.
   std::optional<size_t> last_to_render = std::nullopt;
   if (held_card_index_) {

@@ -83,6 +83,9 @@ class EffectResolver {
   /** @brief Returns the number of actions in the queue. */
   size_t queue_size() const { return action_queue_.size(); }
 
+  /** @brief Returns the current action being processed. */
+  Action current_action() const { return current_action_; }
+
  private:
   EffectResolver() = default;
   std::deque<Action> action_queue_;

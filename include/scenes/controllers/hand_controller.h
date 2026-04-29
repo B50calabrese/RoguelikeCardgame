@@ -8,6 +8,7 @@
 #include "core/card_data.h"
 #include "core/state/game_state.h"
 #include "engine/ecs/components/transform.h"
+#include "scenes/combat/hitbox_manager.h"
 
 namespace scenes::controllers {
 
@@ -34,7 +35,8 @@ class HandController {
  public:
   HandController(int player_id);
 
-  void Update(float delta_time_seconds, core::state::GameState& state);
+  void Update(float delta_time_seconds, core::state::GameState& state,
+              combat::HitboxManager* hitbox_manager = nullptr);
   void Render();
 
   void SetBounds(glm::vec2 pos, glm::vec2 size) {
@@ -51,12 +53,18 @@ class HandController {
   }
   std::optional<size_t> held_card_index() const { return held_card_index_; }
 
+  bool is_picking_target() const { return is_picking_target_; }
+
  private:
   void SyncHandWithState(
       const std::vector<std::unique_ptr<core::CardInstance>>& hand_state);
   void HandleInteraction(core::state::GameState& state);
   void UpdateLayout();
   void AnimateCards(float delta_time_seconds);
+  void DrawTargetingLine();
+  std::optional<core::effects::Target> FindTargetAt(
+      const core::state::GameState& state, glm::vec2 mouse_pos,
+      combat::HitboxManager* hitbox_manager);
 
   int player_id_;
   glm::vec2 bounds_pos_;
@@ -69,6 +77,9 @@ class HandController {
   std::vector<VisualCard> hand_visuals_;
   std::optional<size_t> hovered_card_index_;
   std::optional<size_t> held_card_index_;
+
+  bool is_picking_target_ = false;
+  core::effects::TargetFilter current_target_filter_;
 };
 
 }  // namespace scenes::controllers

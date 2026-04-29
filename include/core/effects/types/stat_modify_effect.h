@@ -22,6 +22,7 @@ class StatModifyEffect : public Effect {
 
     int power = 0;
     int health = 0;
+    core::ModifierDuration duration = core::ModifierDuration::Permanent;
 
     auto it_p = params.find("power");
     if (it_p != params.end()) power = std::stoi(it_p->second);
@@ -29,14 +30,20 @@ class StatModifyEffect : public Effect {
     auto it_h = params.find("health");
     if (it_h != params.end()) health = std::stoi(it_h->second);
 
+    auto it_d = params.find("duration");
+    if (it_d != params.end() && it_d->second == "UntilEndOfTurn") {
+      duration = core::ModifierDuration::UntilEndOfTurn;
+    }
+
     actions.push_back(std::make_shared<actions::ModifyStatsAction>(
-        targets[0].id, power, health));
+        targets[0].id, power, health, duration));
     return actions;
   }
 
   std::string GetDescription(const EffectParams& params) const override {
     int power = 0;
     int health = 0;
+    bool end_of_turn = false;
 
     auto it_p = params.find("power");
     if (it_p != params.end()) power = std::stoi(it_p->second);
@@ -44,10 +51,20 @@ class StatModifyEffect : public Effect {
     auto it_h = params.find("health");
     if (it_h != params.end()) health = std::stoi(it_h->second);
 
+    auto it_d = params.find("duration");
+    if (it_d != params.end() && it_d->second == "UntilEndOfTurn") {
+      end_of_turn = true;
+    }
+
     std::string p_str = (power >= 0 ? "+" : "") + std::to_string(power);
     std::string h_str = (health >= 0 ? "+" : "") + std::to_string(health);
 
-    return "Give a creature " + p_str + "/" + h_str + ".";
+    std::string desc = "Give a creature " + p_str + "/" + h_str;
+    if (end_of_turn) {
+      desc += " until end of turn";
+    }
+    desc += ".";
+    return desc;
   }
 };
 

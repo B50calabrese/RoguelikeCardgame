@@ -1,0 +1,11 @@
+<Card id="31">
+    <Name>Arcane Intellect</Name>
+    <Type>Spell</Type>
+    <Subtype>Spell</Subtype>
+    <Color>Blue</Color>
+    <Cost>1</Cost>
+    <Effect trigger="OnPlay" type="Draw">
+        <Param name="amount" value="1" />
+    </Effect>
+    <Art>placeholder</Art>
+</Card>
