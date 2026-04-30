@@ -48,6 +48,9 @@ class PlayCardAction : public ActionBase {
       int card_id = (*it)->instance_id;
       if ((*it)->data->type == CardType::Creature) {
         (*it)->location = CardLocation::Board;
+        if ((*it)->has_haste) {
+          (*it)->can_attack = true;
+        }
         p.board.push_back(std::move(*it));
       } else {
         (*it)->location = CardLocation::Stack;

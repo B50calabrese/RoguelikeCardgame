@@ -39,6 +39,34 @@ class AttackRule : public IRule {
               false};
     }
 
+    // Blocker check: if defender has any blockers, only blockers can be
+    // targeted.
+    PlayerState& defender =
+        (attacker->owner_id == state.player->id) ? *state.enemy : *state.player;
+
+    bool defender_has_blocker = false;
+    for (const auto& creature : defender.board) {
+      if (creature->is_blocker) {
+        defender_has_blocker = true;
+        break;
+      }
+    }
+
+    if (defender_has_blocker) {
+      bool target_is_blocker = false;
+      if (attack_action->target().type == Target::Type::kCreature) {
+        CardInstance* target_inst =
+            state.FindCardInstance(attack_action->target().id);
+        if (target_inst && target_inst->is_blocker) {
+          target_is_blocker = true;
+        }
+      }
+
+      if (!target_is_blocker) {
+        return {false, "Must attack a creature with Blocker", false};
+      }
+    }
+
     // Check that target is an opposing creature or player
     if (attack_action->target().type == Target::Type::kCreature) {
       CardInstance* target_inst =
