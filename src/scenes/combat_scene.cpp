@@ -217,6 +217,20 @@ void CombatScene::OnRender() {
           {0.5f, 0.5f});
     }
 
+    // Render Haste highlight (red)
+    if (game_state_.player->board[i]->has_haste) {
+      engine::graphics::PrimitiveRenderer::SubmitQuad(
+          pos, size * 1.05f, glm::vec4(1.0f, 0.0f, 0.0f, 0.4f), 0.0f,
+          {0.5f, 0.5f});
+    }
+
+    // Render Blocker highlight (green)
+    if (game_state_.player->board[i]->is_blocker) {
+      engine::graphics::PrimitiveRenderer::SubmitQuad(
+          pos, size * 1.05f, glm::vec4(0.0f, 1.0f, 0.0f, 0.4f), 0.0f,
+          {0.5f, 0.5f});
+    }
+
     // Render selection highlight
     if (combat_controller_->selected_attacker_id() == inst_id) {
       engine::graphics::PrimitiveRenderer::SubmitQuad(
@@ -242,6 +256,20 @@ void CombatScene::OnRender() {
         glm::vec2(card_base_width * scale, card_base_height * scale);
 
     combat_controller_->hitbox_manager().AddHitbox({inst_id, pos, size, true});
+
+    // Render Haste highlight (red)
+    if (game_state_.enemy->board[i]->has_haste) {
+      engine::graphics::PrimitiveRenderer::SubmitQuad(
+          pos, size * 1.05f, glm::vec4(1.0f, 0.0f, 0.0f, 0.4f), 0.0f,
+          {0.5f, 0.5f});
+    }
+
+    // Render Blocker highlight (green)
+    if (game_state_.enemy->board[i]->is_blocker) {
+      engine::graphics::PrimitiveRenderer::SubmitQuad(
+          pos, size * 1.05f, glm::vec4(0.0f, 1.0f, 0.0f, 0.4f), 0.0f,
+          {0.5f, 0.5f});
+    }
 
     core::graphics::CardRenderer::RenderCard(
         *game_state_.enemy->board[i]->data, pos, scale, 1.0f,

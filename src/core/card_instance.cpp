@@ -18,7 +18,18 @@ CardInstance::CardInstance(const CardData* card_data, int inst_id, int owner)
       permanent_power_offset(0),
       permanent_health_offset(0),
       has_attacked(false),
-      can_attack(false) {}
+      can_attack(false),
+      has_haste(false),
+      is_blocker(false) {
+  // Check for keywords in CardData effects
+  for (const auto& effect : data->effects) {
+    if (effect.effect_type == "Haste") {
+      has_haste = true;
+    } else if (effect.effect_type == "Blocker") {
+      is_blocker = true;
+    }
+  }
+}
 
 void CardInstance::RecalculateStats() {
   current_power = data->power + permanent_power_offset;

@@ -7,6 +7,7 @@
     <Cost>2</Cost>
     <Power>3</Power>
     <Health>2</Health>
+    <Effect type="Blocker" />
     <Frame>black_creature_frame.png</Frame>
     <Art>placeholder</Art>
 </Card>

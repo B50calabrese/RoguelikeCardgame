@@ -2,8 +2,10 @@
 
 #include "core/card_registry.h"
 #include "core/effects/effect_registry.h"
+#include "core/effects/types/blocker_effect.h"
 #include "core/effects/types/damage_effect.h"
 #include "core/effects/types/draw_effect.h"
+#include "core/effects/types/haste_effect.h"
 #include "core/effects/types/heal_effect.h"
 #include "core/effects/types/modify_max_mana_effect.h"
 #include "core/effects/types/stat_modify_effect.h"
@@ -40,6 +42,12 @@ class DeckBuilderApp : public engine::Application {
     });
     core::effects::EffectRegistry::Get().RegisterEffect("ModifyMaxMana", []() {
       return std::make_unique<core::effects::types::ModifyMaxManaEffect>();
+    });
+    core::effects::EffectRegistry::Get().RegisterEffect("Haste", []() {
+      return std::make_unique<core::effects::types::HasteEffect>();
+    });
+    core::effects::EffectRegistry::Get().RegisterEffect("Blocker", []() {
+      return std::make_unique<core::effects::types::BlockerEffect>();
     });
 
     // Load Cards

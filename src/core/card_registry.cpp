@@ -351,7 +351,20 @@ const CardData* CardRegistry::GetCardById(int id) const {
 std::string CardRegistry::GenerateDescription(
     CardType type, const std::vector<CardEffectDefinition>& effects) const {
   std::string description = "";
+  std::string keywords = "";
+
   for (const auto& effect_def : effects) {
+    if (effect_def.effect_type == "Haste") {
+      if (!keywords.empty()) keywords += ", ";
+      keywords += "Haste";
+      continue;
+    }
+    if (effect_def.effect_type == "Blocker") {
+      if (!keywords.empty()) keywords += ", ";
+      keywords += "Blocker";
+      continue;
+    }
+
     auto effect =
         effects::EffectRegistry::Get().CreateEffect(effect_def.effect_type);
     if (effect) {
@@ -390,6 +403,15 @@ std::string CardRegistry::GenerateDescription(
       description += prefix + effect_desc;
     }
   }
+
+  if (!keywords.empty()) {
+    if (description.empty()) {
+      return keywords + ".";
+    } else {
+      return keywords + ". " + description;
+    }
+  }
+
   return description;
 }
 

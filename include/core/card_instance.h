@@ -51,6 +51,9 @@ struct CardInstance {
   bool can_attack;  // Used for summoning sickness and other "can't attack"
                     // effects
 
+  bool has_haste;
+  bool is_blocker;
+
   std::vector<StatModifier> modifiers;
 
   CardInstance(const CardData* card_data, int inst_id, int owner);

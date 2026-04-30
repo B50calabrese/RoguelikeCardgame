@@ -39,6 +39,12 @@
     - **Manual Spell Targeting**: Enhanced `HandController` to support manual targeting for spells. Players now drag a cyan line to creatures or players to select targets.
     - **New Effects & Actions**: Added `HealEffect`, `ModifyMaxManaEffect`, and updated `StatModifyEffect` to support durations.
     - **Demo Spell Set**: Created five new demo spells: Holy Light (White), Arcane Intellect (Blue), Weakness (Black), Fireblast (Red), and Growth Spurt (Green).
+- **Keyword Abilities (Haste & Blocker)**: Implemented "Haste" and "Blocker" as a hybrid of `Effect` classes and `CardInstance` flags.
+    - **Haste Implementation**: Creatures with Haste can attack on the turn they are played, bypassing summoning sickness logic in `PlayCardAction`.
+    - **Blocker Implementation**: Enforced targeting rules in `AttackRule`; if a defender has any creatures with Blocker, they must be targeted first.
+    - **Visual Indicators**: Added red highlights for Haste and green highlights for Blocker on the board in `CombatScene`.
+    - **Keyword Descriptions**: Updated `CardRegistry` to automatically prepend "Haste." and "Blocker." to card descriptions.
+    - **Card Set Update**: Assigned Haste and Blocker to 10 existing cards (2 of each color) by updating their XML definitions.
 
 ## Technical Status Report
 
