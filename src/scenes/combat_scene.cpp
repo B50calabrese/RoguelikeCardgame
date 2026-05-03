@@ -1,6 +1,7 @@
 #include "scenes/combat_scene.h"
 
 #include <algorithm>
+#include <random>
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/vec2.hpp>
@@ -58,7 +59,51 @@ void CombatScene::OnAttach() {
   game_state_.enemy->colors = {core::CardColor::Red, core::CardColor::Black};
   game_state_.current_turn_player_id = game_state_.player->id;
 
+  game_state_.player->mana = 1;
+  game_state_.player->max_mana = 1;
+  game_state_.enemy->mana = 0;
+  game_state_.enemy->max_mana = 0;
+
   enemy_ai_ = std::make_unique<core::ai::SimpleAI>(game_state_.enemy->id);
+
+  // Initialize decks: first 10 cards of each color
+  auto setup_deck = [&](core::PlayerState& p) {
+    for (auto color : p.colors) {
+      int base_id = 0;
+      switch (color) {
+        case core::CardColor::White: base_id = 0; break;
+        case core::CardColor::Blue: base_id = 20; break;
+        case core::CardColor::Black: base_id = 40; break;
+        case core::CardColor::Red: base_id = 60; break;
+        case core::CardColor::Green: base_id = 80; break;
+        default: break;
+      }
+      for (int i = 1; i <= 10; ++i) {
+        const core::CardData* data = core::CardRegistry::Get().GetCardById(base_id + i);
+        if (data) {
+          auto inst = std::make_unique<core::CardInstance>(
+              data, game_state_.next_instance_id++, p.id);
+          inst->location = core::CardLocation::Deck;
+          p.deck.push_back(std::move(inst));
+        }
+      }
+    }
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(p.deck.begin(), p.deck.end(), g);
+
+    // Initial draw
+    for (int i = 0; i < 5 && !p.deck.empty(); ++i) {
+      auto inst = std::move(p.deck.back());
+      p.deck.pop_back();
+      inst->location = core::CardLocation::Hand;
+      p.hand.push_back(std::move(inst));
+    }
+  };
+
+  setup_deck(*game_state_.player);
+  setup_deck(*game_state_.enemy);
 
   // Trigger first turn
   core::effects::EffectResolver::Get().QueueAction(
@@ -66,21 +111,6 @@ void CombatScene::OnAttach() {
           game_state_.player->id));
 
   auto& config = core::GameConfig::Get();
-
-  // Populate hand for demo
-  int starting_hand_size = config.starting_hand_size;
-  auto it = all_cards.begin();
-  for (int i = 0; i < starting_hand_size && it != all_cards.end(); ++i, ++it) {
-    auto p_inst = std::make_unique<core::CardInstance>(
-        &it->second, game_state_.next_instance_id++, game_state_.player->id);
-    p_inst->location = core::CardLocation::Hand;
-    game_state_.player->hand.push_back(std::move(p_inst));
-
-    auto e_inst = std::make_unique<core::CardInstance>(
-        &it->second, game_state_.next_instance_id++, game_state_.enemy->id);
-    e_inst->location = core::CardLocation::Hand;
-    game_state_.enemy->hand.push_back(std::move(e_inst));
-  }
 
   // Configure hands
   kBorderThickness = config.window_width * 0.05f;

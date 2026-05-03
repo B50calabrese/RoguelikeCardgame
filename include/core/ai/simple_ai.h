@@ -14,7 +14,7 @@ class SimpleAI : public IBattleAI {
  private:
   int ai_player_id_;
   float wait_timer_ = 0.0f;
-  const float kWaitDuration = 2.0f;
+  const float kActionDelay = 1.0f;
 };
 
 }  // namespace core::ai
