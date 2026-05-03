@@ -22,6 +22,7 @@
 #include "core/game_config.h"
 #include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
+#include "core/util/game_setup.h"
 #include "core/util/math_util.h"
 #include "engine/graphics/primitive_renderer.h"
 #include "engine/graphics/renderer.h"
@@ -66,44 +67,11 @@ void CombatScene::OnAttach() {
 
   enemy_ai_ = std::make_unique<core::ai::SimpleAI>(game_state_.enemy->id);
 
-  // Initialize decks: first 10 cards of each color
-  auto setup_deck = [&](core::PlayerState& p) {
-    for (auto color : p.colors) {
-      int base_id = 0;
-      switch (color) {
-        case core::CardColor::White: base_id = 0; break;
-        case core::CardColor::Blue: base_id = 20; break;
-        case core::CardColor::Black: base_id = 40; break;
-        case core::CardColor::Red: base_id = 60; break;
-        case core::CardColor::Green: base_id = 80; break;
-        default: break;
-      }
-      for (int i = 1; i <= 10; ++i) {
-        const core::CardData* data = core::CardRegistry::Get().GetCardById(base_id + i);
-        if (data) {
-          auto inst = std::make_unique<core::CardInstance>(
-              data, game_state_.next_instance_id++, p.id);
-          inst->location = core::CardLocation::Deck;
-          p.deck.push_back(std::move(inst));
-        }
-      }
-    }
+  core::util::GameSetup::SetupDefaultDeck(game_state_, game_state_.player->id);
+  core::util::GameSetup::DrawInitialHand(game_state_, game_state_.player->id);
 
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(p.deck.begin(), p.deck.end(), g);
-
-    // Initial draw
-    for (int i = 0; i < 5 && !p.deck.empty(); ++i) {
-      auto inst = std::move(p.deck.back());
-      p.deck.pop_back();
-      inst->location = core::CardLocation::Hand;
-      p.hand.push_back(std::move(inst));
-    }
-  };
-
-  setup_deck(*game_state_.player);
-  setup_deck(*game_state_.enemy);
+  core::util::GameSetup::SetupDefaultDeck(game_state_, game_state_.enemy->id);
+  core::util::GameSetup::DrawInitialHand(game_state_, game_state_.enemy->id);
 
   // Trigger first turn
   core::effects::EffectResolver::Get().QueueAction(

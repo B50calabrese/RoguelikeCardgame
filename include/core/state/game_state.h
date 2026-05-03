@@ -46,6 +46,28 @@ struct GameState {
     if (auto c = search_zones(*enemy, instance_id)) return c;
     return nullptr;
   }
+
+  /**
+   * @brief Gets the player state by ID.
+   */
+  PlayerState& GetPlayerById(int id) {
+    return (player->id == id) ? *player : *enemy;
+  }
+
+  const PlayerState& GetPlayerById(int id) const {
+    return (player->id == id) ? *player : *enemy;
+  }
+
+  /**
+   * @brief Gets the opponent's player state.
+   */
+  PlayerState& GetOpponentOf(int id) {
+    return (player->id == id) ? *enemy : *player;
+  }
+
+  const PlayerState& GetOpponentOf(int id) const {
+    return (player->id == id) ? *enemy : *player;
+  }
 };
 
 }  // namespace core::state

@@ -7,6 +7,7 @@
 #include "core/effects/actions/end_turn_action.h"
 #include "core/effects/actions/play_card_action.h"
 #include "core/effects/effect_resolver.h"
+#include "core/effects/rules_engine.h"
 
 namespace core::ai {
 
@@ -25,10 +26,8 @@ void SimpleAI::Update(float delta_time, GameState& state) {
     return;
   }
 
-  PlayerState& ai_player =
-      (ai_player_id_ == state.player->id) ? *state.player : *state.enemy;
-  PlayerState& opponent =
-      (ai_player_id_ == state.player->id) ? *state.enemy : *state.player;
+  PlayerState& ai_player = state.GetPlayerById(ai_player_id_);
+  PlayerState& opponent = state.GetOpponentOf(ai_player_id_);
 
   // 1. Try to play a creature card
   std::vector<CardInstance*> playable_creatures;
@@ -66,35 +65,54 @@ void SimpleAI::Update(float delta_time, GameState& state) {
       effects::Target target;
 
       // Determine target priority: Blockers > Other Creatures > Player Health
-      std::vector<CardInstance*> blockers;
-      std::vector<CardInstance*> other_creatures;
+      std::vector<effects::Target> possible_targets;
 
+      // 1. Check for blockers
       for (const auto& opp_creature : opponent.board) {
         if (opp_creature->is_blocker) {
-          blockers.push_back(opp_creature.get());
-        } else {
-          other_creatures.push_back(opp_creature.get());
+          possible_targets.push_back(
+              {effects::Target::Type::kCreature, opp_creature->instance_id});
         }
       }
 
-      auto lowest_health_cmp = [](CardInstance* a, CardInstance* b) {
-        return a->current_health < b->current_health;
-      };
+      // 2. If no blockers, check for other creatures
+      if (possible_targets.empty()) {
+        for (const auto& opp_creature : opponent.board) {
+          possible_targets.push_back(
+              {effects::Target::Type::kCreature, opp_creature->instance_id});
+        }
+      }
 
-      if (!blockers.empty()) {
-        auto it = std::min_element(blockers.begin(), blockers.end(),
-                                   lowest_health_cmp);
-        target.type = effects::Target::Type::kCreature;
-        target.id = (*it)->instance_id;
-      } else if (!other_creatures.empty()) {
-        auto it = std::min_element(other_creatures.begin(), other_creatures.end(),
-                                   lowest_health_cmp);
-        target.type = effects::Target::Type::kCreature;
-        target.id = (*it)->instance_id;
-      } else {
+      // 3. If no creatures, target opponent's health
+      if (possible_targets.empty()) {
         target.type = (opponent.id == 0) ? effects::Target::Type::kPlayer
                                          : effects::Target::Type::kEnemy;
-        target.id = -1;  // Conventional ID for player/enemy health
+        target.id = -1;
+      } else {
+        // Find valid targets according to rules
+        std::vector<effects::Target> valid_targets;
+        for (const auto& t : possible_targets) {
+          auto attack_action = std::make_shared<effects::actions::CreatureAttackAction>(
+              creature->instance_id, t);
+          if (effects::RulesEngine::Get().ValidateAction(state, attack_action).success) {
+            valid_targets.push_back(t);
+          }
+        }
+
+        if (valid_targets.empty()) continue;
+
+        // Among valid targets, pick one with lowest health if they are creatures
+        auto lowest_health_it = std::min_element(
+            valid_targets.begin(), valid_targets.end(),
+            [&state](const effects::Target& a, const effects::Target& b) {
+              if (a.type == effects::Target::Type::kCreature &&
+                  b.type == effects::Target::Type::kCreature) {
+                return state.FindCardInstance(a.id)->current_health <
+                       state.FindCardInstance(b.id)->current_health;
+              }
+              return false;
+            });
+        target = *lowest_health_it;
       }
 
       effects::EffectResolver::Get().QueueAction(

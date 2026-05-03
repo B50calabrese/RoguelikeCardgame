@@ -3,12 +3,13 @@
 ## Most Recent Changes
 - **Simple AI Implementation**: Implemented a "simple" AI logic for the enemy.
     - **Decision Making**: The AI now plays the highest-cost creature card it can afford each turn, picking randomly among ties.
-    - **Combat Logic**: Follows a strict attack priority (Blockers > Other Creatures > Player Health) and targets the lowest health creature when attacking creatures.
+    - **Combat Logic**: Follows a strict attack priority (Blockers > Other Creatures > Player Health) and targets the lowest health creature when attacking creatures. It now leverages the `RulesEngine` for target validation.
     - **Turn Choreography**: Actions are executed with a 1-second delay between them for better readability, and the AI correctly waits for the action queue to clear.
-- **Combat Deck Initialization**: Updated the `CombatScene` to use more structured deck rules.
+- **Combat Deck Initialization**: Updated the `CombatScene` to use more structured deck rules via a new `GameSetup` utility.
     - **Deck Composition**: Decks are now 20 cards each, consisting of the first 10 cards of the player's and enemy's respective color pairs (e.g., IDs 1-10 and 21-30 for White/Blue).
     - **Starting Conditions**: Implemented deck shuffling and a 5-card starting hand draw.
     - **Mana Balancing**: Set starting mana to 1 for the player and 0 for the enemy (with the enemy gaining their first mana at the start of their first turn).
+- **GameState Enhancements**: Added `GetPlayerById` and `GetOpponentOf` helper methods to `GameState` to simplify player state access.
 - **Google C++ Style Compliance**: Performed a comprehensive refactor of the `include/` and `src/` directories to adhere to the Google C++ Style Guide.
     - **Uniform Formatting**: Applied `clang-format` to all header and source files.
     - **Naming Convention Alignment**:
