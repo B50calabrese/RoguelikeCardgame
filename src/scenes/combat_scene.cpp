@@ -1,6 +1,7 @@
 #include "scenes/combat_scene.h"
 
 #include <algorithm>
+#include <random>
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/vec2.hpp>
@@ -21,6 +22,7 @@
 #include "core/game_config.h"
 #include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
+#include "core/util/game_setup.h"
 #include "core/util/math_util.h"
 #include "engine/graphics/primitive_renderer.h"
 #include "engine/graphics/renderer.h"
@@ -58,7 +60,18 @@ void CombatScene::OnAttach() {
   game_state_.enemy->colors = {core::CardColor::Red, core::CardColor::Black};
   game_state_.current_turn_player_id = game_state_.player->id;
 
+  game_state_.player->mana = 1;
+  game_state_.player->max_mana = 1;
+  game_state_.enemy->mana = 0;
+  game_state_.enemy->max_mana = 0;
+
   enemy_ai_ = std::make_unique<core::ai::SimpleAI>(game_state_.enemy->id);
+
+  core::util::GameSetup::SetupDefaultDeck(game_state_, game_state_.player->id);
+  core::util::GameSetup::DrawInitialHand(game_state_, game_state_.player->id);
+
+  core::util::GameSetup::SetupDefaultDeck(game_state_, game_state_.enemy->id);
+  core::util::GameSetup::DrawInitialHand(game_state_, game_state_.enemy->id);
 
   // Trigger first turn
   core::effects::EffectResolver::Get().QueueAction(
@@ -66,21 +79,6 @@ void CombatScene::OnAttach() {
           game_state_.player->id));
 
   auto& config = core::GameConfig::Get();
-
-  // Populate hand for demo
-  int starting_hand_size = config.starting_hand_size;
-  auto it = all_cards.begin();
-  for (int i = 0; i < starting_hand_size && it != all_cards.end(); ++i, ++it) {
-    auto p_inst = std::make_unique<core::CardInstance>(
-        &it->second, game_state_.next_instance_id++, game_state_.player->id);
-    p_inst->location = core::CardLocation::Hand;
-    game_state_.player->hand.push_back(std::move(p_inst));
-
-    auto e_inst = std::make_unique<core::CardInstance>(
-        &it->second, game_state_.next_instance_id++, game_state_.enemy->id);
-    e_inst->location = core::CardLocation::Hand;
-    game_state_.enemy->hand.push_back(std::move(e_inst));
-  }
 
   // Configure hands
   kBorderThickness = config.window_width * 0.05f;
