@@ -7,7 +7,7 @@
 
 #include "core/effects/action.h"
 #include "core/effects/rule_result.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/util/logger.h"
 
 namespace core::effects {
@@ -26,7 +26,7 @@ class EffectResolver {
   void QueueAction(const Action& action) { action_queue_.push_back(action); }
 
   /** @brief Processes all pending actions in the queue. */
-  void ProcessQueue(GameState& state) {
+  void ProcessQueue(CombatState& state) {
     while (true) {
       // 1. If we have a current action, check if it's done.
       if (current_action_) {

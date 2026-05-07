@@ -9,7 +9,7 @@
 #include "core/effects/rule.h"
 #include "core/effects/rule_result.h"
 #include "core/effects/target_filter.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 
@@ -26,7 +26,7 @@ class RulesEngine {
   /**
    * @brief Validates an action against all registered rules.
    */
-  RuleResult ValidateAction(const state::GameState& state,
+  RuleResult ValidateAction(const state::CombatState& state,
                             const Action& action) const {
     // 1. Core action validation (basic structure)
     RuleResult result = action->Validate(state);
@@ -51,7 +51,7 @@ class RulesEngine {
   /**
    * @brief Checks if a set of targets meets the requirements of a filter.
    */
-  static RuleResult CheckTargeting(const state::GameState& state, int actor_id,
+  static RuleResult CheckTargeting(const state::CombatState& state, int actor_id,
                                    const std::vector<Target>& targets,
                                    const TargetFilter& filter) {
     if (filter.is_required && targets.empty()) {

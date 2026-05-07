@@ -4,7 +4,7 @@
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
 #include "core/effects/visual_blocker.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include <string>
 
 namespace core::effects::actions {
@@ -14,15 +14,15 @@ class SpellVisualAction : public ActionBase {
   explicit SpellVisualAction(int card_instance_id)
       : card_instance_id_(card_instance_id) {}
 
-  RuleResult Validate(const state::GameState& state) const override {
+  RuleResult Validate(const state::CombatState& state) const override {
     return RuleResult::Success();
   }
 
-  void Apply(state::GameState& state) const override {
+  void Apply(state::CombatState& state) const override {
     VisualBlocker::Get().AddBlocker("SpellVisual_" + std::to_string(card_instance_id_));
   }
 
-  bool IsComplete(const state::GameState& state) const override {
+  bool IsComplete(const state::CombatState& state) const override {
     return !VisualBlocker::Get().is_blocking();
   }
 

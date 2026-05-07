@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "core/card_data.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/ecs/components/transform.h"
 #include "scenes/combat/hitbox_manager.h"
 
@@ -35,7 +35,7 @@ class HandController {
  public:
   HandController(int player_id);
 
-  void Update(float delta_time_seconds, core::state::GameState& state,
+  void Update(float delta_time_seconds, core::state::CombatState& state,
               combat::HitboxManager* hitbox_manager = nullptr);
   void Render();
 
@@ -58,12 +58,12 @@ class HandController {
  private:
   void SyncHandWithState(
       const std::vector<std::unique_ptr<core::CardInstance>>& hand_state);
-  void HandleInteraction(core::state::GameState& state);
+  void HandleInteraction(core::state::CombatState& state);
   void UpdateLayout();
   void AnimateCards(float delta_time_seconds);
   void DrawTargetingLine();
   std::optional<core::effects::Target> FindTargetAt(
-      const core::state::GameState& state, glm::vec2 mouse_pos,
+      const core::state::CombatState& state, glm::vec2 mouse_pos,
       combat::HitboxManager* hitbox_manager);
 
   int player_id_;

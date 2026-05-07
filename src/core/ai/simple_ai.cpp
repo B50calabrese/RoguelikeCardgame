@@ -11,7 +11,7 @@
 
 namespace core::ai {
 
-void SimpleAI::Update(float delta_time, GameState& state) {
+void SimpleAI::Update(float delta_time, CombatState& state) {
   if (state.current_turn_player_id != ai_player_id_) {
     wait_timer_ = 0.0f;
     return;

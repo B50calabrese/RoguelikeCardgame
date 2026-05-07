@@ -5,7 +5,7 @@
 #include "core/card_data.h"
 #include "core/card_instance.h"
 #include "core/effects/actions/play_card_action.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 namespace {
@@ -13,7 +13,7 @@ namespace {
 class RulesEngineTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    state = std::make_unique<state::GameState>();
+    state = std::make_unique<state::CombatState>();
 
     card_data = std::make_shared<CardData>();
     card_data->name = "Test Card";
@@ -21,7 +21,7 @@ class RulesEngineTest : public ::testing::Test {
     card_data->type = CardType::Creature;
   }
 
-  std::unique_ptr<state::GameState> state;
+  std::unique_ptr<state::CombatState> state;
   std::shared_ptr<CardData> card_data;
 };
 

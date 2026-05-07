@@ -3,15 +3,15 @@
 #include <algorithm>
 
 #include "core/effects/rule_result.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects::actions {
 
-RuleResult StartTurnAction::Validate(const state::GameState& state) const {
+RuleResult StartTurnAction::Validate(const state::CombatState& state) const {
   return {true, "OK", false};
 }
 
-void StartTurnAction::Apply(state::GameState& state) const {
+void StartTurnAction::Apply(state::CombatState& state) const {
   state::PlayerState* p =
       (state.player->id == player_id_) ? state.player.get() : state.enemy.get();
 

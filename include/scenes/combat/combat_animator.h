@@ -4,14 +4,14 @@
 #include <glm/vec2.hpp>
 #include <optional>
 
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "scenes/combat/attack_animation.h"
 
 namespace scenes::combat {
 
 class CombatAnimator {
  public:
-  void Update(float delta_time, core::state::GameState& state);
+  void Update(float delta_time, core::state::CombatState& state);
   void StartAnimation(const AttackAnimation& anim);
 
   glm::vec2 GetAnimatedPosition(int instance_id, glm::vec2 default_pos) const;

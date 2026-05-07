@@ -11,7 +11,7 @@ namespace core::effects::rules {
  */
 class TurnRule : public IRule {
  public:
-  RuleResult Validate(const state::GameState& state,
+  RuleResult Validate(const state::CombatState& state,
                       const Action& action) const override {
     int actor_id = action->actor_id();
     if (actor_id != static_cast<int>(ActorId::None) &&

@@ -1,4 +1,4 @@
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 #include <gtest/gtest.h>
 
@@ -8,19 +8,19 @@
 namespace core::state {
 namespace {
 
-class GameStateTest : public ::testing::Test {
+class CombatStateTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    state = std::make_unique<GameState>();
+    state = std::make_unique<CombatState>();
     card_data = std::make_shared<CardData>();
     card_data->name = "Test Card";
   }
 
-  std::unique_ptr<GameState> state;
+  std::unique_ptr<CombatState> state;
   std::shared_ptr<CardData> card_data;
 };
 
-TEST_F(GameStateTest, FindCardInHand) {
+TEST_F(CombatStateTest, FindCardInHand) {
   auto instance = std::make_unique<CardInstance>(card_data.get(), 100, 0);
   state->player->hand.push_back(std::move(instance));
 
@@ -29,7 +29,7 @@ TEST_F(GameStateTest, FindCardInHand) {
   EXPECT_EQ(found->instance_id, 100);
 }
 
-TEST_F(GameStateTest, FindCardInBoard) {
+TEST_F(CombatStateTest, FindCardInBoard) {
   auto instance = std::make_unique<CardInstance>(card_data.get(), 101, 0);
   state->player->board.push_back(std::move(instance));
 
@@ -38,7 +38,7 @@ TEST_F(GameStateTest, FindCardInBoard) {
   EXPECT_EQ(found->instance_id, 101);
 }
 
-TEST_F(GameStateTest, FindCardInDeck) {
+TEST_F(CombatStateTest, FindCardInDeck) {
   auto instance = std::make_unique<CardInstance>(card_data.get(), 102, 0);
   state->player->deck.push_back(std::move(instance));
 
@@ -47,7 +47,7 @@ TEST_F(GameStateTest, FindCardInDeck) {
   EXPECT_EQ(found->instance_id, 102);
 }
 
-TEST_F(GameStateTest, FindCardInGraveyard) {
+TEST_F(CombatStateTest, FindCardInGraveyard) {
   auto instance = std::make_unique<CardInstance>(card_data.get(), 103, 0);
   state->player->graveyard.push_back(std::move(instance));
 
@@ -56,7 +56,7 @@ TEST_F(GameStateTest, FindCardInGraveyard) {
   EXPECT_EQ(found->instance_id, 103);
 }
 
-TEST_F(GameStateTest, FindCardInStack) {
+TEST_F(CombatStateTest, FindCardInStack) {
   auto instance = std::make_unique<CardInstance>(card_data.get(), 104, 0);
   state->player->stack.push_back(std::move(instance));
 
@@ -65,7 +65,7 @@ TEST_F(GameStateTest, FindCardInStack) {
   EXPECT_EQ(found->instance_id, 104);
 }
 
-TEST_F(GameStateTest, FindCardInEnemyZones) {
+TEST_F(CombatStateTest, FindCardInEnemyZones) {
   auto instance = std::make_unique<CardInstance>(card_data.get(), 200, 1);
   state->enemy->hand.push_back(std::move(instance));
 
@@ -74,7 +74,7 @@ TEST_F(GameStateTest, FindCardInEnemyZones) {
   EXPECT_EQ(found->instance_id, 200);
 }
 
-TEST_F(GameStateTest, CardNotFound) {
+TEST_F(CombatStateTest, CardNotFound) {
   CardInstance* found = state->FindCardInstance(999);
   EXPECT_EQ(found, nullptr);
 }

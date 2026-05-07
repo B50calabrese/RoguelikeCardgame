@@ -14,9 +14,9 @@ class CreatureAttackAction : public ActionBase {
   CreatureAttackAction(int attacker_id, Target target)
       : attacker_id_(attacker_id), target_(target) {}
 
-  RuleResult Validate(const state::GameState& state) const override;
-  void Apply(state::GameState& state) const override;
-  bool IsComplete(const state::GameState& state) const override;
+  RuleResult Validate(const state::CombatState& state) const override;
+  void Apply(state::CombatState& state) const override;
+  bool IsComplete(const state::CombatState& state) const override;
 
   int attacker_id() const { return attacker_id_; }
   Target target() const { return target_; }

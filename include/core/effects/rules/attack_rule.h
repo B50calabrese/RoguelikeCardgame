@@ -12,7 +12,7 @@ namespace core::effects::rules {
  */
 class AttackRule : public IRule {
  public:
-  RuleResult Validate(const state::GameState& state,
+  RuleResult Validate(const state::CombatState& state,
                       const Action& action) const override {
     auto attack_action =
         std::dynamic_pointer_cast<actions::CreatureAttackAction>(action);

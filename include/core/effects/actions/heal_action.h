@@ -4,7 +4,7 @@
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
 #include "core/effects/target.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/util/logger.h"
 
 namespace core::effects::actions {
@@ -13,7 +13,7 @@ class HealAction : public ActionBase {
  public:
   HealAction(Target target, int amount) : target_(target), amount_(amount) {}
 
-  RuleResult Validate(const GameState& state) const override {
+  RuleResult Validate(const CombatState& state) const override {
     if (target_.type == Target::Type::kPlayer ||
         target_.type == Target::Type::kEnemy) {
       return {true, "Valid target player", false};
@@ -27,7 +27,7 @@ class HealAction : public ActionBase {
     return {true, "Valid heal target", false};
   }
 
-  void Apply(GameState& state) const override {
+  void Apply(CombatState& state) const override {
     if (target_.type == Target::Type::kPlayer) {
       state.player->health =
           std::min(state.player->max_health, state.player->health + amount_);
