@@ -6,7 +6,7 @@
 
 namespace scenes::combat {
 
-void CombatAnimator::Update(float delta_time, core::state::GameState& state) {
+void CombatAnimator::Update(float delta_time, core::state::CombatState& state) {
   if (active_animation_) {
     active_animation_->elapsed_time += delta_time;
     if (active_animation_->moving_to_target &&

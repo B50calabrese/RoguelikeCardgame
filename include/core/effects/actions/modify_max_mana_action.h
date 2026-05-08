@@ -3,7 +3,7 @@
 
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/util/logger.h"
 
 namespace core::effects::actions {
@@ -13,11 +13,11 @@ class ModifyMaxManaAction : public ActionBase {
   ModifyMaxManaAction(int player_id, int amount)
       : player_id_(player_id), amount_(amount) {}
 
-  RuleResult Validate(const GameState& state) const override {
+  RuleResult Validate(const CombatState& state) const override {
     return {true, "OK", false};
   }
 
-  void Apply(GameState& state) const override {
+  void Apply(CombatState& state) const override {
     int target_player_id = player_id_;
     if (target_player_id == -1) {
       target_player_id = state.current_turn_player_id;

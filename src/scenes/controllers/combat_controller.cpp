@@ -10,7 +10,7 @@
 
 namespace scenes::controllers {
 
-void CombatController::Update(float delta_time, core::state::GameState& state,
+void CombatController::Update(float delta_time, core::state::CombatState& state,
                               float icon_top, float icon_size) {
   animator_.Update(delta_time, state);
   if (current_state_ == CombatState::AnimatingAttack &&
@@ -19,7 +19,7 @@ void CombatController::Update(float delta_time, core::state::GameState& state,
   }
 }
 
-void CombatController::HandleInput(core::state::GameState& state,
+void CombatController::HandleInput(core::state::CombatState& state,
                                    float icon_top, float icon_size) {
   if (core::effects::VisualBlocker::Get().is_blocking()) return;
 
@@ -83,7 +83,7 @@ void CombatController::HandleInput(core::state::GameState& state,
   }
 }
 
-void CombatController::OnCreatureAttacked(core::state::GameState& state,
+void CombatController::OnCreatureAttacked(core::state::CombatState& state,
                                           const core::effects::GameEvent& event,
                                           float icon_top, float icon_size) {
   AttackAnimation anim;

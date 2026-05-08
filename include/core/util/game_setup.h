@@ -7,7 +7,7 @@
 
 #include "core/card_instance.h"
 #include "core/card_registry.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::util {
 
@@ -23,7 +23,7 @@ class GameSetup {
    * @param player_id The player whose deck to initialize.
    * @param seed Optional seed for shuffling.
    */
-  static void SetupDefaultDeck(GameState& state, int player_id,
+  static void SetupDefaultDeck(CombatState& state, int player_id,
                                std::optional<unsigned int> seed = std::nullopt) {
     PlayerState& p = state.GetPlayerById(player_id);
     p.deck.clear();
@@ -62,7 +62,7 @@ class GameSetup {
   /**
    * @brief Draws an initial hand of cards.
    */
-  static void DrawInitialHand(GameState& state, int player_id, int amount = 5) {
+  static void DrawInitialHand(CombatState& state, int player_id, int amount = 5) {
     PlayerState& p = state.GetPlayerById(player_id);
     for (int i = 0; i < amount && !p.deck.empty(); ++i) {
       auto inst = std::move(p.deck.back());

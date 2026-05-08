@@ -3,18 +3,18 @@
 #include "core/effects/actions/start_turn_action.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/rule_result.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects::actions {
 
-RuleResult EndTurnAction::Validate(const state::GameState& state) const {
+RuleResult EndTurnAction::Validate(const state::CombatState& state) const {
   if (state.current_turn_player_id != player_id_) {
     return {false, "Not current player's turn", false};
   }
   return {true, "OK", false};
 }
 
-void EndTurnAction::Apply(state::GameState& state) const {
+void EndTurnAction::Apply(state::CombatState& state) const {
   // Clear "UntilEndOfTurn" modifiers for all creatures on board
   for (auto& inst : state.player->board) {
     inst->ClearModifiers(core::ModifierDuration::UntilEndOfTurn);

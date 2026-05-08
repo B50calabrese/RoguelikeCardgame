@@ -13,7 +13,7 @@ namespace core::effects::rules {
  */
 class TargetingRule : public IRule {
  public:
-  RuleResult Validate(const state::GameState& state,
+  RuleResult Validate(const state::CombatState& state,
                       const Action& action) const override {
     auto play_action =
         std::dynamic_pointer_cast<actions::PlayCardAction>(action);

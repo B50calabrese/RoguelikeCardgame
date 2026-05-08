@@ -1,11 +1,11 @@
 #include "core/effects/target_filter.h"
 
 #include "core/card_instance.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 
-bool TargetFilter::IsValid(const state::GameState& state, int actor_player_id,
+bool TargetFilter::IsValid(const state::CombatState& state, int actor_player_id,
                            const Target& target) const {
   if (target.type == Target::Type::kPlayer ||
       target.type == Target::Type::kEnemy) {

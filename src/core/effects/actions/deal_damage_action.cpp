@@ -9,7 +9,7 @@
 
 namespace core::effects::actions {
 
-void DealDamageAction::Apply(GameState& state) const {
+void DealDamageAction::Apply(CombatState& state) const {
   GameEvent event;
   event.type = GameEventType::DamageDealt;
   event.source_id = source_id_;

@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects::actions {
 namespace {
@@ -11,9 +11,9 @@ using ::testing::Test;
 
 class StartTurnActionTest : public Test {
  protected:
-  void SetUp() override { state = std::make_unique<GameState>(); }
+  void SetUp() override { state = std::make_unique<CombatState>(); }
 
-  std::unique_ptr<GameState> state;
+  std::unique_ptr<CombatState> state;
 };
 
 TEST_F(StartTurnActionTest, IncrementMaxMana) {

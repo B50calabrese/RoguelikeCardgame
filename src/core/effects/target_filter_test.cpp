@@ -4,7 +4,7 @@
 
 #include "core/card_data.h"
 #include "core/card_instance.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 namespace {
@@ -12,11 +12,11 @@ namespace {
 class TargetFilterTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    state = std::make_unique<state::GameState>();
+    state = std::make_unique<state::CombatState>();
     card_data = std::make_shared<CardData>();
   }
 
-  std::unique_ptr<state::GameState> state;
+  std::unique_ptr<state::CombatState> state;
   std::shared_ptr<CardData> card_data;
 };
 

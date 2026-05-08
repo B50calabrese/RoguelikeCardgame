@@ -8,7 +8,7 @@ namespace core::ai {
 class SimpleAI : public IBattleAI {
  public:
   SimpleAI(int ai_player_id) : ai_player_id_(ai_player_id) {}
-  void Update(float delta_time, GameState& state) override;
+  void Update(float delta_time, CombatState& state) override;
   void Reset() override;
 
  private:

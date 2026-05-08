@@ -14,7 +14,7 @@ namespace core::effects::rules {
  */
 class BoardSpaceRule : public IRule {
  public:
-  RuleResult Validate(const state::GameState& state,
+  RuleResult Validate(const state::CombatState& state,
                       const Action& action) const override {
     // Only check board space for PlayCardAction
     auto play_action =

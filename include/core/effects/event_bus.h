@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "core/effects/game_event.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 
@@ -19,7 +19,7 @@ class EventBus {
     return instance;
   }
 
-  using Listener = std::function<void(state::GameState&, const GameEvent&)>;
+  using Listener = std::function<void(state::CombatState&, const GameEvent&)>;
 
   /** @brief Adds a listener for game events. */
   void Subscribe(Listener listener) {
@@ -27,7 +27,7 @@ class EventBus {
   }
 
   /** @brief Broadcasts an event to all subscribers. */
-  void Publish(state::GameState& state, const GameEvent& event) {
+  void Publish(state::CombatState& state, const GameEvent& event) {
     for (const auto& listener : listeners_) {
       listener(state, event);
     }

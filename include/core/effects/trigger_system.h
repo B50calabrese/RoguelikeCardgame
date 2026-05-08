@@ -7,7 +7,7 @@
 #include "core/effects/effect_registry.h"
 #include "core/effects/game_event.h"
 #include "core/effects/trigger.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 
@@ -26,7 +26,7 @@ class TriggerSystem {
   /**
    * @brief Handles a game event by checking for any triggered abilities.
    */
-  void HandleEvent(state::GameState& state, const GameEvent& event) {
+  void HandleEvent(state::CombatState& state, const GameEvent& event) {
     // Determine which Trigger type this event maps to
     Trigger trigger_to_check;
     switch (event.type) {

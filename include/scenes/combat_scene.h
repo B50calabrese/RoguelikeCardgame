@@ -9,7 +9,7 @@
 #include "core/card_data.h"
 #include "core/effects/game_event.h"
 #include "core/graphics/battle_ui.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/ecs/components/transform.h"
 #include "engine/scene/scene.h"
 #include "scenes/combat/attack_animation.h"
@@ -57,7 +57,7 @@ class CombatScene : public engine::Scene {
   glm::vec4 player_zone_rect_ = {0.0f, 0.0f, 0.0f, 0.0f};
   glm::vec4 enemy_zone_rect_ = {0.0f, 0.0f, 0.0f, 0.0f};
 
-  core::GameState game_state_;
+  core::CombatState game_state_;
   core::graphics::BattleUI battle_ui_;
   std::unique_ptr<core::ai::IBattleAI> enemy_ai_;
 

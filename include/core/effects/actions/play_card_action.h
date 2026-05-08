@@ -13,7 +13,7 @@
 #include "core/effects/game_event.h"
 #include "core/effects/rule_result.h"
 #include "core/effects/target.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/util/logger.h"
 
 namespace core::effects::actions {
@@ -26,13 +26,13 @@ class PlayCardAction : public ActionBase {
         card_instance_id_(card_instance_id),
         targets_(std::move(targets)) {}
 
-  RuleResult Validate(const state::GameState& state) const override {
+  RuleResult Validate(const state::CombatState& state) const override {
     // Basic structure validation only. Logic-based rules are now in
     // RulesEngine.
     return RuleResult::Success();
   }
 
-  void Apply(state::GameState& state) const override {
+  void Apply(state::CombatState& state) const override {
     PlayerState& p =
         (player_id_ == state.player->id) ? *state.player : *state.enemy;
 

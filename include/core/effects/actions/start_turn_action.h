@@ -11,8 +11,8 @@ class StartTurnAction : public ActionBase {
  public:
   explicit StartTurnAction(int player_id) : player_id_(player_id) {}
 
-  RuleResult Validate(const state::GameState& state) const override;
-  void Apply(state::GameState& state) const override;
+  RuleResult Validate(const state::CombatState& state) const override;
+  void Apply(state::CombatState& state) const override;
   std::string name() const override { return "StartTurnAction"; }
 
  private:

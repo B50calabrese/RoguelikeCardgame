@@ -4,7 +4,7 @@
 
 #include "core/effects/actions/start_turn_action.h"
 #include "core/effects/effect_resolver.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects::actions {
 namespace {
@@ -14,11 +14,11 @@ using ::testing::Test;
 class EndTurnActionTest : public Test {
  protected:
   void SetUp() override {
-    state = std::make_unique<GameState>();
+    state = std::make_unique<CombatState>();
     EffectResolver::Get().ClearQueue();
   }
 
-  std::unique_ptr<GameState> state;
+  std::unique_ptr<CombatState> state;
 };
 
 TEST_F(EndTurnActionTest, SwapsPlayers) {

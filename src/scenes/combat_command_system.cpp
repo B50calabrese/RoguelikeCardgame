@@ -13,7 +13,7 @@
 
 namespace scenes {
 
-void CombatCommandSystem::Register(core::GameState& state) {
+void CombatCommandSystem::Register(core::CombatState& state) {
   auto& console = engine::util::Console::Get();
   console.RegisterCommand("add_card",
                           [&state](const std::vector<std::string>& args) {
@@ -48,7 +48,7 @@ void CombatCommandSystem::Register(core::GameState& state) {
                           });
 }
 
-void CombatCommandSystem::AddCardCommand(core::GameState& state,
+void CombatCommandSystem::AddCardCommand(core::CombatState& state,
                                          const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 3) {
@@ -85,7 +85,7 @@ void CombatCommandSystem::AddCardCommand(core::GameState& state,
 }
 
 void CombatCommandSystem::RemoveCardCommand(
-    core::GameState& state, const std::vector<std::string>& args) {
+    core::CombatState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: remove_card <instance_id>");
@@ -131,7 +131,7 @@ void CombatCommandSystem::ListCardsCommand(
 }
 
 void CombatCommandSystem::SetHealthCommand(
-    core::GameState& state, const std::vector<std::string>& args) {
+    core::CombatState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: set_health <player|enemy> <amount>");
@@ -149,7 +149,7 @@ void CombatCommandSystem::SetHealthCommand(
 }
 
 void CombatCommandSystem::DrawCardCommand(
-    core::GameState& state, const std::vector<std::string>& args) {
+    core::CombatState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
     console.Log("Usage: draw <player|enemy>");
@@ -169,7 +169,7 @@ void CombatCommandSystem::DrawCardCommand(
   console.Log(target + " drew a card.");
 }
 
-void CombatCommandSystem::SetManaCommand(core::GameState& state,
+void CombatCommandSystem::SetManaCommand(core::CombatState& state,
                                          const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
@@ -187,7 +187,7 @@ void CombatCommandSystem::SetManaCommand(core::GameState& state,
   }
 }
 
-void CombatCommandSystem::SetTurnCommand(core::GameState& state,
+void CombatCommandSystem::SetTurnCommand(core::CombatState& state,
                                          const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.empty()) {
@@ -200,7 +200,7 @@ void CombatCommandSystem::SetTurnCommand(core::GameState& state,
 }
 
 void CombatCommandSystem::PlayCardCommand(
-    core::GameState& state, const std::vector<std::string>& args) {
+    core::CombatState& state, const std::vector<std::string>& args) {
   auto& console = engine::util::Console::Get();
   if (args.size() < 2) {
     console.Log("Usage: play_card <player|enemy> <instance_id>");
