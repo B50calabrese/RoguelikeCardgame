@@ -192,15 +192,42 @@ void CombatScene::OnRender() {
   float card_base_width = core::graphics::kBaseCardWidth;
   float card_base_height = core::graphics::kBaseCardHeight;
 
-  auto player_board_layouts = core::graphics::HandRenderer::CalculateHandLayout(
-      game_state_.player->board.size(), kPlayerBoardPos, kBoardBoundsSize, 0.0f,
-      0.2f);
+  // Calculate board card scaling and positioning with 24px gap
+  float gap = 24.0f;
+  auto calculate_board_layout = [&](size_t count, glm::vec2 zone_pos,
+                                    glm::vec2 zone_size) {
+    std::vector<engine::ecs::components::Transform> layouts(count);
+    if (count == 0) return layouts;
+
+    // Determine scale: we want to fit 'count' cards + (count-1) gaps of 24px
+    // card_width = scale * kBaseCardWidth
+    // count * card_width + (count-1) * gap <= zone_size.x
+    // scale * count * kBaseCardWidth <= zone_size.x - (count-1) * gap
+    float max_width = zone_size.x - (count > 1 ? (count - 1) * gap : 0.0f);
+    float scale_x = max_width / (count * card_base_width);
+    float scale_y = zone_size.y / card_base_height;
+    float scale = std::min({scale_x, scale_y, combat::kBoardCardScaleMultiplier});
+
+    float card_width = scale * card_base_width;
+    float total_width = count * card_width + (count > 1 ? (count - 1) * gap : 0.0f);
+    float start_x = zone_pos.x + (zone_size.x - total_width) * 0.5f + card_width * 0.5f;
+    float center_y = zone_pos.y + zone_size.y * 0.5f;
+
+    for (size_t i = 0; i < count; ++i) {
+      layouts[i].position = {start_x + i * (card_width + gap), center_y};
+      layouts[i].scale = glm::vec2(scale);
+      layouts[i].rotation = 0.0f;
+    }
+    return layouts;
+  };
+
+  auto player_board_layouts = calculate_board_layout(
+      game_state_.player->board.size(), kPlayerBoardPos, kBoardBoundsSize);
   for (size_t i = 0; i < game_state_.player->board.size(); ++i) {
     int inst_id = game_state_.player->board[i]->instance_id;
     glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
         inst_id, player_board_layouts[i].position);
-    float scale =
-        player_board_layouts[i].scale.x * combat::kBoardCardScaleMultiplier;
+    float scale = player_board_layouts[i].scale.x;
     glm::vec2 size =
         glm::vec2(card_base_width * scale, card_base_height * scale);
 
@@ -241,15 +268,14 @@ void CombatScene::OnRender() {
         player_board_layouts[i].rotation, 0.0f);
   }
 
-  auto enemy_board_layouts = core::graphics::HandRenderer::CalculateHandLayout(
+  auto enemy_board_layouts = calculate_board_layout(
       game_state_.enemy->board.size(), {enemy_zone_rect_.x, enemy_zone_rect_.y},
-      {enemy_zone_rect_.z, enemy_zone_rect_.w}, 0.0f, 0.2f);
+      {enemy_zone_rect_.z, enemy_zone_rect_.w});
   for (size_t i = 0; i < game_state_.enemy->board.size(); ++i) {
     int inst_id = game_state_.enemy->board[i]->instance_id;
     glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
         inst_id, enemy_board_layouts[i].position);
-    float scale =
-        enemy_board_layouts[i].scale.x * combat::kBoardCardScaleMultiplier;
+    float scale = enemy_board_layouts[i].scale.x;
     glm::vec2 size =
         glm::vec2(card_base_width * scale, card_base_height * scale);
 

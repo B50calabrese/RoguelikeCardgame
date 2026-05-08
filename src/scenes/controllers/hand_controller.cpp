@@ -74,9 +74,12 @@ void HandController::Update(float delta_time_seconds,
                     player_id_, held_card.instance_id,
                     std::vector<core::effects::Target>{*selected_target}));
 
-            held_card.is_held = false;
+            // Immediately remove card from visuals to prevent it snapping back
+            // to hand before state updates.
+            hand_visuals_.erase(hand_visuals_.begin() + *held_card_index_);
             held_card_index_ = std::nullopt;
             is_picking_target_ = false;
+            return;
           } else {
             // Cancel play if click was not on a valid target
             is_picking_target_ = false;
@@ -119,6 +122,12 @@ void HandController::Update(float delta_time_seconds,
                   std::make_shared<core::effects::actions::PlayCardAction>(
                       player_id_, held_card.instance_id,
                       std::vector<core::effects::Target>{}));
+
+              // Immediately remove card from visuals to prevent it snapping back
+              // to hand before state updates.
+              hand_visuals_.erase(hand_visuals_.begin() + *held_card_index_);
+              held_card_index_ = std::nullopt;
+              return;
             }
           }
         }
@@ -227,16 +236,22 @@ void HandController::AnimateCards(float delta_time_seconds) {
   bool any_moving = false;
 
   for (auto& vc : hand_visuals_) {
-    float lerp_speed =
-        vc.is_held ? combat::kHeldCardLerpSpeed : combat::kDefaultLerpSpeed;
-    float t = glm::clamp(delta_time_seconds * lerp_speed, 0.0f, 1.0f);
+    if (vc.is_held && !is_picking_target_) {
+      vc.current_transform.position = vc.target_transform.position;
+      vc.current_transform.scale = vc.target_transform.scale;
+      vc.current_transform.rotation = vc.target_transform.rotation;
+    } else {
+      float lerp_speed =
+          vc.is_held ? combat::kHeldCardLerpSpeed : combat::kDefaultLerpSpeed;
+      float t = glm::clamp(delta_time_seconds * lerp_speed, 0.0f, 1.0f);
 
-    vc.current_transform.position = glm::mix(vc.current_transform.position,
-                                             vc.target_transform.position, t);
-    vc.current_transform.scale =
-        glm::mix(vc.current_transform.scale, vc.target_transform.scale, t);
-    vc.current_transform.rotation = glm::mix(vc.current_transform.rotation,
-                                             vc.target_transform.rotation, t);
+      vc.current_transform.position = glm::mix(vc.current_transform.position,
+                                               vc.target_transform.position, t);
+      vc.current_transform.scale =
+          glm::mix(vc.current_transform.scale, vc.target_transform.scale, t);
+      vc.current_transform.rotation = glm::mix(vc.current_transform.rotation,
+                                               vc.target_transform.rotation, t);
+    }
 
     if (glm::distance(vc.current_transform.position,
                       vc.target_transform.position) > 1.0f) {

@@ -83,7 +83,8 @@ TEST_F(PlayCardActionTest, PlaySpellQueuesResolution) {
   EXPECT_EQ(state->player->hand.size(), 0);
   EXPECT_EQ(state->player->stack.size(), 1);
   EXPECT_EQ(state->player->stack[0]->instance_id, 101);
-  EXPECT_EQ(EffectResolver::Get().queue_size(), 1);
+  // Queues SpellVisualAction and ResolveSpellAction
+  EXPECT_EQ(EffectResolver::Get().queue_size(), 2);
 }
 
 }  // namespace

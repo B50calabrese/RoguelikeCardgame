@@ -54,6 +54,10 @@
     - **Visual Indicators**: Added red highlights for Haste and green highlights for Blocker on the board in `CombatScene`.
     - **Keyword Descriptions**: Updated `CardRegistry` to automatically prepend "Haste." and "Blocker." to card descriptions.
     - **Card Set Update**: Assigned Haste and Blocker to 10 existing cards (2 of each color) by updating their XML definitions.
+- **Visual Polish & Board Layout Refinement**: Improved card interaction feel and board presentation.
+    - **Held Card Snapping**: Modified `HandController` to snap held cards directly to the mouse position. This eliminates the "ghosting" artifact caused by linear interpolation lag during rapid mouse movement.
+    - **Play Interaction Fix**: Resolved the "snap-back" glitch where cards would briefly return to the hand layout after being played. The `HandController` now immediately removes played cards from its visual state upon queuing the play action.
+    - **Board Spacing & Centering**: Overhauled the board layout logic in `CombatScene` to enforce a fixed 24px gap between cards. Creatures are now centered within their respective board zones and maintain a consistent scale, rather than spreading to fill the entire width.
 
 ## Technical Status Report
 
