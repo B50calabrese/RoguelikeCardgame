@@ -6,7 +6,7 @@
 #include "core/card_data.h"
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/util/logger.h"
 
 namespace core::effects::actions {
@@ -16,11 +16,11 @@ class KillCreatureAction : public ActionBase {
   KillCreatureAction(int card_instance_id)
       : card_instance_id_(card_instance_id) {}
 
-  RuleResult Validate(const state::GameState& state) const override {
+  RuleResult Validate(const state::CombatState& state) const override {
     return {true, "Kill allowed", false};
   }
 
-  void Apply(state::GameState& state) const override {
+  void Apply(state::CombatState& state) const override {
     auto find_and_kill = [this](PlayerState& p, int id) -> bool {
       auto it =
           std::find_if(p.board.begin(), p.board.end(),

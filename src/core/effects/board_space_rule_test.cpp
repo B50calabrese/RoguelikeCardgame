@@ -4,7 +4,7 @@
 #include "core/card_instance.h"
 #include "core/effects/actions/play_card_action.h"
 #include "core/effects/rules_engine.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 namespace {
@@ -12,7 +12,7 @@ namespace {
 class BoardSpaceRuleTest : public ::testing::Test {
  protected:
   void SetUp() override {
-    state = std::make_unique<state::GameState>();
+    state = std::make_unique<state::CombatState>();
     state->player->mana = 100;
     state->current_turn_player_id = 0;
 
@@ -27,7 +27,7 @@ class BoardSpaceRuleTest : public ::testing::Test {
     spell_data->type = CardType::Spell;
   }
 
-  std::unique_ptr<state::GameState> state;
+  std::unique_ptr<state::CombatState> state;
   std::shared_ptr<CardData> creature_data;
   std::shared_ptr<CardData> spell_data;
 };

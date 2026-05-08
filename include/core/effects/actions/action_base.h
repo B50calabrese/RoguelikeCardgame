@@ -6,7 +6,7 @@
 #include "core/enums.h"
 
 namespace core::state {
-struct GameState;
+struct CombatState;
 }
 namespace core::effects {
 struct RuleResult;
@@ -22,14 +22,14 @@ class ActionBase {
   virtual ~ActionBase() = default;
 
   /** @brief Validates if the action is legal in the current state. */
-  virtual RuleResult Validate(const state::GameState& state) const = 0;
+  virtual RuleResult Validate(const state::CombatState& state) const = 0;
 
   /** @brief Applies the action's effects to the game state. */
-  virtual void Apply(state::GameState& state) const = 0;
+  virtual void Apply(state::CombatState& state) const = 0;
 
   /** @brief Returns true if the action (and any associated animations) is
    * finished. */
-  virtual bool IsComplete(const state::GameState& state) const { return true; }
+  virtual bool IsComplete(const state::CombatState& state) const { return true; }
 
   /** @brief Human-readable name of the action. */
   virtual std::string name() const = 0;

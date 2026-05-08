@@ -3,7 +3,7 @@
 
 #include "core/effects/action.h"
 #include "core/effects/rule_result.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 
@@ -18,7 +18,7 @@ class IRule {
    * @brief Validates an action against this rule.
    * @return RuleResult indicating if the rule was satisfied.
    */
-  virtual RuleResult Validate(const state::GameState& state,
+  virtual RuleResult Validate(const state::CombatState& state,
                               const Action& action) const = 0;
 };
 

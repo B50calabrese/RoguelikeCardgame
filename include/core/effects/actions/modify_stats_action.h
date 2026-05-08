@@ -6,7 +6,7 @@
 #include "core/card_instance.h"
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects::actions {
 
@@ -20,11 +20,11 @@ class ModifyStatsAction : public ActionBase {
         health_change_(health_change),
         duration_(duration) {}
 
-  RuleResult Validate(const GameState& state) const override {
+  RuleResult Validate(const CombatState& state) const override {
     return {true, "Modify allowed", false};
   }
 
-  void Apply(GameState& state) const override;
+  void Apply(CombatState& state) const override;
 
   std::string name() const override { return "ModifyStats"; }
 

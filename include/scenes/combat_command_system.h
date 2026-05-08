@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace scenes {
 
@@ -14,23 +14,23 @@ namespace scenes {
  */
 class CombatCommandSystem {
  public:
-  static void Register(core::GameState& state);
+  static void Register(core::CombatState& state);
 
  private:
-  static void AddCardCommand(core::GameState& state,
+  static void AddCardCommand(core::CombatState& state,
                              const std::vector<std::string>& args);
-  static void RemoveCardCommand(core::GameState& state,
+  static void RemoveCardCommand(core::CombatState& state,
                                 const std::vector<std::string>& args);
   static void ListCardsCommand(const std::vector<std::string>& args);
-  static void SetHealthCommand(core::GameState& state,
+  static void SetHealthCommand(core::CombatState& state,
                                const std::vector<std::string>& args);
-  static void DrawCardCommand(core::GameState& state,
+  static void DrawCardCommand(core::CombatState& state,
                               const std::vector<std::string>& args);
-  static void SetManaCommand(core::GameState& state,
+  static void SetManaCommand(core::CombatState& state,
                              const std::vector<std::string>& args);
-  static void SetTurnCommand(core::GameState& state,
+  static void SetTurnCommand(core::CombatState& state,
                              const std::vector<std::string>& args);
-  static void PlayCardCommand(core::GameState& state,
+  static void PlayCardCommand(core::CombatState& state,
                               const std::vector<std::string>& args);
 };
 

@@ -7,7 +7,7 @@
 
 namespace core::effects::actions {
 
-void ModifyStatsAction::Apply(GameState& state) const {
+void ModifyStatsAction::Apply(CombatState& state) const {
   CardInstance* inst = state.FindCardInstance(card_instance_id_);
   if (inst && inst->location == CardLocation::Board) {
     if (duration_ == core::ModifierDuration::Permanent) {

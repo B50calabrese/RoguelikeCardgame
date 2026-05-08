@@ -19,6 +19,11 @@ enum class CardColor { White, Blue, Black, Red, Green, Colorless };
 enum class ActorId : int { Player = 0, Enemy = 1, None = -1 };
 
 /**
+ * @brief Defines the playable character types.
+ */
+enum class CharacterType { Warrior, Mage, Rogue, None };
+
+/**
  * @brief Defines the subtypes (creature types) of a card.
  */
 enum class CreatureType {

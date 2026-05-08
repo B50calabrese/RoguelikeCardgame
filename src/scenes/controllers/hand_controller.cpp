@@ -29,7 +29,7 @@ HandController::HandController(int player_id)
       held_card_index_(std::nullopt) {}
 
 void HandController::Update(float delta_time_seconds,
-                            core::state::GameState& state,
+                            core::state::CombatState& state,
                             combat::HitboxManager* hitbox_manager) {
   const auto& hand_state =
       (player_id_ == state.player->id) ? state.player->hand : state.enemy->hand;
@@ -273,7 +273,7 @@ void HandController::DrawTargetingLine() {
 }
 
 std::optional<core::effects::Target> HandController::FindTargetAt(
-    const core::state::GameState& state, glm::vec2 mouse_pos,
+    const core::state::CombatState& state, glm::vec2 mouse_pos,
     combat::HitboxManager* hitbox_manager) {
   auto& config = core::GameConfig::Get();
   float icon_size = config.window_width * 0.05f;

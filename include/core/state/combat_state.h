@@ -1,0 +1,80 @@
+#ifndef DECK_BUILDER_GAME_INCLUDE_CORE_STATE_COMBAT_STATE_H_
+#define DECK_BUILDER_GAME_INCLUDE_CORE_STATE_COMBAT_STATE_H_
+
+#include <memory>
+
+#include "core/card_instance.h"
+#include "core/state/player_state.h"
+
+namespace core::state {
+
+/**
+ * @brief Central storage for the game's runtime state during combat.
+ */
+struct CombatState {
+  std::unique_ptr<PlayerState> player;
+  std::unique_ptr<PlayerState> enemy;
+
+  int current_turn_player_id;
+  int next_instance_id = 1;
+
+  CombatState() {
+    player = std::make_unique<PlayerState>(0, 30, 1);
+    enemy = std::make_unique<PlayerState>(1, 30, 1);
+    current_turn_player_id = 0;
+  }
+
+  /**
+   * @brief Helper to find a card instance by its ID across all zones.
+   */
+  CardInstance* FindCardInstance(int instance_id) const {
+    auto search_zones = [](const PlayerState& p, int id) -> CardInstance* {
+      for (const auto& c : p.hand)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.board)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.deck)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.graveyard)
+        if (c->instance_id == id) return c.get();
+      for (const auto& c : p.stack)
+        if (c->instance_id == id) return c.get();
+      return nullptr;
+    };
+
+    if (auto c = search_zones(*player, instance_id)) return c;
+    if (auto c = search_zones(*enemy, instance_id)) return c;
+    return nullptr;
+  }
+
+  /**
+   * @brief Gets the player state by ID.
+   */
+  PlayerState& GetPlayerById(int id) {
+    return (player->id == id) ? *player : *enemy;
+  }
+
+  const PlayerState& GetPlayerById(int id) const {
+    return (player->id == id) ? *player : *enemy;
+  }
+
+  /**
+   * @brief Gets the opponent's player state.
+   */
+  PlayerState& GetOpponentOf(int id) {
+    return (player->id == id) ? *enemy : *player;
+  }
+
+  const PlayerState& GetOpponentOf(int id) const {
+    return (player->id == id) ? *enemy : *player;
+  }
+};
+
+}  // namespace core::state
+
+namespace core {
+using CombatState = state::CombatState;
+using PlayerState = state::PlayerState;
+}  // namespace core
+
+#endif  // DECK_BUILDER_GAME_INCLUDE_CORE_STATE_COMBAT_STATE_H_

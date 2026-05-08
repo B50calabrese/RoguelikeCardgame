@@ -6,7 +6,7 @@
 #include "core/card_instance.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/rules_engine.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects::actions {
 namespace {
@@ -16,7 +16,7 @@ using ::testing::Test;
 class PlayCardActionTest : public Test {
  protected:
   void SetUp() override {
-    state = std::make_unique<GameState>();
+    state = std::make_unique<CombatState>();
     EffectResolver::Get().ClearQueue();
 
     creature_data = std::make_shared<CardData>();
@@ -30,7 +30,7 @@ class PlayCardActionTest : public Test {
     spell_data->type = CardType::Spell;
   }
 
-  std::unique_ptr<GameState> state;
+  std::unique_ptr<CombatState> state;
   std::shared_ptr<CardData> creature_data;
   std::shared_ptr<CardData> spell_data;
 };

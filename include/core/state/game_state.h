@@ -1,80 +1,42 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_STATE_GAME_STATE_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_STATE_GAME_STATE_H_
 
-#include <memory>
-
-#include "core/card_instance.h"
-#include "core/state/player_state.h"
-
-namespace core::state {
-
-/**
- * @brief Central storage for the game's runtime state.
- */
-struct GameState {
-  std::unique_ptr<PlayerState> player;
-  std::unique_ptr<PlayerState> enemy;
-
-  int current_turn_player_id;
-  int next_instance_id = 1;
-
-  GameState() {
-    player = std::make_unique<PlayerState>(0, 30, 1);
-    enemy = std::make_unique<PlayerState>(1, 30, 1);
-    current_turn_player_id = 0;
-  }
-
-  /**
-   * @brief Helper to find a card instance by its ID across all zones.
-   */
-  CardInstance* FindCardInstance(int instance_id) const {
-    auto search_zones = [](const PlayerState& p, int id) -> CardInstance* {
-      for (const auto& c : p.hand)
-        if (c->instance_id == id) return c.get();
-      for (const auto& c : p.board)
-        if (c->instance_id == id) return c.get();
-      for (const auto& c : p.deck)
-        if (c->instance_id == id) return c.get();
-      for (const auto& c : p.graveyard)
-        if (c->instance_id == id) return c.get();
-      for (const auto& c : p.stack)
-        if (c->instance_id == id) return c.get();
-      return nullptr;
-    };
-
-    if (auto c = search_zones(*player, instance_id)) return c;
-    if (auto c = search_zones(*enemy, instance_id)) return c;
-    return nullptr;
-  }
-
-  /**
-   * @brief Gets the player state by ID.
-   */
-  PlayerState& GetPlayerById(int id) {
-    return (player->id == id) ? *player : *enemy;
-  }
-
-  const PlayerState& GetPlayerById(int id) const {
-    return (player->id == id) ? *player : *enemy;
-  }
-
-  /**
-   * @brief Gets the opponent's player state.
-   */
-  PlayerState& GetOpponentOf(int id) {
-    return (player->id == id) ? *enemy : *player;
-  }
-
-  const PlayerState& GetOpponentOf(int id) const {
-    return (player->id == id) ? *enemy : *player;
-  }
-};
-
-}  // namespace core::state
+#include <vector>
+#include "core/enums.h"
 
 namespace core {
-using GameState = state::GameState;
-using PlayerState = state::PlayerState;
+
+/**
+ * @brief Singleton class that tracks the overall state of a game run.
+ */
+class GameState {
+ public:
+  static GameState& Get();
+
+  void Reset();
+
+  // Getters and Setters
+  CharacterType character_type() const { return character_type_; }
+  void set_character_type(CharacterType type) { character_type_ = type; }
+
+  const std::vector<CardColor>& colors() const { return colors_; }
+  void set_colors(const std::vector<CardColor>& colors) { colors_ = colors; }
+
+  const std::vector<int>& deck() const { return deck_; }
+  void set_deck(const std::vector<int>& deck) { deck_ = deck; }
+  void add_card_to_deck(int card_id) { deck_.push_back(card_id); }
+
+ private:
+  GameState();
+  ~GameState() = default;
+  GameState(const GameState&) = delete;
+  GameState& operator=(const GameState&) = delete;
+
+  CharacterType character_type_ = CharacterType::None;
+  std::vector<CardColor> colors_;
+  std::vector<int> deck_;
+};
+
 }  // namespace core
 
 #endif  // DECK_BUILDER_GAME_INCLUDE_CORE_STATE_GAME_STATE_H_

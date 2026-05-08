@@ -9,11 +9,13 @@
 #include "core/character_config.h"
 #include "core/constants.h"
 #include "core/game_config.h"
+#include "core/state/game_state.h"
 #include "core/util/math_util.h"
 #include "engine/graphics/renderer.h"
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
 #include "scenes/main_menu_scene.h"
+#include "scenes/map_scene.h"
 
 namespace scenes {
 
@@ -71,11 +73,33 @@ void NewRunScene::OnAttach() {
 
   start_button_ = std::make_unique<core::graphics::UIButton>(
       "Start Run", glm::vec2{window_w * 0.5f - 100.0f, 50.0f},
-      glm::vec2{200.0f, 60.0f}, []() {
-        GLFWwindow* window = glfwGetCurrentContext();
-        if (window) {
-          glfwSetWindowShouldClose(window, GLFW_TRUE);
+      glm::vec2{200.0f, 60.0f}, [this]() {
+        auto& game_state = core::GameState::Get();
+        game_state.Reset();
+
+        // Save Character
+        core::CharacterType char_type = core::CharacterType::None;
+        if (selected_character_index_ == 0) char_type = core::CharacterType::Warrior;
+        else if (selected_character_index_ == 1) char_type = core::CharacterType::Mage;
+        else if (selected_character_index_ == 2) char_type = core::CharacterType::Rogue;
+        game_state.set_character_type(char_type);
+
+        // Save Colors
+        std::vector<core::CardColor> colors;
+        for (int idx : selected_color_indices_) {
+          colors.push_back(static_cast<core::CardColor>(idx));
         }
+        game_state.set_colors(colors);
+
+        // Populate Deck
+        for (auto color : colors) {
+          int start_id = static_cast<int>(color) * 20 + 1;
+          for (int i = 0; i < 10; ++i) {
+            game_state.add_card_to_deck(start_id + i);
+          }
+        }
+
+        engine::SceneManager::Get().SetScene(std::make_unique<MapScene>());
       });
 }
 

@@ -8,7 +8,7 @@
 
 namespace core::effects::actions {
 
-RuleResult CreatureAttackAction::Validate(const state::GameState& state) const {
+RuleResult CreatureAttackAction::Validate(const state::CombatState& state) const {
   CardInstance* attacker = state.FindCardInstance(attacker_id_);
   if (!attacker || attacker->location != CardLocation::Board) {
     return {false, "Attacker not on board", true};
@@ -27,7 +27,7 @@ RuleResult CreatureAttackAction::Validate(const state::GameState& state) const {
   return {true, "OK", false};
 }
 
-void CreatureAttackAction::Apply(state::GameState& state) const {
+void CreatureAttackAction::Apply(state::CombatState& state) const {
   CardInstance* attacker = state.FindCardInstance(attacker_id_);
   if (!attacker) return;
 
@@ -74,7 +74,7 @@ void CreatureAttackAction::Apply(state::GameState& state) const {
                                   std::to_string(attacker_id_));
 }
 
-bool CreatureAttackAction::IsComplete(const state::GameState& state) const {
+bool CreatureAttackAction::IsComplete(const state::CombatState& state) const {
   return !VisualBlocker::Get().is_blocking();
 }
 

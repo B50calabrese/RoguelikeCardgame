@@ -151,7 +151,7 @@ void CombatScene::OnAttach() {
   combat_controller_ = std::make_unique<controllers::CombatController>();
 
   core::effects::EventBus::Get().Subscribe(
-      [this](core::state::GameState& state,
+      [this](core::state::CombatState& state,
              const core::effects::GameEvent& event) {
         if (event.type == core::effects::GameEventType::CreatureAttacked) {
           this->combat_controller_->OnCreatureAttacked(

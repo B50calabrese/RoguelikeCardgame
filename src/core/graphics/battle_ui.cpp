@@ -36,7 +36,7 @@ BattleUI::BattleUI() {
       enemy_pos, icon_size, glm::vec4(0.8f, 0.0f, 0.0f, 1.0f));
 }
 
-void BattleUI::Update(float delta_time, const GameState& state) {
+void BattleUI::Update(float delta_time, const CombatState& state) {
   auto& input = engine::InputManager::Get();
   glm::vec2 mouse_pos = input.mouse_screen_pos();
   bool clicked = input.IsKeyPressed(engine::KeyCode::kMouseLeft);
@@ -68,7 +68,7 @@ void BattleUI::Update(float delta_time, const GameState& state) {
   }
 }
 
-void BattleUI::Render(const GameState& state, const glm::vec4& player_zone,
+void BattleUI::Render(const CombatState& state, const glm::vec4& player_zone,
                       const glm::vec4& enemy_zone) const {
   auto& config = core::GameConfig::Get();
   auto& queue = engine::graphics::utils::RenderQueue::Default();

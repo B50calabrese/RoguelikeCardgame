@@ -9,7 +9,7 @@
 #include "core/effects/effect_resolver.h"
 #include "core/effects/rule_result.h"
 #include "core/effects/target.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "engine/util/logger.h"
 
 namespace core::effects::actions {
@@ -22,11 +22,11 @@ class ResolveSpellAction : public ActionBase {
         card_instance_id_(card_instance_id),
         targets_(std::move(targets)) {}
 
-  RuleResult Validate(const state::GameState& state) const override {
+  RuleResult Validate(const state::CombatState& state) const override {
     return {true, "Valid resolution", false};
   }
 
-  void Apply(state::GameState& state) const override {
+  void Apply(state::CombatState& state) const override {
     CardInstance* inst = state.FindCardInstance(card_instance_id_);
     if (!inst || inst->location != CardLocation::Stack) {
       LOG_ERR("[EffectResolver] Spell %d not found on stack for resolution.",

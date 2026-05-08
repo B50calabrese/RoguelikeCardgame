@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "core/effects/game_event.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 #include "scenes/combat/attack_animation.h"
 #include "scenes/combat/board_hitbox.h"
 #include "scenes/combat/combat_animator.h"
@@ -17,11 +17,11 @@ namespace scenes::controllers {
 
 class CombatController {
  public:
-  void Update(float delta_time, core::state::GameState& state, float icon_top,
+  void Update(float delta_time, core::state::CombatState& state, float icon_top,
               float icon_size);
-  void HandleInput(core::state::GameState& state, float icon_top,
+  void HandleInput(core::state::CombatState& state, float icon_top,
                    float icon_size);
-  void OnCreatureAttacked(core::state::GameState& state,
+  void OnCreatureAttacked(core::state::CombatState& state,
                           const core::effects::GameEvent& event, float icon_top,
                           float icon_size);
 

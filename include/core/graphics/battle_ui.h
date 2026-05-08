@@ -7,15 +7,15 @@
 
 #include "core/graphics/health_icon.h"
 #include "core/graphics/ui_button.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::graphics {
 
 class BattleUI {
  public:
   BattleUI();
-  void Update(float delta_time, const GameState& state);
-  void Render(const GameState& state, const glm::vec4& player_zone,
+  void Update(float delta_time, const CombatState& state);
+  void Render(const CombatState& state, const glm::vec4& player_zone,
               const glm::vec4& enemy_zone) const;
 
  private:

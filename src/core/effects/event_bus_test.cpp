@@ -3,16 +3,16 @@
 #include <gtest/gtest.h>
 
 #include "core/effects/game_event.h"
-#include "core/state/game_state.h"
+#include "core/state/combat_state.h"
 
 namespace core::effects {
 namespace {
 
 TEST(EventBusTest, PublishSubscribe) {
-  GameState state;
+  CombatState state;
   bool event_received = false;
 
-  EventBus::Get().Subscribe([&](state::GameState& s, const GameEvent& e) {
+  EventBus::Get().Subscribe([&](state::CombatState& s, const GameEvent& e) {
     event_received = true;
     EXPECT_EQ(e.type, GameEventType::TurnStarted);
   });

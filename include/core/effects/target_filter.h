@@ -8,7 +8,7 @@
 #include "core/effects/target.h"
 
 namespace core::state {
-struct GameState;
+struct CombatState;
 }
 namespace core {
 struct CardInstance;
@@ -42,7 +42,7 @@ struct TargetFilter {
   /**
    * @brief Checks if a given target is valid according to this filter.
    */
-  bool IsValid(const state::GameState& state, int actor_player_id,
+  bool IsValid(const state::CombatState& state, int actor_player_id,
                const Target& target) const;
 };
 
