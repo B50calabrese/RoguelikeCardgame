@@ -1,6 +1,14 @@
 # Project Status
 
 ## Most Recent Changes
+- **Map Scene Navigation (MVP)**: Implemented the "run navigation" system in `MapScene`.
+    - **Scenario Choices**: The scene now generates 2-5 randomized cards representing different encounter types: Battle (Red), Random Event (Purple), Shop (Gold), and Treasure (Cyan).
+    - **UI Layout**: Added a 64px high top bar (Z-index 1000) for future UI elements. Scenario cards are centered horizontally and vertically.
+    - **Card Visuals**: Choice cards use the `gray_noncreature_frame.png` asset. Each card displays its scenario name and a colored square in the art area corresponding to the scenario type.
+    - **Animations & Interaction**:
+        - **Hover**: Cards perform a "shake" animation when hovered.
+        - **Selection**: Clicking a card logs the selection, triggers a 1-second fade-out transition, and generates a new set of choices.
+        - **Fading**: Implemented smooth fade-in and fade-out transitions for scene elements.
 - **Game State Architecture Refactor**: Separated persistent run-level state from encounter-specific combat state.
     - **CombatState**: Renamed the original `GameState` to `CombatState` to better reflect its role in tracking individual combat encounters (health, mana, cards in zones).
     - **Run-Level GameState**: Introduced a new `core::GameState` singleton to track progress across an entire run, including chosen character, selected color identity, and the player's current deck.
@@ -8,9 +16,7 @@
     - **Character Types**: Added a `CharacterType` enum with Warrior, Mage, and Rogue archetypes.
     - **Dynamic Deck Building**: The `NewRunScene` now populates the player's starting deck based on their color choices, using the first 10 cards from each selected color (e.g., IDs 1-10 for White).
     - **Run Setup**: Clicking "Start Run" now resets the run state, saves player selections, and initializes the starting deck.
-- **Map Scene Implementation**: Added a placeholder `MapScene` as the destination after starting a new run.
-    - **Scene Transition**: Replaced the "Close Window" behavior of the Start Run button with a proper transition to the map.
-    - **Navigation**: Included basic navigation back to the Main Menu from the Map Scene for testing.
+- **Map Scene Placeholder**: Replaced the initial `MapScene` placeholder with the functional navigation MVP.
 - **Simple AI Implementation**: Implemented a "simple" AI logic for the enemy.
     - **Decision Making**: The AI now plays the highest-cost creature card it can afford each turn, picking randomly among ties.
     - **Combat Logic**: Follows a strict attack priority (Blockers > Other Creatures > Player Health) and targets the lowest health creature when attacking creatures. It now leverages the `RulesEngine` for target validation.
@@ -36,7 +42,7 @@
 ### Scenes
 - **MainMenuScene**: Functional entry point for the application.
 - **NewRunScene**: Allows players to select starting colors and character. Now properly initializes the run state.
-- **MapScene**: A placeholder scene that serves as the main hub after starting a run.
+- **MapScene**: Functional run navigation scene with randomized scenario choices and UI animations.
 - **CombatScene**: The primary gameplay loop. Orchestrates `HandController`, `BattleUI`, and board state. Currently uses `CombatState` for encounter logic.
 - **CardViewerScene**: Provides a grid view of all registered cards.
 
@@ -51,20 +57,22 @@
 - **BattleUI**: Renders the combat interface, including mana pools and board zones.
 - **HealthIcon**: Component-based health tracking for player and enemy.
 - **TextRenderer**: Singleton for font management and UI text rendering.
+- **CardRenderer**: Central utility for rendering cards, now leveraged by `MapScene` for navigation choices.
 
 ### Infrastructure
 - **InputManager**: Handles mouse and keyboard input.
 - **SceneManager**: Manages scene transitions using a deferred mechanism.
-- **Engine Z-Sorting Support**: The layering hierarchy is strictly enforced across all rendering systems.
+- **Engine Z-Sorting Support**: The layering hierarchy is strictly enforced across all rendering systems using `RenderQueue`.
 
 ## Recommendations & Next Steps
 
 ### Technical Improvements
 - **Combat Initialization Integration**: Update `CombatScene` to pull player deck and color data from the new `GameState` singleton instead of hardcoding them.
-- **Map Functionality**: Replace the placeholder `MapScene` with a node-based map system for run progression.
+- **Map State Persistence**: Extend `GameState` to track the player's current position on the map and visited nodes.
 - **Engine Linker Resolution**: Standardize the search paths for GLFW and OpenGL in the build system to improve sandbox compatibility.
 
 ### Feature Development
+- **Node-Based Map**: Transition from simple scenario choices to a persistent node-based map graph.
 - **Character Perks**: Introduce unique starting stats or passive abilities for the Warrior, Mage, and Rogue archetypes.
 - **AI Enhancement**: Expand `SimpleAI` to support non-creature spell targeting and more complex tactical decisions.
 - **Audio Integration**: Bootstrap an audio system for sound effects and music.
