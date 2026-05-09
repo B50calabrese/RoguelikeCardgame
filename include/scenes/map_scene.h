@@ -11,19 +11,6 @@
 
 namespace scenes {
 
-enum class ScenarioType { Battle, RandomEvent, Shop, Treasure };
-
-struct ChoiceCard {
-  ScenarioType type;
-  std::string name;
-  glm::vec2 position;
-  glm::vec4 color;
-  float alpha = 1.0f;
-  bool is_hovered = false;
-  float shake_timer = 0.0f;
-  core::CardData dummy_data;
-};
-
 class MapScene : public engine::Scene {
  public:
   MapScene() : engine::Scene("MapScene") {}
@@ -34,6 +21,19 @@ class MapScene : public engine::Scene {
   void OnRender() override;
 
  private:
+  enum class ScenarioType { Battle, RandomEvent, Shop, Treasure };
+
+  struct ChoiceCard {
+    ScenarioType type;
+    std::string name;
+    glm::vec2 position;
+    glm::vec4 color;
+    float alpha = 1.0f;
+    bool is_hovered = false;
+    float shake_timer = 0.0f;
+    core::CardData dummy_data;
+  };
+
   void GenerateChoices();
   bool IsMouseOverCard(const ChoiceCard& card, glm::vec2 mouse_pos) const;
 

@@ -45,22 +45,22 @@ void MapScene::GenerateChoices() {
 
   for (int i = 0; i < num_choices; ++i) {
     ChoiceCard card;
-    card.type = static_cast<ScenarioType>(scenario_dist(gen));
+    card.type = static_cast<MapScene::ScenarioType>(scenario_dist(gen));
 
     switch (card.type) {
-      case ScenarioType::Battle:
+      case MapScene::ScenarioType::Battle:
         card.name = "BATTLE";
         card.color = {0.7f, 0.1f, 0.1f, 1.0f};
         break;
-      case ScenarioType::RandomEvent:
+      case MapScene::ScenarioType::RandomEvent:
         card.name = "RANDOM EVENT";
         card.color = {0.5f, 0.0f, 0.5f, 1.0f};
         break;
-      case ScenarioType::Shop:
+      case MapScene::ScenarioType::Shop:
         card.name = "SHOP";
         card.color = {1.0f, 0.84f, 0.0f, 1.0f};
         break;
-      case ScenarioType::Treasure:
+      case MapScene::ScenarioType::Treasure:
         card.name = "TREASURE";
         card.color = {0.0f, 1.0f, 1.0f, 1.0f};
         break;
@@ -84,7 +84,7 @@ void MapScene::GenerateChoices() {
   fade_timer_ = fade_duration_;
 }
 
-bool MapScene::IsMouseOverCard(const ChoiceCard& card,
+bool MapScene::IsMouseOverCard(const MapScene::ChoiceCard& card,
                                glm::vec2 mouse_pos) const {
   float half_width = (core::graphics::kBaseCardWidth * kCardScale) / 2.0f;
   float half_height = (core::graphics::kBaseCardHeight * kCardScale) / 2.0f;
