@@ -13,6 +13,8 @@ void GameState::Reset() {
   character_type_ = CharacterType::None;
   colors_.clear();
   deck_.clear();
+  health_ = 30;
+  max_health_ = 30;
 }
 
 }  // namespace core

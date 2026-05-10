@@ -60,6 +60,32 @@ class GameSetup {
   }
 
   /**
+   * @brief Initializes a player's deck with a specific list of card IDs.
+   * @param state The game state to modify.
+   * @param player_id The player whose deck to initialize.
+   * @param card_ids The list of card IDs to add.
+   */
+  static void SetupDeckFromIds(CombatState& state, int player_id,
+                               const std::vector<int>& card_ids) {
+    PlayerState& p = state.GetPlayerById(player_id);
+    p.deck.clear();
+
+    for (int card_id : card_ids) {
+      const CardData* data = CardRegistry::Get().GetCardById(card_id);
+      if (data) {
+        auto inst = std::make_unique<CardInstance>(
+            data, state.next_instance_id++, p.id);
+        inst->location = CardLocation::Deck;
+        p.deck.push_back(std::move(inst));
+      }
+    }
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(p.deck.begin(), p.deck.end(), g);
+  }
+
+  /**
    * @brief Draws an initial hand of cards.
    */
   static void DrawInitialHand(CombatState& state, int player_id, int amount = 5) {
