@@ -79,10 +79,20 @@ void NewRunScene::OnAttach() {
 
         // Save Character
         core::CharacterType char_type = core::CharacterType::None;
-        if (selected_character_index_ == 0) char_type = core::CharacterType::Warrior;
-        else if (selected_character_index_ == 1) char_type = core::CharacterType::Mage;
-        else if (selected_character_index_ == 2) char_type = core::CharacterType::Rogue;
+        int starting_health = 30;
+        if (selected_character_index_ == 0) {
+          char_type = core::CharacterType::Warrior;
+          starting_health = 35;
+        } else if (selected_character_index_ == 1) {
+          char_type = core::CharacterType::Mage;
+          starting_health = 25;
+        } else if (selected_character_index_ == 2) {
+          char_type = core::CharacterType::Rogue;
+          starting_health = 30;
+        }
         game_state.set_character_type(char_type);
+        game_state.set_health(starting_health);
+        game_state.set_max_health(starting_health);
 
         // Save Colors
         std::vector<core::CardColor> colors;

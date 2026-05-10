@@ -26,6 +26,12 @@ class GameState {
   void set_deck(const std::vector<int>& deck) { deck_ = deck; }
   void add_card_to_deck(int card_id) { deck_.push_back(card_id); }
 
+  int health() const { return health_; }
+  void set_health(int health) { health_ = health; }
+
+  int max_health() const { return max_health_; }
+  void set_max_health(int max_health) { max_health_ = max_health; }
+
  private:
   GameState();
   ~GameState() = default;
@@ -35,6 +41,9 @@ class GameState {
   CharacterType character_type_ = CharacterType::None;
   std::vector<CardColor> colors_;
   std::vector<int> deck_;
+
+  int health_ = 30;
+  int max_health_ = 30;
 };
 
 }  // namespace core

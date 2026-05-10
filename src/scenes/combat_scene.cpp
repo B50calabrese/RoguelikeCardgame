@@ -1,11 +1,14 @@
 #include "scenes/combat_scene.h"
 
+#include <GLFW/glfw3.h>
+
 #include <algorithm>
 #include <random>
+#include <vector>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/vec2.hpp>
-#include <vector>
 
 #include "core/ai/simple_ai.h"
 #include "core/card_instance.h"
@@ -22,8 +25,10 @@
 #include "core/game_config.h"
 #include "core/graphics/card_renderer.h"
 #include "core/graphics/hand_renderer.h"
+#include "core/state/game_state.h"
 #include "core/util/game_setup.h"
 #include "core/util/math_util.h"
+#include "engine/core/engine.h"
 #include "engine/graphics/primitive_renderer.h"
 #include "engine/graphics/renderer.h"
 #include "engine/graphics/utils/render_queue.h"
@@ -34,6 +39,7 @@
 #include "scenes/combat_command_system.h"
 #include "scenes/controllers/hand_controller.h"
 #include "scenes/main_menu_scene.h"
+#include "scenes/map_scene.h"
 
 namespace scenes {
 
@@ -55,9 +61,18 @@ void CombatScene::OnAttach() {
     return;
   }
 
-  // Setup initial state
-  game_state_.player->colors = {core::CardColor::White, core::CardColor::Blue};
+  // Setup initial state from global GameState
+  auto& global_state = core::GameState::Get();
+
+  game_state_.player->colors = global_state.colors();
+  game_state_.player->health = global_state.health();
+  game_state_.player->max_health = global_state.max_health();
+
+  // Random enemy colors for now, or could be fixed
   game_state_.enemy->colors = {core::CardColor::Red, core::CardColor::Black};
+  game_state_.enemy->health = 30;
+  game_state_.enemy->max_health = 30;
+
   game_state_.current_turn_player_id = game_state_.player->id;
 
   game_state_.player->mana = 1;
@@ -67,7 +82,8 @@ void CombatScene::OnAttach() {
 
   enemy_ai_ = std::make_unique<core::ai::SimpleAI>(game_state_.enemy->id);
 
-  core::util::GameSetup::SetupDefaultDeck(game_state_, game_state_.player->id);
+  core::util::GameSetup::SetupDeckFromIds(game_state_, game_state_.player->id,
+                                          global_state.deck());
   core::util::GameSetup::DrawInitialHand(game_state_, game_state_.player->id);
 
   core::util::GameSetup::SetupDefaultDeck(game_state_, game_state_.enemy->id);
@@ -170,6 +186,19 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
 
   // Process game logic
   core::effects::EffectResolver::Get().ProcessQueue(game_state_);
+
+  // Check for win/loss
+  if (game_state_.enemy->health <= 0) {
+    auto& global_state = core::GameState::Get();
+    global_state.set_health(game_state_.player->health);
+    engine::SceneManager::Get().SetScene(std::make_unique<MapScene>());
+    return;
+  }
+  if (game_state_.player->health <= 0) {
+    glfwSetWindowShouldClose(engine::Engine::window().native_handle(), GLFW_TRUE);
+    return;
+  }
+
   UpdateSpellVisuals(delta_time_seconds);
   enemy_ai_->Update(delta_time_seconds, game_state_);
   battle_ui_.Update(delta_time_seconds, game_state_);

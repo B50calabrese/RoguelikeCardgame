@@ -15,6 +15,7 @@
 #include "engine/input/input_manager.h"
 #include "engine/scene/scene_manager.h"
 #include "engine/util/asset_manager.h"
+#include "scenes/combat_scene.h"
 #include "scenes/main_menu_scene.h"
 
 namespace scenes {
@@ -140,6 +141,10 @@ void MapScene::OnUpdate(float delta_time_seconds) {
 
       if (input.IsKeyPressed(engine::KeyCode::kMouseLeft)) {
         std::cout << "Selected Scenario: " << choice.name << std::endl;
+        if (choice.type == MapScene::ScenarioType::Battle) {
+          engine::SceneManager::Get().SetScene(std::make_unique<CombatScene>());
+          return;
+        }
         is_fading_out_ = true;
         fade_timer_ = fade_duration_;
         break;
