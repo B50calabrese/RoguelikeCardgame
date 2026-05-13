@@ -1,11 +1,12 @@
 #ifndef DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_ACTIONS_SPELL_VISUAL_ACTION_H_
 #define DECK_BUILDER_GAME_INCLUDE_CORE_EFFECTS_ACTIONS_SPELL_VISUAL_ACTION_H_
 
+#include <string>
+
 #include "core/effects/actions/action_base.h"
 #include "core/effects/rule_result.h"
 #include "core/effects/visual_blocker.h"
 #include "core/state/combat_state.h"
-#include <string>
 
 namespace core::effects::actions {
 
@@ -19,7 +20,8 @@ class SpellVisualAction : public ActionBase {
   }
 
   void Apply(state::CombatState& state) const override {
-    VisualBlocker::Get().AddBlocker("SpellVisual_" + std::to_string(card_instance_id_));
+    VisualBlocker::Get().AddBlocker("SpellVisual_" +
+                                    std::to_string(card_instance_id_));
   }
 
   bool IsComplete(const state::CombatState& state) const override {

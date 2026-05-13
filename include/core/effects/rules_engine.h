@@ -51,7 +51,8 @@ class RulesEngine {
   /**
    * @brief Checks if a set of targets meets the requirements of a filter.
    */
-  static RuleResult CheckTargeting(const state::CombatState& state, int actor_id,
+  static RuleResult CheckTargeting(const state::CombatState& state,
+                                   int actor_id,
                                    const std::vector<Target>& targets,
                                    const TargetFilter& filter) {
     if (filter.is_required && targets.empty()) {

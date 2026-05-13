@@ -8,7 +8,8 @@
 
 namespace core::effects::actions {
 
-RuleResult CreatureAttackAction::Validate(const state::CombatState& state) const {
+RuleResult CreatureAttackAction::Validate(
+    const state::CombatState& state) const {
   CardInstance* attacker = state.FindCardInstance(attacker_id_);
   if (!attacker || attacker->location != CardLocation::Board) {
     return {false, "Attacker not on board", true};

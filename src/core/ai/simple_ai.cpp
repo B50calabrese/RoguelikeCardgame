@@ -54,7 +54,8 @@ void SimpleAI::Update(float delta_time, CombatState& state) {
 
     effects::EffectResolver::Get().QueueAction(
         std::make_shared<effects::actions::PlayCardAction>(
-            ai_player_id_, to_play->instance_id, std::vector<effects::Target>()));
+            ai_player_id_, to_play->instance_id,
+            std::vector<effects::Target>()));
     wait_timer_ = 0.0f;
     return;
   }
@@ -92,16 +93,20 @@ void SimpleAI::Update(float delta_time, CombatState& state) {
         // Find valid targets according to rules
         std::vector<effects::Target> valid_targets;
         for (const auto& t : possible_targets) {
-          auto attack_action = std::make_shared<effects::actions::CreatureAttackAction>(
-              creature->instance_id, t);
-          if (effects::RulesEngine::Get().ValidateAction(state, attack_action).success) {
+          auto attack_action =
+              std::make_shared<effects::actions::CreatureAttackAction>(
+                  creature->instance_id, t);
+          if (effects::RulesEngine::Get()
+                  .ValidateAction(state, attack_action)
+                  .success) {
             valid_targets.push_back(t);
           }
         }
 
         if (valid_targets.empty()) continue;
 
-        // Among valid targets, pick one with lowest health if they are creatures
+        // Among valid targets, pick one with lowest health if they are
+        // creatures
         auto lowest_health_it = std::min_element(
             valid_targets.begin(), valid_targets.end(),
             [&state](const effects::Target& a, const effects::Target& b) {

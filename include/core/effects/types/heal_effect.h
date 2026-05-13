@@ -21,7 +21,8 @@ class HealEffect : public Effect {
     auto it = params.find("amount");
     if (it != params.end()) amount = std::stoi(it->second);
 
-    actions.push_back(std::make_shared<actions::HealAction>(targets[0], amount));
+    actions.push_back(
+        std::make_shared<actions::HealAction>(targets[0], amount));
     return actions;
   }
 

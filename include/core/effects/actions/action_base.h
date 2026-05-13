@@ -29,7 +29,9 @@ class ActionBase {
 
   /** @brief Returns true if the action (and any associated animations) is
    * finished. */
-  virtual bool IsComplete(const state::CombatState& state) const { return true; }
+  virtual bool IsComplete(const state::CombatState& state) const {
+    return true;
+  }
 
   /** @brief Human-readable name of the action. */
   virtual std::string name() const = 0;

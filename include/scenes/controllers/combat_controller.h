@@ -10,7 +10,7 @@
 #include "scenes/combat/attack_animation.h"
 #include "scenes/combat/board_hitbox.h"
 #include "scenes/combat/combat_animator.h"
-#include "scenes/combat/combat_state.h"
+#include "scenes/combat/combat_ui_state.h"
 #include "scenes/combat/hitbox_manager.h"
 
 namespace scenes::controllers {
@@ -25,7 +25,7 @@ class CombatController {
                           const core::effects::GameEvent& event, float icon_top,
                           float icon_size);
 
-  CombatState current_state() const { return current_state_; }
+  CombatUIState current_state() const { return current_state_; }
   std::optional<int> selected_attacker_id() const {
     return selected_attacker_id_;
   }
@@ -34,7 +34,7 @@ class CombatController {
   combat::HitboxManager& hitbox_manager() { return hitbox_manager_; }
 
  private:
-  CombatState current_state_ = CombatState::Idle;
+  CombatUIState current_state_ = CombatUIState::Idle;
   std::optional<int> selected_attacker_id_;
 
   combat::CombatAnimator animator_;

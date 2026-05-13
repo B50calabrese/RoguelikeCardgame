@@ -67,9 +67,10 @@ void MapScene::GenerateChoices() {
         break;
     }
 
-    card.position = {start_x + i * (core::graphics::kBaseCardWidth * kCardScale +
-                                    kCardSpacing),
-                     center_y};
+    card.position = {
+        start_x +
+            i * (core::graphics::kBaseCardWidth * kCardScale + kCardSpacing),
+        center_y};
 
     // Setup dummy CardData for CardRenderer
     card.dummy_data.name = card.name;
@@ -183,12 +184,12 @@ void MapScene::OnRender() {
     }
 
     // Draw the card frame and text using CardRenderer
-    core::graphics::CardRenderer::RenderCard(choice.dummy_data, render_pos,
-                                             kCardScale, choice.alpha, 0.0f,
-                                             500.0f);
+    core::graphics::CardRenderer::RenderCard(
+        choice.dummy_data, render_pos, kCardScale, choice.alpha, 0.0f, 500.0f);
 
     // Draw the colored square in the art area
-    glm::vec2 art_pos = render_pos + core::graphics::kCardArtOffset * kCardScale;
+    glm::vec2 art_pos =
+        render_pos + core::graphics::kCardArtOffset * kCardScale;
     glm::vec2 art_size = core::graphics::kCardArtSize * kCardScale;
 
     engine::graphics::utils::RenderCommand art_bg_cmd;
