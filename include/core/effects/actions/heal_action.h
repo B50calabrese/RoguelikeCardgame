@@ -41,8 +41,8 @@ class HealAction : public ActionBase {
     } else if (target_.type == Target::Type::kCreature) {
       CardInstance* target_inst = state.FindCardInstance(target_.id);
       if (target_inst) {
-        target_inst->current_health =
-            std::min(target_inst->max_health, target_inst->current_health + amount_);
+        target_inst->current_health = std::min(
+            target_inst->max_health, target_inst->current_health + amount_);
         LOG_INFO("[EffectResolver] Creature %s healed for %d. New health: %d",
                  target_inst->data->name.c_str(), amount_,
                  target_inst->current_health);

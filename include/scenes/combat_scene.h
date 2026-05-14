@@ -14,8 +14,9 @@
 #include "engine/scene/scene.h"
 #include "scenes/combat/attack_animation.h"
 #include "scenes/combat/board_hitbox.h"
-#include "scenes/combat/combat_state.h"
 #include "scenes/combat/combat_ui_constants.h"
+#include "scenes/combat/combat_ui_state.h"
+#include "scenes/combat/spell_visual_manager.h"
 #include "scenes/controllers/combat_controller.h"
 #include "scenes/controllers/hand_controller.h"
 
@@ -36,8 +37,6 @@ class CombatScene : public engine::Scene {
 
  private:
   void DrawTargetingLine();
-  void UpdateSpellVisuals(float delta_time_seconds);
-  void RenderSpellVisuals();
 
   // UI Constants (Relative to window size)
   float kBorderThickness = 0.0f;
@@ -64,16 +63,7 @@ class CombatScene : public engine::Scene {
   std::unique_ptr<controllers::HandController> player_hand_;
   std::unique_ptr<controllers::HandController> enemy_hand_;
   std::unique_ptr<controllers::CombatController> combat_controller_;
-
-  struct ActiveSpellVisual {
-    int instance_id;
-    float elapsed_time;
-    glm::vec2 current_pos;
-  };
-  std::vector<ActiveSpellVisual> active_spell_visuals_;
-
-  // Hitbox cache for board creatures
-  std::vector<BoardHitbox> board_hitboxes_;
+  combat::SpellVisualManager spell_visual_manager_;
 };
 
 }  // namespace scenes

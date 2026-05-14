@@ -1,9 +1,8 @@
-#include "core/state/combat_state.h"
-
 #include <gtest/gtest.h>
 
 #include "core/card_data.h"
 #include "core/card_instance.h"
+#include "core/state/combat_state.h"
 
 namespace core::state {
 namespace {

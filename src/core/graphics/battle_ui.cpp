@@ -183,9 +183,10 @@ void BattleUI::RenderManaPool(const state::PlayerState& player,
   glm::vec4 color2 = {0.5f, 0.5f, 0.5f, 1.0f};
 
   if (!player.colors.empty()) {
-    color1 = util::GetColorVector(player.colors[0]);
-    color2 = (player.colors.size() > 1) ? util::GetColorVector(player.colors[1])
-                                        : color1;
+    color1 = util::GraphicsUtil::GetColorVector(player.colors[0]);
+    color2 = (player.colors.size() > 1)
+                 ? util::GraphicsUtil::GetColorVector(player.colors[1])
+                 : color1;
   }
 
   const float ui_z = scenes::combat::kUIZ;

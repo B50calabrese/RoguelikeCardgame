@@ -10,7 +10,8 @@ namespace core::effects::types {
 
 /**
  * @brief Keyword effect: Blocker.
- * If the opposing player has a blocker then the only valid targets are creatures with blocker.
+ * If the opposing player has a blocker then the only valid targets are
+ * creatures with blocker.
  */
 class BlockerEffect : public Effect {
  public:

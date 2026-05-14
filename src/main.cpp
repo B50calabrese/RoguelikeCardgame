@@ -1,14 +1,7 @@
 #include <memory>
 
 #include "core/card_registry.h"
-#include "core/effects/effect_registry.h"
-#include "core/effects/types/blocker_effect.h"
-#include "core/effects/types/damage_effect.h"
-#include "core/effects/types/draw_effect.h"
-#include "core/effects/types/haste_effect.h"
-#include "core/effects/types/heal_effect.h"
-#include "core/effects/types/modify_max_mana_effect.h"
-#include "core/effects/types/stat_modify_effect.h"
+#include "core/effects/effect_initializer.h"
 #include "core/game_config.h"
 #include "engine/core/application.h"
 #include "engine/core/engine.h"
@@ -28,27 +21,7 @@ class DeckBuilderApp : public engine::Application {
     engine::graphics::TextRenderer::Get().LoadFont("default", "arial.ttf", 18);
 
     // Register Effects
-    core::effects::EffectRegistry::Get().RegisterEffect("Damage", []() {
-      return std::make_unique<core::effects::types::DamageEffect>();
-    });
-    core::effects::EffectRegistry::Get().RegisterEffect("Draw", []() {
-      return std::make_unique<core::effects::types::DrawEffect>();
-    });
-    core::effects::EffectRegistry::Get().RegisterEffect("Buff", []() {
-      return std::make_unique<core::effects::types::StatModifyEffect>();
-    });
-    core::effects::EffectRegistry::Get().RegisterEffect("Heal", []() {
-      return std::make_unique<core::effects::types::HealEffect>();
-    });
-    core::effects::EffectRegistry::Get().RegisterEffect("ModifyMaxMana", []() {
-      return std::make_unique<core::effects::types::ModifyMaxManaEffect>();
-    });
-    core::effects::EffectRegistry::Get().RegisterEffect("Haste", []() {
-      return std::make_unique<core::effects::types::HasteEffect>();
-    });
-    core::effects::EffectRegistry::Get().RegisterEffect("Blocker", []() {
-      return std::make_unique<core::effects::types::BlockerEffect>();
-    });
+    core::effects::EffectInitializer::InitializeAll();
 
     // Load Cards
     core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);

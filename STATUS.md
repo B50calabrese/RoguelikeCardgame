@@ -1,43 +1,42 @@
 # Project Status
 
 ## Most Recent Changes
+- **Refactoring & Modularity**: significantly improved codebase architecture and modularity.
+    - **Naming Collision Resolution**: Renamed the `scenes::CombatState` enum to `scenes::CombatUIState` to eliminate confusion with the core `core::state::CombatState` structure.
+    - **Modular Effect Registration**: Moved game effect registration from `main.cpp` to a dedicated `core::effects::EffectInitializer`, centralizing game-logic bootstrapping.
+    - **UI & Layout Decoupling**: Extracted board layout calculation logic from `CombatScene` into a reusable `core::util::GraphicsUtil` class.
+    - **Spell Visuals Refactor**: Modularized spell visual effect management into a dedicated `scenes::combat::SpellVisualManager` class.
+- **Cleanup**:
+    - Removed redundant card loading in `CombatScene` as it is already handled globally.
+    - Eliminated dead code, including unused hitbox cache members in `CombatScene`.
+    - Centralized color vector mapping in `GraphicsUtil`.
 - **Scene Stitching & Flow**: Fully integrated the game's core loop: `NewRunScene` -> `MapScene` -> `CombatScene`.
     - **Persistence**: Player health and deck now persist across scenes via the global `core::GameState` singleton.
-    - **Win/Loss Transitions**:
-        - **Victory**: Defeating the enemy in `CombatScene` (enemy health <= 0) saves the player's current health back to `GameState` and returns them to the `MapScene`, which generates a new set of choices.
-        - **Defeat**: If the player's health reaches 0, the program gracefully closes via `glfwSetWindowShouldClose`.
-    - **Run Initialization**: `NewRunScene` now correctly sets the player's starting health based on their chosen character (Warrior: 35, Mage: 25, Rogue: 30) before entering the map.
 - **Combat Initialization Overhaul**: `CombatScene` now pulls its initial state directly from the persistent `GameState`.
-    - Added `GameSetup::SetupDeckFromIds` to reconstruct the combat deck from the ID list stored in the run state.
-- **Map Scene Navigation (MVP)**: Implemented the "run navigation" system in `MapScene`.
-    - **Scenario Choices**: The scene generates 2-5 randomized cards representing different encounter types: Battle (Red), Random Event (Purple), Shop (Gold), and Treasure (Cyan).
-    - **Battle Transition**: Clicking a "Battle" choice card now correctly initiates a combat encounter.
-- **Game State Architecture Refactor**: Separated persistent run-level state from encounter-specific combat state.
-    - **CombatState**: Tracks individual combat encounters (health, mana, cards in zones).
-    - **Run-Level GameState**: Tracks progress across an entire run, including chosen character, selected color identity, current deck, and current/max health.
-- **Simple AI Implementation**: Implemented a "simple" AI logic for the enemy with attack priorities (Blockers > Other Creatures > Player Health).
-- **Established Project Tracking System**: Created `STATUS.md` and updated `AGENTS.md` with maintenance directives.
+- **Map Scene Navigation (MVP)**: Implemented the "run navigation" system in `MapScene` with randomized scenario choices.
 
 ## Technical Status Report
 
 ### Scenes
 - **MainMenuScene**: Functional entry point for the application.
-- **NewRunScene**: Allows players to select starting colors and character. Properly initializes persistent run state (health, deck, colors).
-- **MapScene**: Functional run navigation scene with randomized scenario choices and UI animations. Successfully transitions to Combat.
-- **CombatScene**: Integrated with persistent state. Handles encounter logic and redirects back to Map or exits based on outcome.
+- **NewRunScene**: Allows players to select starting colors and character. Properly initializes persistent run state.
+- **MapScene**: Functional run navigation scene with randomized scenario choices.
+- **CombatScene**: Integrated with persistent state. Handles encounter logic and modularized UI/Visual systems.
 - **CardViewerScene**: Provides a grid view of all registered cards.
 
 ### Core Systems
 - **GameState & CombatState**: Two-tier state management for persistent run data and temporary combat data.
+- **Effect Initializer**: Centralized registry for all game-defined effects.
+- **SpellVisualManager**: Independent system for managing spell play animations and visual blockers.
 - **RulesEngine**: Singleton managing gameplay validation via pluggable `IRule` objects.
 - **EventBus**: Facilitates decoupled communication between systems.
-- **EffectResolver**: Manages the execution of game actions. Uses a `VisualBlocker` system for animation synchronization.
+- **EffectResolver**: Manages the execution of game actions.
 
 ### UI & Visuals
+- **GraphicsUtil**: Utility class for layout math and color mapping.
 - **HandController & HandRenderer**: Manage fluid card animations and hand layout math.
 - **BattleUI**: Renders the combat interface, including mana pools and board zones.
-- **HealthIcon**: Component-based health tracking for player and enemy.
-- **CardRenderer**: Central utility for rendering cards, used by `MapScene` and `CombatScene`.
+- **CardRenderer**: Central utility for rendering cards.
 
 ### Infrastructure
 - **InputManager**: Handles mouse and keyboard input.
@@ -47,7 +46,8 @@
 ## Recommendations & Next Steps
 
 ### Technical Improvements
-- **Map State Persistence**: Extend `GameState` to track the player's current position on the map and visited nodes if moving to a graph-based map.
+- **Automated Testing Expansion**: Increase unit test coverage for the newly created `GraphicsUtil` and `SpellVisualManager`.
+- **Map State Persistence**: Extend `GameState` to track the player's current position on the map.
 - **Engine Linker Resolution**: Standardize the search paths for GLFW and OpenGL in the build system to improve sandbox compatibility.
 
 ### Feature Development
@@ -55,4 +55,3 @@
 - **Node-Based Map**: Transition from simple scenario choices to a persistent node-based map graph.
 - **Character Perks**: Introduce unique starting stats or passive abilities for the Warrior, Mage, and Rogue archetypes.
 - **AI Enhancement**: Expand `SimpleAI` to support non-creature spell targeting and more complex tactical decisions.
-- **Audio Integration**: Bootstrap an audio system for sound effects and music.

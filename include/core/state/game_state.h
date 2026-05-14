@@ -2,6 +2,7 @@
 #define DECK_BUILDER_GAME_INCLUDE_CORE_STATE_GAME_STATE_H_
 
 #include <vector>
+
 #include "core/enums.h"
 
 namespace core {

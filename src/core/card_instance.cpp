@@ -47,10 +47,11 @@ void CardInstance::RecalculateStats() {
 }
 
 void CardInstance::ClearModifiers(ModifierDuration duration) {
-  modifiers.erase(
-      std::remove_if(modifiers.begin(), modifiers.end(),
-                     [duration](const auto& mod) { return mod.duration == duration; }),
-      modifiers.end());
+  modifiers.erase(std::remove_if(modifiers.begin(), modifiers.end(),
+                                 [duration](const auto& mod) {
+                                   return mod.duration == duration;
+                                 }),
+                  modifiers.end());
   RecalculateStats();
 }
 

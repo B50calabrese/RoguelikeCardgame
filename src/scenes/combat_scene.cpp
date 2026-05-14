@@ -3,12 +3,11 @@
 #include <GLFW/glfw3.h>
 
 #include <algorithm>
-#include <random>
-#include <vector>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/epsilon.hpp>
 #include <glm/vec2.hpp>
+#include <random>
+#include <vector>
 
 #include "core/ai/simple_ai.h"
 #include "core/card_instance.h"
@@ -16,7 +15,6 @@
 #include "core/constants.h"
 #include "core/effects/actions/creature_attack_action.h"
 #include "core/effects/actions/play_card_action.h"
-#include "core/effects/actions/spell_visual_action.h"
 #include "core/effects/actions/start_turn_action.h"
 #include "core/effects/effect_resolver.h"
 #include "core/effects/event_bus.h"
@@ -27,6 +25,7 @@
 #include "core/graphics/hand_renderer.h"
 #include "core/state/game_state.h"
 #include "core/util/game_setup.h"
+#include "core/util/graphics_util.h"
 #include "core/util/math_util.h"
 #include "engine/core/engine.h"
 #include "engine/graphics/primitive_renderer.h"
@@ -45,13 +44,6 @@ namespace scenes {
 
 void CombatScene::OnAttach() {
   LOG_INFO("[CombatScene] Attached");
-
-  // Load cards from assets
-  bool success =
-      core::CardRegistry::Get().LoadCardsFromDirectory("cards", false);
-  if (!success) {
-    LOG_ERR("[CombatScene] Failed to load some cards.");
-  }
 
   CombatCommandSystem::Register(game_state_);
 
@@ -195,11 +187,12 @@ void CombatScene::OnUpdate(float delta_time_seconds) {
     return;
   }
   if (game_state_.player->health <= 0) {
-    glfwSetWindowShouldClose(engine::Engine::window().native_handle(), GLFW_TRUE);
+    glfwSetWindowShouldClose(engine::Engine::window().native_handle(),
+                             GLFW_TRUE);
     return;
   }
 
-  UpdateSpellVisuals(delta_time_seconds);
+  spell_visual_manager_.Update(delta_time_seconds, game_state_);
   enemy_ai_->Update(delta_time_seconds, game_state_);
   battle_ui_.Update(delta_time_seconds, game_state_);
 
@@ -223,35 +216,11 @@ void CombatScene::OnRender() {
 
   // Calculate board card scaling and positioning with 24px gap
   float gap = 24.0f;
-  auto calculate_board_layout = [&](size_t count, glm::vec2 zone_pos,
-                                    glm::vec2 zone_size) {
-    std::vector<engine::ecs::components::Transform> layouts(count);
-    if (count == 0) return layouts;
 
-    // Determine scale: we want to fit 'count' cards + (count-1) gaps of 24px
-    // card_width = scale * kBaseCardWidth
-    // count * card_width + (count-1) * gap <= zone_size.x
-    // scale * count * kBaseCardWidth <= zone_size.x - (count-1) * gap
-    float max_width = zone_size.x - (count > 1 ? (count - 1) * gap : 0.0f);
-    float scale_x = max_width / (count * card_base_width);
-    float scale_y = zone_size.y / card_base_height;
-    float scale = std::min({scale_x, scale_y, combat::kBoardCardScaleMultiplier});
-
-    float card_width = scale * card_base_width;
-    float total_width = count * card_width + (count > 1 ? (count - 1) * gap : 0.0f);
-    float start_x = zone_pos.x + (zone_size.x - total_width) * 0.5f + card_width * 0.5f;
-    float center_y = zone_pos.y + zone_size.y * 0.5f;
-
-    for (size_t i = 0; i < count; ++i) {
-      layouts[i].position = {start_x + i * (card_width + gap), center_y};
-      layouts[i].scale = glm::vec2(scale);
-      layouts[i].rotation = 0.0f;
-    }
-    return layouts;
-  };
-
-  auto player_board_layouts = calculate_board_layout(
-      game_state_.player->board.size(), kPlayerBoardPos, kBoardBoundsSize);
+  auto player_board_layouts = core::util::GraphicsUtil::CalculateBoardLayout(
+      game_state_.player->board.size(), kPlayerBoardPos, kBoardBoundsSize,
+      {card_base_width, card_base_height}, gap,
+      combat::kBoardCardScaleMultiplier);
   for (size_t i = 0; i < game_state_.player->board.size(); ++i) {
     int inst_id = game_state_.player->board[i]->instance_id;
     glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
@@ -297,9 +266,11 @@ void CombatScene::OnRender() {
         player_board_layouts[i].rotation, 0.0f);
   }
 
-  auto enemy_board_layouts = calculate_board_layout(
+  auto enemy_board_layouts = core::util::GraphicsUtil::CalculateBoardLayout(
       game_state_.enemy->board.size(), {enemy_zone_rect_.x, enemy_zone_rect_.y},
-      {enemy_zone_rect_.z, enemy_zone_rect_.w});
+      {enemy_zone_rect_.z, enemy_zone_rect_.w},
+      {card_base_width, card_base_height}, gap,
+      combat::kBoardCardScaleMultiplier);
   for (size_t i = 0; i < game_state_.enemy->board.size(); ++i) {
     int inst_id = game_state_.enemy->board[i]->instance_id;
     glm::vec2 pos = combat_controller_->animator().GetAnimatedPosition(
@@ -332,7 +303,7 @@ void CombatScene::OnRender() {
   player_hand_->Render();
   enemy_hand_->Render();
 
-  RenderSpellVisuals();
+  spell_visual_manager_.Render(game_state_);
 
   DrawTargetingLine();
 
@@ -341,7 +312,7 @@ void CombatScene::OnRender() {
 }
 
 void CombatScene::DrawTargetingLine() {
-  if (combat_controller_->current_state() == CombatState::PickingTarget &&
+  if (combat_controller_->current_state() == CombatUIState::PickingTarget &&
       combat_controller_->selected_attacker_id()) {
     glm::vec2 start_pos;
     if (auto hitbox = combat_controller_->hitbox_manager().GetHitboxFor(
@@ -362,58 +333,6 @@ void CombatScene::DrawTargetingLine() {
     cmd.z_order = combat::kTargetingLineZ;
 
     queue.Submit(cmd);
-  }
-}
-
-void CombatScene::UpdateSpellVisuals(float delta_time_seconds) {
-  // Check for new SpellVisualAction
-  auto current_action = core::effects::EffectResolver::Get().current_action();
-  if (current_action) {
-    auto spell_action =
-        std::dynamic_pointer_cast<core::effects::actions::SpellVisualAction>(
-            current_action);
-    if (spell_action) {
-      int inst_id = spell_action->card_instance_id();
-      bool already_active = std::any_of(
-          active_spell_visuals_.begin(), active_spell_visuals_.end(),
-          [inst_id](const auto& v) { return v.instance_id == inst_id; });
-
-      if (!already_active) {
-        auto& config = core::GameConfig::Get();
-        ActiveSpellVisual visual;
-        visual.instance_id = inst_id;
-        visual.elapsed_time = 0.0f;
-        // Start from a reasonable middle position or hand?
-        // Let's just pop it in the middle for now.
-        visual.current_pos = {config.window_width * 0.3f, config.window_height * 0.5f};
-        active_spell_visuals_.push_back(visual);
-      }
-    }
-  }
-
-  // Update active visuals
-  for (auto it = active_spell_visuals_.begin();
-       it != active_spell_visuals_.end();) {
-    it->elapsed_time += delta_time_seconds;
-
-    if (it->elapsed_time >= 1.5f) {
-      core::effects::VisualBlocker::Get().RemoveBlocker(
-          "SpellVisual_" + std::to_string(it->instance_id));
-      it = active_spell_visuals_.erase(it);
-    } else {
-      ++it;
-    }
-  }
-}
-
-void CombatScene::RenderSpellVisuals() {
-  for (const auto& visual : active_spell_visuals_) {
-    core::CardInstance* inst = game_state_.FindCardInstance(visual.instance_id);
-    if (inst) {
-      // Float to the left of center
-      core::graphics::CardRenderer::RenderCard(
-          *inst->data, visual.current_pos, 0.8f, 1.0f, 0.0f, combat::kHandZ + 500.0f);
-    }
   }
 }
 

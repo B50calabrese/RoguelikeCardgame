@@ -123,8 +123,8 @@ void HandController::Update(float delta_time_seconds,
                       player_id_, held_card.instance_id,
                       std::vector<core::effects::Target>{}));
 
-              // Immediately remove card from visuals to prevent it snapping back
-              // to hand before state updates.
+              // Immediately remove card from visuals to prevent it snapping
+              // back to hand before state updates.
               hand_visuals_.erase(hand_visuals_.begin() + *held_card_index_);
               held_card_index_ = std::nullopt;
               return;
@@ -143,8 +143,8 @@ void HandController::Update(float delta_time_seconds,
       const auto& vc = hand_visuals_[i];
       glm::vec2 size =
           core::graphics::kBaseCardSize * vc.current_transform.scale.x;
-      if (core::util::PointInRect(mouse_pos, vc.current_transform.position, size,
-                                  true)) {
+      if (core::util::PointInRect(mouse_pos, vc.current_transform.position,
+                                  size, true)) {
         hovered_card_index_ = i;
         break;
       }
@@ -195,7 +195,6 @@ void HandController::SyncHandWithState(
     }
   }
 }
-
 
 void HandController::UpdateLayout() {
   std::vector<size_t> in_hand_indices;
@@ -279,7 +278,7 @@ void HandController::DrawTargetingLine() {
     cmd.shape_type = engine::graphics::utils::ShapeType::kLine;
     cmd.position = start_pos;
     cmd.size = end_pos;
-    cmd.color = {0.0f, 1.0f, 1.0f, 1.0f}; // Cyan for spells
+    cmd.color = {0.0f, 1.0f, 1.0f, 1.0f};  // Cyan for spells
     cmd.thickness = 5.0f;
     cmd.z_order = combat::kTargetingLineZ;
 
@@ -304,7 +303,7 @@ std::optional<core::effects::Target> HandController::FindTargetAt(
                               {icon_size, icon_size}, true)) {
     return core::effects::Target{core::effects::Target::Type::kEnemy, 1};
   } else if (core::util::PointInRect(mouse_pos, player_health_pos,
-                                    {icon_size, icon_size}, true)) {
+                                     {icon_size, icon_size}, true)) {
     return core::effects::Target{core::effects::Target::Type::kPlayer, 0};
   }
 

@@ -13,9 +13,9 @@ namespace scenes::controllers {
 void CombatController::Update(float delta_time, core::state::CombatState& state,
                               float icon_top, float icon_size) {
   animator_.Update(delta_time, state);
-  if (current_state_ == CombatState::AnimatingAttack &&
+  if (current_state_ == CombatUIState::AnimatingAttack &&
       !animator_.active_animation()) {
-    current_state_ = CombatState::Idle;
+    current_state_ = CombatUIState::Idle;
   }
 }
 
@@ -27,21 +27,21 @@ void CombatController::HandleInput(core::state::CombatState& state,
   glm::vec2 mouse_pos = input.mouse_screen_pos();
 
   if (input.IsKeyPressed(engine::KeyCode::kMouseLeft)) {
-    if (current_state_ == CombatState::Idle) {
+    if (current_state_ == CombatUIState::Idle) {
       if (auto hitbox = hitbox_manager_.GetHitboxAt(mouse_pos)) {
         if (!hitbox->is_enemy) {
           auto* inst = state.FindCardInstance(hitbox->instance_id);
           if (inst && inst->can_attack && !inst->has_attacked &&
               state.current_turn_player_id == inst->owner_id) {
             selected_attacker_id_ = hitbox->instance_id;
-            current_state_ = CombatState::PickingTarget;
+            current_state_ = CombatUIState::PickingTarget;
             LOG_INFO("[CombatController] Selected attacker %d",
                      *selected_attacker_id_);
             return;
           }
         }
       }
-    } else if (current_state_ == CombatState::PickingTarget) {
+    } else if (current_state_ == CombatUIState::PickingTarget) {
       bool target_found = false;
       if (auto hitbox = hitbox_manager_.GetHitboxAt(mouse_pos)) {
         if (hitbox->is_enemy) {
@@ -77,7 +77,7 @@ void CombatController::HandleInput(core::state::CombatState& state,
         }
       }
 
-      current_state_ = CombatState::Idle;
+      current_state_ = CombatUIState::Idle;
       selected_attacker_id_.reset();
     }
   }
@@ -130,7 +130,7 @@ void CombatController::OnCreatureAttacked(core::state::CombatState& state,
   anim.moving_to_target = true;
 
   animator_.StartAnimation(anim);
-  current_state_ = CombatState::AnimatingAttack;
+  current_state_ = CombatUIState::AnimatingAttack;
 }
 
 }  // namespace scenes::controllers
