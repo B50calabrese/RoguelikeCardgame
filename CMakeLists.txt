@@ -11,6 +11,20 @@ add_subdirectory("GameEngine")
 
 add_subdirectory("demos")
 
+# 7. GOOGLE TEST INTEGRATION
+cmake_policy(SET CMP0135 NEW)
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+add_subdirectory(tests)
+
 # 2. SOURCE AND HEADER SETUP
 set(SOURCE_FILES
     "src/core/ai/simple_ai.cpp"
